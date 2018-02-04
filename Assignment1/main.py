@@ -1,5 +1,6 @@
 import random
 import queue
+import time
 
 def random_list(start, end, number):
     start = int(start)
@@ -28,7 +29,7 @@ def find_neighbour(str,num):
             if (j+1) != str[i]:
                 neighbour[k] = list(str)
                 neighbour[k][i] = j+1
-                neighbour[k][num]=neighbour[k][num]+10+(str[i]-j-1)*(str[i]-j-1)
+                neighbour[k][num] = neighbour[k][num] + 10 + (str[i]-j-1)*(str[i]-j-1)
                 k = k+1
     return neighbour
 
@@ -55,17 +56,17 @@ def a_star(str,num):
                 came_from[tuple(next[0:-1])] = current
     return result
 
-
-
-
+start = time.clock()
 print('Enter the number of queen:')
 N=int(input())
 queen=random_list(1,N,N)
 queen.append(0)
-print(queen[0:-1])
 result=a_star(queen,N)
+elapsed = (time.clock() - start)
+print(queen[0:-1])
 print(result[0:-1])
 print('cost=:',result[-1])
+print("Time used:",elapsed)
 
 
 
