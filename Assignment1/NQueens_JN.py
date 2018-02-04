@@ -18,6 +18,7 @@ def PrintBoard(coordinate):
         for j in range(len(coordinate)):
             print(str(pb[i][j]), end="")
     print("")
+
 def iniBoard( length ):
     "This is a initialize function"
     coordinate = []
@@ -103,7 +104,7 @@ def GenerateSuccessor (tNode ):
                 # deep Copy function...Create a new object here
                 tempList = copy.deepcopy(tNode.board)
                 tempList[i][0] = j
-                G = 10 + math.pow(j - temp_x_index, 2) + tNode.G
+                G = 10 + math.pow(j - temp_x_index, 2) #+ tNode.G
                 H = 10 + NumberOfAttackQueens(tempList)
                 tempNode = Node(tempList)
                 tempNode.setGH(G, H)
@@ -170,10 +171,22 @@ def aStar(InitialNode):
     while open_set:
 
         #current = min(open_set,key=lambda o:o.G + o.H)
+
+        for key in open_set:
+            if key.H == 10:
+                print("Find someone suitable in open set. No need to explore")
+                resultNode = key
+                open_set.clear()
+                break
+            #break
+        if (len(open_set) == 0):
+            break
+
+        #print ("Need to explore again")
         current = min(open_set, key=lambda o:o.H)
         open_set.remove(current)
         #open_set.clear()
-        print ("open set size: " + str(len(open_set)))
+        #print ("open set size: " + str(len(open_set)))
 
         if current.H == 10:
             resultNode = current
@@ -182,7 +195,7 @@ def aStar(InitialNode):
             current_successor = GenerateSuccessor(current)
             #current_successor = GenerateNeighbors_1(current)
             open_set = open_set | current_successor
-            print("Size of Successor set: " + str(len(current_successor)))
+            #print("Size of Successor set: " + str(len(current_successor)))
             #print("Size of open set: " + str(len(open_set)))
 
     return resultNode
@@ -222,8 +235,8 @@ def HillClimbing( InitialNode ):
     return resultNode
 
 
-#result = [[1,1],[2,2],[1,3],[3,5],[4,4]]# iniBoard(5), only for test
-result = iniBoard(10)
+result = [[2, 8], [6, 5], [8, 4], [10, 2], [3, 9], [8, 1], [1, 3], [2, 10], [4, 7], [5, 6]]# iniBoard(5), only for test
+#result = iniBoard(10)
 print("Initial Board: " + str(result))
 print("Attack Pairs:" + str(NumberOfAttackQueens(result)))
 node_object = Node()
@@ -241,11 +254,13 @@ print ("cost :" + str(result_node.G))
 print ("Time elapsed: " + str(elapsed))
 print("Attack pairs:" + str(NumberOfAttackQueens(result_node.board)))
 PrintBoard(result_node.board)
+
 #A-star
-# start = time.clock()
-# result_node = aStar(node_object)
-# elapsed = (time.clock() - start)
-# print(result_node.board)
-# print ("cost :" + str(result_node.G))
-# print ("Time elapsed: " + str(elapsed))
-# print("Attack pairs:" + str(NumberOfAttackQueens(result_node.board)))
+start = time.clock()
+result_node = aStar(node_object)
+elapsed = (time.clock() - start)
+print(result_node.board)
+print ("cost :" + str(result_node.G))
+print ("Time elapsed: " + str(elapsed))
+print("Attack pairs:" + str(NumberOfAttackQueens(result_node.board)))
+PrintBoard(result_node.board)
