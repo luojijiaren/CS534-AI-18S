@@ -75,7 +75,7 @@ def GenerateSuccessor (tNode ):
     for i in range(0,length): #column index
         tempList = []
         temp_x_index = tNode.board[i][0] #row index
-        print("temp_x_index:" + str(temp_x_index))
+        #print("temp_x_index:" + str(temp_x_index))
         #tempList.clear()
 
         for j in range(1,length + 1):
@@ -92,7 +92,7 @@ def GenerateSuccessor (tNode ):
 
 def aStar(InitialNode):
 
-    open_set = []
+    open_set = set()
     current = InitialNode
 
     open_set.add(current)
@@ -101,8 +101,8 @@ def aStar(InitialNode):
     while open_set:
 
         current = min(open_set,key=lambda o:o.G + o.H)
-        #open_set.remove(current)
-        open_set.clear()
+        open_set.remove(current)
+        #open_set.clear()
         print ("open set size: " + str(len(open_set)))
 
         if current.H == 10:
@@ -137,7 +137,7 @@ def HillClimbing( InitialNode ):
         else:
             current_successor = GenerateSuccessor(current)
             open_set = open_set | current_successor
-            print("Size of Successor set: " + str(len(current_successor)))
+            #print("Size of Successor set: " + str(len(current_successor)))
             print("Size of open set: " + str(len(open_set)))
 
     return resultNode
@@ -150,19 +150,13 @@ node_object = Node()
 node_object.setBoard(result)
 successor_set = GenerateSuccessor(node_object)
 
-print ("Initial Board: " + str(result))
-for n in successor_set:
-         print (n.board)
-         print (n.H-10)
-         #print ("Real H:" + str(NumberOfAttackQueens(n.board)))
 
+#Hill climbing
+#result_node = HillClimbing(node_object)
+#print(result_node.board)
+#print(NumberOfAttackQueens(result_node.board))
 
-current = min(successor_set,key=lambda o:o.H)
-print ( "G: " + str(current.G-10) )
-#print(len(current))
-
-print (len(successor_set))
-
-result_node = HillClimbing(node_object)
+#A-star
+result_node = aStar(node_object)
 print(result_node.board)
 print(NumberOfAttackQueens(result_node.board))
