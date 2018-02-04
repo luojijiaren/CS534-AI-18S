@@ -40,7 +40,7 @@ def HeuristicFunction ( AttackPairs ):
     return 10 + AttackPairs
 
 class Node:
-
+     board = None
      def __init__(self):
          self.parent = None
          self.board = None
@@ -56,6 +56,16 @@ class Node:
 
      def setBoard(self,new_board):
          self.board = new_board
+
+     def newSetBoard(id,ids=None):
+         if id:
+             ids = list()
+             ids.append(id)
+
+         print(ids)
+
+
+
 
 # each node has n*(n-1) successors
 def GenerateSuccessor (tNode ):
@@ -77,12 +87,13 @@ def GenerateSuccessor (tNode ):
                temp_Node = Node()
                temp_Node.setParentNode(tNode)
                temp_Node.setGH(G,H)
-               temp_Node.setBoard(temp_board)
+               #temp_Node.setBoard(temp_board)
+               temp_Node.newSetBoard(temp_board)
                print("temp_board " + str(temp_Node.board))
                successor_set.append(temp_Node)
 
-               for t in range(len(successor_set)):
-                   print (successor_set[t].board)
+               #for t in range(len(successor_set)):
+               #    print (successor_set[t].board)
                temp_board[i][0] = temp_x_index
 
     return successor_set
@@ -112,8 +123,6 @@ def aStar(InitialNode):
             print("Size of open set: " + str(len(open_set)))
 
     return resultNode
-
-
 
 
 
