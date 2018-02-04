@@ -2,6 +2,7 @@ import random
 import numpy as np
 import math
 import copy
+import time
 
 def iniBoard( length ):
     "This is a initialize function"
@@ -83,10 +84,11 @@ def GenerateSuccessor (tNode ):
                #deep Copy function...Create a new object here
                tempList = copy.deepcopy(tNode.board)
                tempList[i][0] = j
-               G = 10 + math.pow(j-temp_x_index,2)
+               G = 10 + math.pow(j-temp_x_index,2) + tNode.G
                H = 10 + NumberOfAttackQueens(tempList)
                tempNode = Node(tempList)
                tempNode.setGH(G,H)
+               tempNode.setParentNode(tNode)
                successor_set.add(tempNode)
     return successor_set
 
@@ -137,8 +139,8 @@ def HillClimbing( InitialNode ):
         else:
             current_successor = GenerateSuccessor(current)
             open_set = open_set | current_successor
-            #print("Size of Successor set: " + str(len(current_successor)))
-            print("Size of open set: " + str(len(open_set)))
+            print("Size of Successor set: " + str(len(current_successor)))
+            #print("Size of open set: " + str(len(open_set)))
 
     return resultNode
 
@@ -154,9 +156,13 @@ successor_set = GenerateSuccessor(node_object)
 #Hill climbing
 #result_node = HillClimbing(node_object)
 #print(result_node.board)
-#print(NumberOfAttackQueens(result_node.board))
+#print("Attack pairs:" + str(NumberOfAttackQueens(result_node.board)))
 
 #A-star
+start = time.clock()
 result_node = aStar(node_object)
+elapsed = (time.clock() - start)
 print(result_node.board)
-print(NumberOfAttackQueens(result_node.board))
+print ("cost :" + str(result_node.G))
+print ("Time elapsed: " + str(elapsed))
+print("Attack pairs:" + str(NumberOfAttackQueens(result_node.board)))
