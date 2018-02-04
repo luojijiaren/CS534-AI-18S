@@ -50,6 +50,7 @@ class Node:
          if board is None:
              board = []
          self.board = board
+         self.column = 0
 
      def setParentNode(self,ParentNode):
          self.parent = ParentNode
@@ -60,6 +61,9 @@ class Node:
 
      def setBoard(self,new_board):
          self.board = new_board
+
+     def setColumn(self,column):
+         self.column = column
 
      def newSetBoard(id,ids=None):
          if id:
@@ -72,25 +76,74 @@ class Node:
 def GenerateSuccessor (tNode ):
     successor_set = set()
     length = len(tNode.board)
+    column = tNode.column
 
-    for i in range(0,length): #column index
+    for i in range(0, length):  # column index
         tempList = []
-        temp_x_index = tNode.board[i][0] #row index
-        #print("temp_x_index:" + str(temp_x_index))
-        #tempList.clear()
+        temp_x_index = tNode.board[i][0]  # row index
+        # print("temp_x_index:" + str(temp_x_index))
+        # tempList.clear()
 
-        for j in range(1,length + 1):
+        for j in range(1, length + 1):
             if j != temp_x_index:
-               #deep Copy function...Create a new object here
-               tempList = copy.deepcopy(tNode.board)
-               tempList[i][0] = j
-               G = 10 + math.pow(j-temp_x_index,2) + tNode.G
-               H = 10 + NumberOfAttackQueens(tempList)
-               tempNode = Node(tempList)
-               tempNode.setGH(G,H)
-               tempNode.setParentNode(tNode)
-               successor_set.add(tempNode)
+                # deep Copy function...Create a new object here
+                tempList = copy.deepcopy(tNode.board)
+                tempList[i][0] = j
+                G = 10 + math.pow(j - temp_x_index, 2) + tNode.G
+                H = 10 + NumberOfAttackQueens(tempList)
+                tempNode = Node(tempList)
+                tempNode.setGH(G, H)
+                tempNode.setParentNode(tNode)
+                successor_set.add(tempNode)
     return successor_set
+
+def GenerateNeighbors_1( tNode ):
+
+    successor_set = set()
+    length = len(tNode.board)
+    column = tNode.column
+    if column == 0:
+        for i in range(0, length):  # column index
+            tempList = []
+            temp_x_index = tNode.board[i][0]  # row index
+            # print("temp_x_index:" + str(temp_x_index))
+            # tempList.clear()
+
+            for j in range(1, length + 1):
+                if j != temp_x_index:
+                    # deep Copy function...Create a new object here
+                    tempList = copy.deepcopy(tNode.board)
+                    tempList[i][0] = j
+                    G = 10 + math.pow(j - temp_x_index, 2) + tNode.G
+                    H = 10 + NumberOfAttackQueens(tempList)
+                    tempNode = Node(tempList)
+                    tempNode.setGH(G, H)
+                    tempNode.setParentNode(tNode)
+                    tempNode.setColumn(i+1)
+                    successor_set.add(tempNode)
+    else:
+        if column == length:
+            column == 1
+        else:
+            column = column + 1
+
+        temp_x_index_2 = tNode.board[column - 1][0]  # row index, next index from Parent Node
+
+        for ln in range(1, length + 1):
+            if ln != temp_x_index_2:
+                tempList2 = copy.deepcopy(tNode.board)
+                tempList2[column - 1][0] = ln
+                G = 10 + math.pow(ln - temp_x_index_2, 2) + tNode.G
+                H = 10 + NumberOfAttackQueens(tempList2)
+                tempNode = Node(tempList2)
+                tempNode.setGH(G, H)
+                tempNode.setColumn(column)
+                tempNode.setParentNode(tNode)
+                successor_set.add(tempNode)
+
+    return successor_set
+
+
 
 def aStar(InitialNode):
 
@@ -102,7 +155,8 @@ def aStar(InitialNode):
 
     while open_set:
 
-        current = min(open_set,key=lambda o:o.G + o.H)
+        #current = min(open_set,key=lambda o:o.G + o.H)
+        current = min(open_set, key=lambda o:o.H)
         open_set.remove(current)
         #open_set.clear()
         print ("open set size: " + str(len(open_set)))
@@ -112,9 +166,10 @@ def aStar(InitialNode):
             break
         else:
             current_successor = GenerateSuccessor(current)
+            #current_successor = GenerateNeighbors_1(current)
             open_set = open_set | current_successor
             print("Size of Successor set: " + str(len(current_successor)))
-            print("Size of open set: " + str(len(open_set)))
+            #print("Size of open set: " + str(len(open_set)))
 
     return resultNode
 
@@ -131,32 +186,36 @@ def HillClimbing( InitialNode ):
         current = min(open_set, key=lambda o: o.H)
         # open_set.remove(current)
         open_set.clear()
-        print("open set size: " + str(len(open_set)))
+        #print("open set size: " + str(len(open_set)))
 
         if current.H == 10:
             resultNode = current
             break
         else:
             current_successor = GenerateSuccessor(current)
-            open_set = open_set | current_successor
+            open_set = open_set|current_successor
             print("Size of Successor set: " + str(len(current_successor)))
-            #print("Size of open set: " + str(len(open_set)))
+            print("Size of open set: " + str(len(open_set)))
 
     return resultNode
 
 
 #result = [[1,1],[2,2],[1,3],[3,5],[4,4]]# iniBoard(5), only for test
-result = iniBoard(7)
+result = iniBoard(20)
 print ("Initial Board: " + str(result))
 node_object = Node()
 node_object.setBoard(result)
-successor_set = GenerateSuccessor(node_object)
+#successor_set = GenerateSuccessor(node_object)
 
 
 #Hill climbing
-#result_node = HillClimbing(node_object)
-#print(result_node.board)
-#print("Attack pairs:" + str(NumberOfAttackQueens(result_node.board)))
+# start = time.clock()
+# result_node = HillClimbing(node_object)
+# elapsed = (time.clock() - start)
+# print(result_node.board)
+# print ("cost :" + str(result_node.G))
+# print ("Time elapsed: " + str(elapsed))
+# print("Attack pairs:" + str(NumberOfAttackQueens(result_node.board)))
 
 #A-star
 start = time.clock()
