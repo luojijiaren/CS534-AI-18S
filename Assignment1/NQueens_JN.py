@@ -4,6 +4,20 @@ import math
 import copy
 import time
 
+def PrintBoard(coordinate):
+
+    length = len(coordinate)
+    pb = [['O'] * length for i in range(length)]
+
+    for m in range(length):
+        pb[coordinate[m][0]-1][coordinate[m][1]-1] = 'X'
+
+    for i in range(len(coordinate)):
+        if i != 0:
+            print("")
+        for j in range(len(coordinate)):
+            print(str(pb[i][j]), end="")
+
 def iniBoard( length ):
     "This is a initialize function"
     coordinate = []
@@ -180,10 +194,11 @@ def HillClimbing( InitialNode ):
     open_set.add(current)
     resultNode = Node(InitialNode)
 
-    minH = 10
+    last_H = 10
     while open_set:
 
         current = min(open_set, key=lambda o: o.H)
+        last_H = 10 + NumberOfAttackQueens(current.board)
         # open_set.remove(current)
         open_set.clear()
         #print("open set size: " + str(len(open_set)))
@@ -193,35 +208,44 @@ def HillClimbing( InitialNode ):
             break
         else:
             current_successor = GenerateSuccessor(current)
+            temp_next_node = min(current_successor, key=lambda o: o.H)
+            temp_next_H = 10 + NumberOfAttackQueens(temp_next_node.board)
+
+            if temp_next_H > last_H:
+                print("Dead END: Hill Climbing Stuck.")
+                break
+
             open_set = open_set|current_successor
-            print("Size of Successor set: " + str(len(current_successor)))
-            print("Size of open set: " + str(len(open_set)))
+            #print("Size of Successor set: " + str(len(current_successor)))
+            #print("Size of open set: " + str(len(open_set)))
 
     return resultNode
 
 
 #result = [[1,1],[2,2],[1,3],[3,5],[4,4]]# iniBoard(5), only for test
-result = iniBoard(20)
-print ("Initial Board: " + str(result))
+result = iniBoard(10)
+print("Initial Board: " + str(result))
+print("Attack Pairs:" + str(NumberOfAttackQueens(result)))
 node_object = Node()
 node_object.setBoard(result)
+PrintBoard(node_object.board)
 #successor_set = GenerateSuccessor(node_object)
 
 
 #Hill climbing
-# start = time.clock()
-# result_node = HillClimbing(node_object)
-# elapsed = (time.clock() - start)
-# print(result_node.board)
-# print ("cost :" + str(result_node.G))
-# print ("Time elapsed: " + str(elapsed))
-# print("Attack pairs:" + str(NumberOfAttackQueens(result_node.board)))
-
-#A-star
 start = time.clock()
-result_node = aStar(node_object)
+result_node = HillClimbing(node_object)
 elapsed = (time.clock() - start)
 print(result_node.board)
 print ("cost :" + str(result_node.G))
 print ("Time elapsed: " + str(elapsed))
 print("Attack pairs:" + str(NumberOfAttackQueens(result_node.board)))
+PrintBoard(result_node.board)
+#A-star
+# start = time.clock()
+# result_node = aStar(node_object)
+# elapsed = (time.clock() - start)
+# print(result_node.board)
+# print ("cost :" + str(result_node.G))
+# print ("Time elapsed: " + str(elapsed))
+# print("Attack pairs:" + str(NumberOfAttackQueens(result_node.board)))

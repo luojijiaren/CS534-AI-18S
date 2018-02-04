@@ -1,4 +1,18 @@
 
+import random
+import numpy as np
+
+def iniBoard( length ):
+    "This is a initialize function"
+    coordinate = []
+    # column coordinate, not to be duplicated
+    y_coordinate = random.sample(range(1,length + 1),length)
+    # row coordinates, duplicate allowed
+    x_coordinate = np.random.randint(low = 1, high = length+1, size = length)
+
+    for i in range(0,length):
+        coordinate.append([x_coordinate[i],y_coordinate[i]])
+    return coordinate
 
 class Node:
     def __init__(self, board = None):
@@ -57,3 +71,20 @@ print(r2.accs) # prints ['Hi!']
 
 list = [80, 100, 1000,80]
 print (min(80,100,1000,80))
+
+def PrintBoard(coordinate):
+
+    length = len(coordinate)
+    pb = [['O'] * length for i in range(length)]
+
+    for m in range(length):
+        pb[coordinate[m][0]-1][coordinate[m][1]-1] = 'X'
+
+    for i in range(len(coordinate)):
+        print("")
+        for j in range(len(coordinate)):
+            print(str(pb[i][j]), end="")
+
+
+coordinate = iniBoard(5)
+PrintBoard(coordinate)
