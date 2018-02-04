@@ -1,6 +1,7 @@
 import random
 import numpy as np
 import math
+import copy
 
 def iniBoard( length ):
     "This is a initialize function"
@@ -41,11 +42,13 @@ def HeuristicFunction ( AttackPairs ):
 
 class Node:
      board = None
-     def __init__(self):
+     def __init__(self, board = None):
          self.parent = None
-         self.board = None
          self.G = 0
          self.H = 0
+         if board is None:
+             board = []
+         self.board = board
 
      def setParentNode(self,ParentNode):
          self.parent = ParentNode
@@ -64,43 +67,32 @@ class Node:
 
          print(ids)
 
-
-
-
 # each node has n*(n-1) successors
 def GenerateSuccessor (tNode ):
-
-    successor_set = list()
+    successor_set = set()
     length = len(tNode.board)
 
     for i in range(0,length): #column index
+        tempList = []
         temp_x_index = tNode.board[i][0] #row index
+        print("temp_x_index:" + str(temp_x_index))
+        #tempList.clear()
 
         for j in range(1,length + 1):
-            temp_board = tNode.board
-
             if j != temp_x_index:
-               temp_board[i][0] = j
-               H = 10 + NumberOfAttackQueens(temp_board)
+               #deep Copy function...Create a new object here
+               tempList = copy.deepcopy(tNode.board)
+               tempList[i][0] = j
                G = 10 + math.pow(j-temp_x_index,2)
-
-               temp_Node = Node()
-               temp_Node.setParentNode(tNode)
-               temp_Node.setGH(G,H)
-               #temp_Node.setBoard(temp_board)
-               temp_Node.newSetBoard(temp_board)
-               print("temp_board " + str(temp_Node.board))
-               successor_set.append(temp_Node)
-
-               #for t in range(len(successor_set)):
-               #    print (successor_set[t].board)
-               temp_board[i][0] = temp_x_index
-
+               H = 10 + NumberOfAttackQueens(tempList)
+               tempNode = Node(tempList)
+               tempNode.setGH(G,H)
+               successor_set.add(tempNode)
     return successor_set
 
 def aStar(InitialNode):
 
-    open_set = set()
+    open_set = []
     current = InitialNode
 
     open_set.add(current)
@@ -124,23 +116,53 @@ def aStar(InitialNode):
 
     return resultNode
 
+def HillClimbing( InitialNode ):
+    open_set = set()
+    current = InitialNode
 
+    open_set.add(current)
+    resultNode = Node(InitialNode)
+
+    minH = 10
+    while open_set:
+
+        current = min(open_set, key=lambda o: o.H)
+        # open_set.remove(current)
+        open_set.clear()
+        print("open set size: " + str(len(open_set)))
+
+        if current.H == 10:
+            resultNode = current
+            break
+        else:
+            current_successor = GenerateSuccessor(current)
+            open_set = open_set | current_successor
+            print("Size of Successor set: " + str(len(current_successor)))
+            print("Size of open set: " + str(len(open_set)))
+
+    return resultNode
 
 
 #result = [[1,1],[2,2],[1,3],[3,5],[4,4]]# iniBoard(5), only for test
-result = iniBoard(4)
+result = iniBoard(7)
 print ("Initial Board: " + str(result))
 node_object = Node()
 node_object.setBoard(result)
 successor_set = GenerateSuccessor(node_object)
 
-for i in range(len(successor_set)):
-      print (successor_set[i].board)
+print ("Initial Board: " + str(result))
+for n in successor_set:
+         print (n.board)
+         print (n.H-10)
+         #print ("Real H:" + str(NumberOfAttackQueens(n.board)))
+
+
+current = min(successor_set,key=lambda o:o.H)
+print ( "G: " + str(current.G-10) )
+#print(len(current))
 
 print (len(successor_set))
-#attack = NumberOfAttackQueens(test_board)
-#print(attack)
-# node_successor = GenerateSuccessor(node_object)
 
-# print("Size of successors: " + str(len(node_successor)))
-
+result_node = HillClimbing(node_object)
+print(result_node.board)
+print(NumberOfAttackQueens(result_node.board))
