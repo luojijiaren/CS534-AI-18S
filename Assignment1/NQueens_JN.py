@@ -17,7 +17,7 @@ def PrintBoard(coordinate):
             print("")
         for j in range(len(coordinate)):
             print(str(pb[i][j]), end="")
-
+    print("")
 def iniBoard( length ):
     "This is a initialize function"
     coordinate = []
