@@ -18,11 +18,7 @@ def PrintBoard(coordinate):
         for j in range(len(coordinate)):
             print(str(pb[i][j]), end="")
     print("")
-<<<<<<< HEAD
 
-=======
-    
->>>>>>> d593854941be0beb382f8af104ca26d48fbb7a9a
 def iniBoard( length ):
     "This is a initialize function"
     coordinate = []
@@ -260,7 +256,7 @@ print("Attack pairs:" + str(NumberOfAttackQueens(result_node.board)))
 PrintBoard(result_node.board)
 
 #A-star
-<<<<<<< HEAD
+
 start = time.clock()
 result_node = aStar(node_object)
 elapsed = (time.clock() - start)
@@ -269,7 +265,7 @@ print ("cost :" + str(result_node.G))
 print ("Time elapsed: " + str(elapsed))
 print("Attack pairs:" + str(NumberOfAttackQueens(result_node.board)))
 PrintBoard(result_node.board)
-=======
+
 # start = time.clock()
 # result_node = aStar(node_object)
 # elapsed = (time.clock() - start)
@@ -277,4 +273,4 @@ PrintBoard(result_node.board)
 # print ("cost :" + str(result_node.G))
 # print ("Time elapsed: " + str(elapsed))
 # print("Attack pairs:" + str(NumberOfAttackQueens(result_node.board)))
->>>>>>> d593854941be0beb382f8af104ca26d48fbb7a9a
+#>>>>>>> d593854941be0beb382f8af104ca26d48fbb7a9a
