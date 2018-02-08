@@ -66,6 +66,9 @@ class Node:
              board = []
          self.board = board
          self.column = 0
+         self.ParentCost = 0
+         self.differenceG = 0
+         self.differenceH = 0
 
      def setParentNode(self,ParentNode):
          self.parent = ParentNode
@@ -85,10 +88,23 @@ class Node:
              ids = list()
              ids.append(id)
 
-         print(ids)
+     def GetParentCost(self, pcost):
+         self.ParentCost = pcost
+
+     def setDifferenceGH(self, differH):
+         self.differenceH = differH
+         #self.differenceH = differH
+
+     def setH(self,H):
+         self.H = H
+
+     def setG(self,G):
+         self.G = G
+
+
 
 # each node has n*(n-1) successors
-def GenerateSuccessor (tNode ):
+def GenerateSuccessor ( tNode ):
     successor_set = set()
     length = len(tNode.board)
     column = tNode.column
@@ -104,87 +120,71 @@ def GenerateSuccessor (tNode ):
                 # deep Copy function...Create a new object here
                 tempList = copy.deepcopy(tNode.board)
                 tempList[i][0] = j
-                G = 10 + math.pow(j - temp_x_index, 2) #+ tNode.G
+                #G = 10 + math.pow(j - temp_x_index, 2) + tNode.G
+                #print("G of parentNode:" + str(tNode.G))
                 H = 10 + NumberOfAttackQueens(tempList)
+
                 tempNode = Node(tempList)
-                tempNode.setGH(G, H)
+                tempNode.setH(H)
                 tempNode.setParentNode(tNode)
+                tempNode.GetParentCost(tNode.G)
+
+                #difference G and difference H
+                #differH = tNode.H - H
+                #tempNode.setDifferenceGH(differH)
                 successor_set.add(tempNode)
+
     return successor_set
 
-def GenerateNeighbors_1( tNode ):
+def CalculateCost(board1,board2):
+    cost = 0
+    for i in range(len(board1)):
+        if(board1[i][0] != board2[i][0]):
+            cost = cost + 10 + math.pow(board1[i][0] - board2[i][0],2)
 
-    successor_set = set()
-    length = len(tNode.board)
-    column = tNode.column
-    if column == 0:
-        for i in range(0, length):  # column index
-            tempList = []
-            temp_x_index = tNode.board[i][0]  # row index
-            # print("temp_x_index:" + str(temp_x_index))
-            # tempList.clear()
+    return cost
 
-            for j in range(1, length + 1):
-                if j != temp_x_index:
-                    # deep Copy function...Create a new object here
-                    tempList = copy.deepcopy(tNode.board)
-                    tempList[i][0] = j
-                    G = 10 + math.pow(j - temp_x_index, 2) + tNode.G
-                    H = 10 + NumberOfAttackQueens(tempList)
-                    tempNode = Node(tempList)
-                    tempNode.setGH(G, H)
-                    tempNode.setParentNode(tNode)
-                    tempNode.setColumn(i+1)
-                    successor_set.add(tempNode)
-    else:
-        if column == length:
-            column == 1
+
+
+def IsBoardSme(board1,board2):
+
+    for i in range(len(board1)):
+        if (board1[i][0] == board2[i][0]):
+            break
+            return False
         else:
-            column = column + 1
-
-        temp_x_index_2 = tNode.board[column - 1][0]  # row index, next index from Parent Node
-
-        for ln in range(1, length + 1):
-            if ln != temp_x_index_2:
-                tempList2 = copy.deepcopy(tNode.board)
-                tempList2[column - 1][0] = ln
-                G = 10 + math.pow(ln - temp_x_index_2, 2) + tNode.G
-                H = 10 + NumberOfAttackQueens(tempList2)
-                tempNode = Node(tempList2)
-                tempNode.setGH(G, H)
-                tempNode.setColumn(column)
-                tempNode.setParentNode(tNode)
-                successor_set.add(tempNode)
-
-    return successor_set
-
+            return True
 
 
 def aStar(InitialNode):
 
     open_set = set()
+    close_set = set()
+    close_list = []
     current = InitialNode
 
     open_set.add(current)
     resultNode = Node(InitialNode)
 
+
     while open_set:
 
-        #current = min(open_set,key=lambda o:o.G + o.H)
-
+        #expected_node = min(open_set,key=lambda o:o.H)
         for key in open_set:
-            if key.H == 10:
+             if key.H == 10:
                 print("Find someone suitable in open set. No need to explore")
                 resultNode = key
                 open_set.clear()
                 break
-            #break
         if (len(open_set) == 0):
-            break
+             break
 
         #print ("Need to explore again")
-        current = min(open_set, key=lambda o:o.H)
-        open_set.remove(current)
+        current = min(open_set, key=lambda o:o.G + o.H)
+        open_set.clear()
+
+        #print("Parent Node G:" + str(current.ParentCost))
+        #print("G:" + str(current.G) + " H: " + str(current.H))
         #open_set.clear()
         #print ("open set size: " + str(len(open_set)))
 
@@ -193,6 +193,27 @@ def aStar(InitialNode):
             break
         else:
             current_successor = GenerateSuccessor(current)
+            #close_set = close_set | current_successor
+            print("Length of current successor:" + str(len(current_successor)))
+
+            temp_set = set()
+            for node in current_successor:
+                for board in close_list:
+                    if IsBoardSme(node.board,board) == True:
+                        print("Board same")
+                        temp_set.add(node)
+
+            print("Temp set size: " + str(len(temp_set)) + "Current Successor set size : " + str(len(current_successor)))
+            current_successor = current_successor - temp_set
+
+            print("After removal: Length of current successor:" + str(len(current_successor)))
+            close_set.add(current)
+            close_list.append(current.board)
+
+            for key in current_successor:
+                new_G = CalculateCost(key.board,InitialNode.board)
+                key.setG(new_G)
+
             #current_successor = GenerateNeighbors_1(current)
             open_set = open_set | current_successor
             #print("Size of Successor set: " + str(len(current_successor)))
@@ -210,7 +231,7 @@ def HillClimbing( InitialNode ):
     last_H = 10
     while open_set:
 
-        current = min(open_set, key=lambda o: o.H)
+        current = min(open_set, key=lambda o:o.H)
         last_H = 10 + NumberOfAttackQueens(current.board)
         # open_set.remove(current)
         open_set.clear()
@@ -235,8 +256,8 @@ def HillClimbing( InitialNode ):
     return resultNode
 
 
-result = [[2, 8], [6, 5], [8, 4], [10, 2], [3, 9], [8, 1], [1, 3], [2, 10], [4, 7], [5, 6]]# iniBoard(5), only for test
-#result = iniBoard(10)
+#result = [[2, 8], [6, 5], [8, 4], [10, 2], [3, 9], [8, 1], [1, 3], [2, 10], [4, 7], [5, 6]]# iniBoard(5), only for test
+result = iniBoard(7)
 print("Initial Board: " + str(result))
 print("Attack Pairs:" + str(NumberOfAttackQueens(result)))
 node_object = Node()
@@ -246,14 +267,14 @@ PrintBoard(node_object.board)
 
 
 #Hill climbing
-start = time.clock()
-result_node = HillClimbing(node_object)
-elapsed = (time.clock() - start)
-print(result_node.board)
-print ("cost :" + str(result_node.G))
-print ("Time elapsed: " + str(elapsed))
-print("Attack pairs:" + str(NumberOfAttackQueens(result_node.board)))
-PrintBoard(result_node.board)
+# start = time.clock()
+# result_node = HillClimbing(node_object)
+# elapsed = (time.clock() - start)
+# print(result_node.board)
+# print ("cost :" + str(result_node.G))
+# print ("Time elapsed: " + str(elapsed))
+# print("Attack pairs:" + str(NumberOfAttackQueens(result_node.board)))
+# PrintBoard(result_node.board)
 
 #A-star
 
@@ -266,11 +287,3 @@ print ("Time elapsed: " + str(elapsed))
 print("Attack pairs:" + str(NumberOfAttackQueens(result_node.board)))
 PrintBoard(result_node.board)
 
-# start = time.clock()
-# result_node = aStar(node_object)
-# elapsed = (time.clock() - start)
-# print(result_node.board)
-# print ("cost :" + str(result_node.G))
-# print ("Time elapsed: " + str(elapsed))
-# print("Attack pairs:" + str(NumberOfAttackQueens(result_node.board)))
-#>>>>>>> d593854941be0beb382f8af104ca26d48fbb7a9a

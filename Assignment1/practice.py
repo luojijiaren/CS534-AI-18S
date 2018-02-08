@@ -1,6 +1,23 @@
-
 import random
 import numpy as np
+import math
+import copy
+import time
+
+def PrintBoard(coordinate):
+
+    length = len(coordinate)
+    pb = [['O'] * length for i in range(length)]
+
+    for m in range(length):
+        pb[coordinate[m][0]-1][coordinate[m][1]-1] = 'X'
+
+    for i in range(len(coordinate)):
+        if i != 0:
+            print("")
+        for j in range(len(coordinate)):
+            print(str(pb[i][j]), end="")
+    print("")
 
 def iniBoard( length ):
     "This is a initialize function"
@@ -12,79 +29,143 @@ def iniBoard( length ):
 
     for i in range(0,length):
         coordinate.append([x_coordinate[i],y_coordinate[i]])
+
+    coordinate.append([0,0]) # G and H
     return coordinate
 
-class Node:
-    def __init__(self, board = None):
+def NumberOfAttackQueens( tboard ):
 
-        self.parent = None
-        self.number = 1
-        self.G = 0
-        self.H = 0
+    board = tboard[:-1]
+    counter = 0
+    #print("Length : " + str(len(board)))
+    length = len(board)
 
-        if board is None:
-            board = []
-        self.board = board
+    for i in range(0,len(board)-1):
+        for j in range(i+1,len(board)-2):
 
-    def setGH(self,G,H):
-        self.G = G
-        self.H = H
+         r1 = abs(board[i][0] - board[j][0])
+         r2 = abs(board[i][1] - board[j][1])
+         if r1 == 0 or r2 == 0:
+             counter = counter +1
+             #print ("Horizontal or Vertical: " + str(counter))
+         else:
+             if r1 == r2:
+                 counter = counter +1
+                 #print("Diagonal Line: " + str(counter))
 
-
-trial_list = [1,2,3,4]
-node_list = []
-
-for i in range(4):
-    temp_list = []
-    for j in range(4):
-        temp_list.clear()
-        for m in range(len(trial_list)):
-            temp_list.append(trial_list[m])
-        temp_list[j] = temp_list[j] + j
-    #temp_list[j] = temp_list[j] + 1
-
-    temp_node = Node(temp_list)
-    print(temp_node.board)
-    node_list.append(temp_node)
-    #for m in range(len(node_list)):
-    #   print(node_list[m].board)
-    #temp_node.board.clear()
+    return counter #return the number of attack queen pairs
 
 
+def ReturnList( open_list ):
 
-for t in range(len(node_list)):
-    print(node_list[t].board)
+    min_list = []
 
-class revs:
-    def __init__(self, rev, us, accs=None):
-        self.rev = rev
-        self.us = us
-        if accs is None:
-            accs = []
-        self.accs = accs
+    for i in range(0, len(open_list)):
+        min_value = open_list[i][-1][0] + open_list[i][-1][1]
+        min_list.append(min_value)
 
-r1 = revs(1, 1)
-r2 = revs(2, 2)
-r1.accs.append("Hi!")
-print(r1.accs) # prints ['Hi!']
-print(r2.accs) # prints ['Hi!']
+    #print(min_list)
+    #print("length " + str(len(min_list)))
+    position = min_list.index(min(min_list))
+    result_list = copy.deepcopy(open_list[position])
+    return result_list
 
-list = [80, 100, 1000,80]
-print (min(80,100,1000,80))
+def GenerateSuccessor (curren_list):
+    successor_list = []
 
-def PrintBoard(coordinate):
+    for i in range(0, len(curren_list)-1):  # column index
+        tempList = []
+        temp_x_index = curren_list[i][0]  # row index
 
-    length = len(coordinate)
-    pb = [['O'] * length for i in range(length)]
+        for j in range(1, len(curren_list)-1):
+            if j != temp_x_index:
+                # deep Copy function...Create a new object here
+                tempList = copy.deepcopy(curren_list)
+                tempList[i][0] = j
+                #G = 10 + math.pow(j - temp_x_index, 2) + tNode.G
+                #print("G of parentNode:" + str(tNode.G))
+                H = 10 + NumberOfAttackQueens(tempList)
+                tempList[-1][1] = H
+                successor_list.append(tempList)
 
-    for m in range(length):
-        pb[coordinate[m][0]-1][coordinate[m][1]-1] = 'X'
+    return successor_list
 
-    for i in range(len(coordinate)):
-        print("")
-        for j in range(len(coordinate)):
-            print(str(pb[i][j]), end="")
+def IsBoardSme(board1,board2):
+
+    for i in range(len(board1)):
+        if (board1[i][0] == board2[i][0]):
+            break
+            return False
+        else:
+            return True
 
 
-coordinate = iniBoard(5)
-PrintBoard(coordinate)
+def CalculateCost(board1,board2):
+    cost = 0
+    for i in range(len(board1)):
+        if(board1[i][0] != board2[i][0]):
+            cost = cost + 10 + math.pow(board1[i][0] - board2[i][0],2)
+
+    return cost
+
+
+def A_star( IniBoard ):
+
+    open_list = []
+    close_list = []
+    result_list = []
+
+    open_list.append(IniBoard)
+
+    while True:
+
+        current_list = ReturnList(open_list)
+        accuCost = current_list[-1][0]
+        del open_list[:]
+
+        if current_list[-1][1] == 10:
+            result_list = current_list
+            break
+        else:
+            successorList = GenerateSuccessor(current_list)
+
+            index_list = []
+
+            for i in range(len(successorList)):
+                for j in range(len(close_list)):
+                    if IsBoardSme(successorList[i][:-1],close_list[j][:-1]) == True:
+                        index_list.append(i)
+
+            index_list = list(set(index_list))
+            print("Index List: ")
+            print(index_list)
+
+            print("Successor List length:" + str(len(successorList)))
+
+            if len(index_list) != 0:
+                print(index_list)
+                print("Successor List length:" + str(len(successorList)))
+                for index in range(len(index_list)):
+                    successorList.pop(index_list[index])
+
+
+            close_list.append(current_list)
+
+            for i in range(len(successorList)):
+                new_G = accuCost + CalculateCost(successorList[i][:-1],current_list[:-1])
+                successorList[i][-1][0] = new_G
+
+            open_list = copy.deepcopy(successorList)
+
+
+    return result_list
+
+
+
+initial_board = iniBoard(7)
+print(initial_board)
+PrintBoard(initial_board[:-1])
+
+result_board = A_star(initial_board)
+print(result_board)
+PrintBoard(result_board[:-1])
