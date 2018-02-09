@@ -1,6 +1,7 @@
 import random
 import copy
 import queue
+import timeit
 
 class Map:
     def __init__(self,industrial, commercial, residential):
@@ -71,21 +72,6 @@ def iniPosition(map):
 
     return position
 
-# Hill Climbing:
-def hillClimbing (map):
-
-    ini_avail_position = []
-    for i in range(len(map.costMap)):
-        for j in range(len(map.costMap[i])):
-            if map.costMap[i][j] == -1 or map.costMap[i][j] == 99:
-                continue
-            else:
-                ini_avail_position.append([i+1,j+1])
-
-
-    result = []
-    return result
-
 def ManhattanDistance(a,b):
     distance = abs(a[0]-b[0]) + abs(b[1]-a[1])
     return distance
@@ -98,8 +84,6 @@ def generateSuccessors (position,ini_avail_position):
     for i in range(len(position)):
         for j in range(len(temp_iap)):
             temp_iap = copy.deepcopy(removeSameElement(position[i],temp_iap))
-
-    print("Temp_IAP: " + str(temp_iap))
 
     for n in range(len(position)):
         for m in range(len(temp_iap)):
@@ -117,6 +101,16 @@ def removeSameElement(ele,temp):
             result.pop(j)
 
     return result
+
+def getAvailablePosition(map):
+    available_position = []
+    for i in range(len(map.costMap)):
+        for j in range(len(map.costMap[i])):
+            if map.costMap[i][j] == -1 or map.costMap[i][j] == 99:
+                continue
+            else:
+                available_position.append([i + 1, j + 1])
+    return available_position
 
 def calculateScore(map,position):
     score = 0
@@ -186,48 +180,84 @@ def calculateScore(map,position):
 
     return score
 
+# Hill Climbing
+def hillClimbing (map):
+
+    temp_queue = queue.PriorityQueue()
+    ini_position = iniPosition(map)
+    available_position = getAvailablePosition(map)
+    temp_queue.put((0,ini_position))
+    score_list = []
+
+    while True:
+
+        currnt_position = temp_queue.get()[1] #the current position
+        previous_score = calculateScore(map,currnt_position)
+        temp_queue.queue.clear()
+
+        current_successor = generateSuccessors(currnt_position,available_position)
+
+        del score_list[:]
+
+        for length in range(len(current_successor)):
+            temp_score = calculateScore(map,current_successor[length])
+            score_list.append(temp_score)
+            temp_queue.put((10000-temp_score,current_successor[length]))
+
+        score_list.sort(reverse=True)
+        print("Score: " + str(score_list[0]) + " Previous score :" + str(previous_score))
+        if score_list[0] <= previous_score:
+            result = copy.deepcopy(temp_queue.get()[1])
+            score = previous_score
+            break
+
+    return result,score
+
+
 # Test functions on the following:
-available_position = []
-for i in range(len(map1.costMap)):
-    for j in range(len(map1.costMap[i])):
-        if map1.costMap[i][j] == -1 or map1.costMap[i][j] == 99:
-            continue
-        else:
-            available_position.append([i+1,j+1])
+available_position = getAvailablePosition(map1)
 
-print("Toxic Site:")
-print(map1.toxicCoord)
-position = iniPosition(map1)
-print("The initialized Position: ",end="")
-print(position)
-
+# print("Toxic Site:")
+# print(map1.toxicCoord)
+# position = iniPosition(map1)
+# print("The initialized Position: ",end="")
+# print(position)
 print("")
 print("The Map Idle Positions: ",end="")
 print(available_position)
 
-p2 = generateSuccessors(position,available_position)
-print("")
-print("The next: available position length: ",end="")
-print(len(p2))
-print(" The result :",end="")
+start = timeit.default_timer()
+result,score = hillClimbing(map1)
+end = timeit.default_timer()
 
-queue = queue.PriorityQueue()
+print("The result: ")
+print(result)
+print("The score: "+str(score))
+print("Elpased Time: " + str(end-start))
 
-for i in range(len(p2)):
-    print(str(i+1) + "th Succsessor")
-    print(p2[i])
-    score = calculateScore(map1,p2[i])
-    print("Score: " + str(score))
-    priority = 10000 - score
-    queue.put((priority,(score,p2[i])))
+# p2 = generateSuccessors(position,available_position)
+# print("")
+# print("The next: available position length: ",end="")
+# print(len(p2))
+# print(" The result :",end="")
+#
+# queue = queue.PriorityQueue()
+#
+# for i in range(len(p2)):
+#     print(str(i+1) + "th Succsessor")
+#     print(p2[i])
+#     score = calculateScore(map1,p2[i])
+#     print("Score: " + str(score))
+#     priority = 10000 - score
+#     queue.put((priority,(score,p2[i])))
 
 
 
 #  Test Priority Queue
 
-while not queue.empty():
-    print(queue.get())
-    print()
+# while not queue.empty():
+#     print(queue.get())
+#     print()
 
 # queue = queue.PriorityQueue()
 # l1 = ['X']
