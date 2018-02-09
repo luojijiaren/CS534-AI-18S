@@ -210,15 +210,24 @@ print("")
 print("The next: available position length: ",end="")
 print(len(p2))
 print(" The result :",end="")
+
+queue = queue.PriorityQueue()
+
 for i in range(len(p2)):
-    print(str(i) + "th Succsessor")
+    print(str(i+1) + "th Succsessor")
     print(p2[i])
     score = calculateScore(map1,p2[i])
     print("Score: " + str(score))
+    priority = 10000 - score
+    queue.put((priority,(score,p2[i])))
 
 
 
 #  Test Priority Queue
+
+while not queue.empty():
+    print(queue.get())
+    print()
 
 # queue = queue.PriorityQueue()
 # l1 = ['X']
@@ -226,14 +235,14 @@ for i in range(len(p2)):
 # l3 = ['Z']
 # l4 = ['DD']
 # queue.put((1,l1))
-# queue.put((2,l2))
+# queue.put((4,l2))
 # queue.put((5,l3))
 # queue.put((3,l4))
 #
 # while not queue.empty():
 #     print(queue.get()[1][0])
 #     print()
-
+#
 
 
 
