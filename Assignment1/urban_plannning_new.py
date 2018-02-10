@@ -1,6 +1,8 @@
 import random
 import copy
 import queue
+from scipy.special import comb
+import numpy as np
 import timeit
 
 class Map:
@@ -40,6 +42,12 @@ map1 = Map(1,1,1)
 map1.setToxicSite([[1,1]])
 map1.setScenicView([[2,3]])
 map1.setCostMap([[99,1,2,4],[3,4,-1,3],[6,0,2,3]]) #99 means this site is 'X', -1 means this site is 'S'
+
+map2 = Map(1,2,2)
+map2.setToxicSite([[1,4],[2,2],[3,5]])
+map2.setScenicView([[5,1],[5,3]])
+map2.setCostMap([[2,3,3,99,6],[4,99,3,2,3],[3,0,1,6,99],[7,6,5,8,5],[-1,6,-1,9,1],[4,7,2,6,5]])
+
 
 def iniPosition(map):
     position = []
@@ -180,6 +188,90 @@ def calculateScore(map,position):
 
     return score
 
+# On the following are functions for Genetic Algorithm
+def colonySize(map):
+
+    row = len(map.costMap)
+    column = len(map.costMap[0])
+    number = row*column
+    site_number = map.siteAmount
+    colony_size = site_number*(number - site_number)
+    return colony_size
+
+def upperBound(map):
+
+    cost_list = []
+    for i in range(len(map.costMap)):
+        for j in range(len(map.costMap[i])):
+            cost_list.append(map.costMap[i][j])
+
+    cost_list.sort()
+
+    while -1 in cost_list:
+        cost_list.remove(-1)
+    while 99 in cost_list:
+        cost_list.remove(99)
+
+    bonus_S = map.residential * len(map.scenicCoord)*10
+
+    bonus_1 = map.residential * map.commercial*5
+
+    if map.industrial >= 2:
+        bonus_2 = int(comb(map.industrial,2))*3
+    else:
+        bonus_2 = 0
+
+    print(bonus_2)
+
+    print(cost_list[:map.siteAmount])
+    cost = sum(cost_list[:map.siteAmount])
+    print(cost)
+
+    upper_final = bonus_S + bonus_1 + bonus_2 - cost
+
+    return upper_final
+
+def divide(number):
+    r1 = 0
+    r2 = 0
+
+    if number == 1:
+        r1 = 1
+        r2 = 1
+    elif number % 2 == 0:
+        r1 = number / 2
+        r2 = number / 2
+    elif number % 2 == 1:
+        r1 = (number-1)/2
+        r2 = (number+1)/2
+
+    r1 = int(r1)
+    r2 = int(r2)
+
+    return r1,r2
+
+def getFirstPosition(n,position):
+    temp = []
+    for i in range(len(position)):
+        if position[i][2] == n:
+            temp.append(i)
+
+    print("temp :" + str(temp))
+    result = temp[0]
+    return result
+
+def getPositions(n,position):
+    temp = []
+    result = []
+    for i in range(len(position)):
+        if position[i][2] == n:
+            temp.append(i)
+    result.append(temp[0])
+    result.append(temp[-1])
+    return result
+
+
+
 # Hill Climbing
 def hillClimbing (map):
 
@@ -205,6 +297,7 @@ def hillClimbing (map):
             temp_queue.put((10000-temp_score,current_successor[length]))
 
         score_list.sort(reverse=True)
+
         print("Score: " + str(score_list[0]) + " Previous score :" + str(previous_score))
         if score_list[0] <= previous_score:
             result = copy.deepcopy(temp_queue.get()[1])
@@ -213,73 +306,206 @@ def hillClimbing (map):
 
     return result,score
 
+def selection(scores,population):
+
+    length = len(population)
+
+    for i in range(len(scores)):
+        scores[i] = scores[i] + 10000
+
+    scores = np.asarray(scores)
+    pop_new = np.asarray(population)
+
+    x = np.random.choice(np.arange(length), size=length, replace=True, p = scores/scores.sum())
+    pop_new = pop_new[x]
+    pop_new = pop_new.tolist()
+
+    return pop_new
+
+def elitism():
+
+    return
+
+def crossOver(parent,n_population,map):
+
+    # get the length
+    industrial = map.industrial
+    commercial = map.commercial
+    residential = map.residential
+
+    # divide the length
+    in_1,in_2 = divide(industrial)
+    com_1,com_2 = divide(commercial)
+    res_1,res_2 = divide(residential)
+
+    inp = 0
+    comp = industrial
+    resp = industrial + commercial
+
+    #should be the new child
+
+    random_position = random.sample(range(0,len(n_population)),1)
+    #print("random position :" + str(random_position))
+
+    pop = copy.deepcopy(n_population[random_position[0]])
+
+    #crossover on Industrial:
+
+    for j in range(inp,inp+in_1):
+        #new_parent[inp : inp + in_1-1] = copy.deepcopy(pop[inp + industrial - in_2 : inp + industrial - 1])
+        parent[j][0] = copy.deepcopy(pop[inp + industrial - 1 - j][0])
+        parent[j][1] = copy.deepcopy(pop[inp + industrial - 1 - j][1])
+        parent[j][2] = copy.deepcopy(pop[inp + industrial - 1 - j][2])
+
+    #crossover on commercial:
+    for m in range(comp,comp+com_1):
+        parent[m][0] = copy.deepcopy(pop[comp + commercial - 1 - m][0])
+        parent[m][1] = copy.deepcopy(pop[comp + commercial - 1 - m][1])
+        parent[m][2] = copy.deepcopy(pop[comp + commercial - 1 - m][2])
+
+    #new_parent[comp : comp + com_1 - 1] = copy.deepcopy(pop[comp + commercial - com_2 : comp + commercial - 1])
+
+    #crossover on residential:
+    for n in range(resp,resp+res_1):
+        parent[n][0] = copy.deepcopy(pop[resp + residential - 1 - n][0])
+        parent[n][1] = copy.deepcopy(pop[resp + residential - 1 - n][1])
+        parent[n][2] = copy.deepcopy(pop[resp + residential - 1 - n][2])
+
+    #new_parent[resp: resp + res_1 - 1] = copy.deepcopy(pop[resp + residential - res_2: resp + residential - 1])
+
+    return parent
+
+def mutation(child, available_position, mutation_rate):
+
+    # between 1 and 3
+    #number = random.sample(range(1, 4), 1)
+
+    temp_iap = []
+    number = random.sample(range(1, 4), 1)
+
+    if np.random.rand() < mutation_rate:
+
+        for i in range(len(child)):
+            for j in range(len(available_position)):
+                temp_iap = copy.deepcopy(removeSameElement(child, available_position))
+
+            if number == 1:
+                position_range = getPositions(child)
+                #position is a list
+                position = random.sample(range(position_range[0],position_range[-1]+1),1)
+
+                #random position is also a list
+                random_position = random.sample(range(0,len(temp_iap)+1),1)
+                child[position[0]][0] = temp_iap[random_position[0]][0]
+                child[position[0]][1] = temp_iap[random_position[0]][1]
+
+            elif number == 2:
+                position_range = getPositions(child)
+                # position is a list
+                position = random.sample(range(position_range[0], position_range[-1] + 1), 1)
+
+                # random position is also a list
+                random_position = random.sample(range(0, len(temp_iap) + 1), 1)
+                child[position[0]][0] = temp_iap[random_position[0]][0]
+                child[position[0]][1] = temp_iap[random_position[0]][1]
+
+            elif number == 3:
+                position_range = getPositions(child)
+                # position is a list
+                position = random.sample(range(position_range[0], position_range[-1] + 1), 1)
+
+                # random position is also a list
+                random_position = random.sample(range(0, len(temp_iap) + 1), 1)
+                child[position[0]][0] = temp_iap[random_position[0]][0]
+                child[position[0]][1] = temp_iap[random_position[0]][1]
+
+    return child
+
+def GeneticAlgorithm(map,generations):
+
+    colony_size = colonySize(map)
+    upper = upperBound(map)
+    generations = generations
+    available_position = getAvailablePosition(map)
+    mutation_rate = 0.03
+    score = []
+    population = []
+    temp_queue = queue.PriorityQueue()
+
+    for _ in range(colony_size):
+        population.append(iniPosition(map))
+
+    for __ in range(generations):
+
+        print("-------Loop  -----" + str(__))
+        del score[:]
+        for index in range(len(population)):
+            score.append(calculateScore(map,population[index]))
+
+        population = selection(score,population)
+
+        # cross over & mutation
+        pop_copy = copy.deepcopy(population)
+        for l_ in range(len(population)):
+            child = copy.deepcopy(crossOver(population[l_],pop_copy,map))
+            #print("child: " + str(child))
+            child = copy.deepcopy(mutation(child,available_position,mutation_rate))
+            population[l_] = copy.deepcopy(child)
+
+        # mutation
+
+    for j in range(len(population)):
+        temp_score = calculateScore(map,population[j])
+        temp_queue.put((10000-temp_score,population[j]))
+
+    result = temp_queue.get()
+
+    return result
+
 
 # Test functions on the following:
-available_position = getAvailablePosition(map1)
+#available_position = getAvailablePosition(map2)
 
-# print("Toxic Site:")
-# print(map1.toxicCoord)
-# position = iniPosition(map1)
-# print("The initialized Position: ",end="")
-# print(position)
-print("")
-print("The Map Idle Positions: ",end="")
-print(available_position)
 
+# print("")
+# print("The Map Idle Positions: ",end="")
+# print(available_position)
+#
+# start = timeit.default_timer()
+# result,score = hillClimbing(map2)
+# end = timeit.default_timer()
+#
+# print("The result: ")
+# print(result)
+# print("The score: "+str(score))
+# print("Elpased Time: " + str(end-start))
+
+print("Colony Size: " + str(colonySize(map2)))
+print("upper bound :" + str(upperBound(map2)))
+
+### Genetic Algorithm:
+
+print("Genetic Algorithm: ")
 start = timeit.default_timer()
-result,score = hillClimbing(map1)
+result = GeneticAlgorithm(map2,15)
+end = timeit.default_timer()
+
+print("The result: ")
+print(result)
+print("The score: "+str(10000 - result[0]))
+print("Elpased Time: " + str(end-start))
+
+# Hill Climbing:
+
+print("Hill Climbing: ")
+start = timeit.default_timer()
+result,score = hillClimbing(map2)
 end = timeit.default_timer()
 
 print("The result: ")
 print(result)
 print("The score: "+str(score))
 print("Elpased Time: " + str(end-start))
-
-# p2 = generateSuccessors(position,available_position)
-# print("")
-# print("The next: available position length: ",end="")
-# print(len(p2))
-# print(" The result :",end="")
-#
-# queue = queue.PriorityQueue()
-#
-# for i in range(len(p2)):
-#     print(str(i+1) + "th Succsessor")
-#     print(p2[i])
-#     score = calculateScore(map1,p2[i])
-#     print("Score: " + str(score))
-#     priority = 10000 - score
-#     queue.put((priority,(score,p2[i])))
-
-
-
-#  Test Priority Queue
-
-# while not queue.empty():
-#     print(queue.get())
-#     print()
-
-# queue = queue.PriorityQueue()
-# l1 = ['X']
-# l2 = ['Y']
-# l3 = ['Z']
-# l4 = ['DD']
-# queue.put((1,l1))
-# queue.put((4,l2))
-# queue.put((5,l3))
-# queue.put((3,l4))
-#
-# while not queue.empty():
-#     print(queue.get()[1][0])
-#     print()
-#
-
-
-
-
-
-
-
 
 
 
