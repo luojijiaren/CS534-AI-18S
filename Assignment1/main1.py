@@ -45,11 +45,13 @@ def hill_climbing(str,num):
     frontier.put((0,str))
     frontier_attack = 10000
     current_attack = 0
+    nodes = 0
     while True:
         current1 = frontier.get()
         current = current1[-1]
         frontier.queue.clear()
         current_attack = attack_number(current,num)
+        nodes = 20+nodes
         if current_attack == 0:
             result = current #111
             break
@@ -62,17 +64,18 @@ def hill_climbing(str,num):
         for next in neighbour:
             priority = 10*attack_number(next,num)+ 100 + next[num]
             frontier.put((priority,next))
-
-    return result
+    return result, nodes
 
 def restart(str,num):
-    i=-1
+    restart_number=-1
     result = []
     start = timeit.default_timer()
+    all_nodes=0
     while True:
-        peak = hill_climbing(str, num)
+        peak, thistime_nodes = hill_climbing(str, num)
+        all_nodes=all_nodes+thistime_nodes
         result.append(list(peak))
-        i=i+1
+        restart_number=restart_number+1
         end = timeit.default_timer()
         a = attack_number(peak,num)
         if (end-start) > 10 or a == 0:
@@ -80,7 +83,41 @@ def restart(str,num):
         str = random_list(1,num,num)
         str.append(0)
     during_time = end-start
-    return result,i,during_time
+    return result,restart_number,during_time,all_nodes
+
+def normal_a_star(str,num):
+    sequence = []
+    start = timeit.default_timer()
+    frontier = queue.PriorityQueue()
+    frontier.put((0,str))
+    cost_so_far = {}
+    cost_so_far[tuple(str[0:-1])] = 0
+    came_from = {}
+    while not frontier.empty():
+        current1 = frontier.get()
+        current=current1[-1]
+        if attack_number(current, num) == 0:
+            result=list(current)
+            break
+        neighbour = a_star_find_neighbour(current,num)
+        for next in neighbour:
+            new_cost = attack_number(next,num) + 10 + next[num]
+            if tuple(next[0:-1]) not in cost_so_far:
+                cost_so_far[tuple(next[0:-1])] = new_cost
+                frontier.put((new_cost,next))
+                came_from[tuple(next[0:-1])] = current[0:-1]
+    end = timeit.default_timer()
+    during_time = end - start
+    sequence.append(result[0:-1])
+    k=0
+    while True:
+        if tuple(sequence[k]) not in came_from:
+            break
+        back=came_from[tuple(sequence[k])]
+        k=k+1
+        sequence.append(back)
+    node_expanded=len(cost_so_far)
+    return result, during_time, sequence, node_expanded
 
 def a_star(str,num,depth):
     sequence = []
@@ -100,7 +137,7 @@ def a_star(str,num,depth):
         if node_deep[tuple(current[0:-1])]<depth:
             neighbour = a_star_find_neighbour(current,num)
             for next in neighbour:
-                new_cost = attack_number(next,num) + 10 + next[num]
+                new_cost = 10*attack_number(next,num) + 100 + next[num]
                 if tuple(next[0:-1]) not in cost_so_far:
                     cost_so_far[tuple(next[0:-1])] = new_cost
                     frontier.put((new_cost,next))
@@ -120,8 +157,10 @@ def a_star(str,num,depth):
 
 def ID_a_star(str,num):
     start = timeit.default_timer()
+    node_expanded = 0
     for i in range(num+1):
-        result, sequence, node_expanded = a_star(str, num, i+1)
+        result, sequence, node_expanded1 = a_star(str, num, i+1)
+        node_expanded = node_expanded+node_expanded1
         if attack_number(result, num)==0:
             break
     end = timeit.default_timer()
@@ -134,21 +173,30 @@ print('1 for A*, 2 for hill climbing:')
 a=int(input())
 queen=random_list(1,N,N)
 queen.append(0)
-print('start sate:',queen[0:-1])
 if a==1:
-    result,time, sequence, node_expanded = ID_a_star(queen,N)
+    print('1 for normal A*, 2 for iterative A*:')
+    b=int(input())
+    if b==1:
+        result, time, sequence, node_expanded = normal_a_star(queen, N)
+    elif b==2:
+        result,time, sequence, node_expanded = ID_a_star(queen,N)
+    else:
+        print('input error')
+        exit()
+    print('start sate:', queen[0:-1])
     print('end state:', result[0:-1])
     print('sequence:',sequence[::-1])
     print('the node expanded vs the length of solution path:%d vs %d'%(node_expanded,len(sequence)))
     print('node expanded:', node_expanded)
-
 elif a==2:
-    result,restart_number,time = restart(queen,N)
+    result,restart_number,time, all_nodes = restart(queen,N)
+    print('start sate:', queen[0:-1])
     print('end state:', result[-1][0:-1])
+    print('cost:', result[-1][-1])
     print('number of restart',restart_number)
     print('length:',len(result))
-
+    print('nodes expanded:',all_nodes)
 else:
     print('input error')
-
+    exit()
 print("Time used:",time)
