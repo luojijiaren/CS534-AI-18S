@@ -53,7 +53,7 @@ def hill_climbing(str,num):
         frontier_attack = current_attack
         neighbour = a_star_find_neighbour(current,num)
         for next in neighbour:
-            priority = attack_number(next,num)+ 10 + next[num]
+            priority = 10*attack_number(next,num)+ 100 + next[num]
             frontier.put((priority,next))
 
     return result
@@ -67,7 +67,8 @@ def restart(str,num):
         result.append(list(peak))
         i=i+1
         end = timeit.default_timer()
-        if (end-start)>=10:
+        a = attack_number(peak,num)
+        if (end-start) > 10 or a == 0:
             break
         str = random_list(1,num,num)
         str.append(0)
