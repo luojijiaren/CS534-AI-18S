@@ -74,7 +74,6 @@ def restart(str,num):
     during_time = end-start
     return result,i,during_time
 
-
 def a_star(str,num):
     sequence = []
     start = timeit.default_timer()
@@ -83,7 +82,6 @@ def a_star(str,num):
     cost_so_far = {}
     cost_so_far[tuple(str[0:-1])] = 0
     came_from = {}
-    #came_from[tuple(str[0:-1])] = None
     while not frontier.empty():
         current1 = frontier.get()
         current=current1[-1]
@@ -107,7 +105,8 @@ def a_star(str,num):
         back=came_from[tuple(sequence[k])]
         k=k+1
         sequence.append(back)
-    return result, during_time, sequence
+    effective=len(cost_so_far)/len(sequence)
+    return result, during_time, sequence, effective
 
 
 print('Enter the number of queen:')
@@ -117,14 +116,13 @@ a=int(input())
 queen=random_list(1,N,N)
 queen.append(0)
 if a==1:
-    result,time, sequence = a_star(queen,N)
+    result,time, sequence, effective = a_star(queen,N)
     print('sequence:',sequence[::-1])
+    print('effective', effective)
 elif a==2:
     result,restart_number,time = restart(queen,N)
-    #print('attcak:', attack_number(result,N))
 else:
     print('input error')
 print(queen[0:-1])
 print(result[0:-1])
-#print('cost=:',result[-1])
 print("Time used:",time)
