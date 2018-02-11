@@ -76,11 +76,14 @@ def restart(str,num):
 
 
 def a_star(str,num):
+    sequence = []
     start = timeit.default_timer()
     frontier = queue.PriorityQueue()
     frontier.put((0,str))
     cost_so_far = {}
     cost_so_far[tuple(str[0:-1])] = 0
+    came_from = {}
+    #came_from[tuple(str[0:-1])] = None
     while not frontier.empty():
         current1 = frontier.get()
         current=current1[-1]
@@ -93,10 +96,18 @@ def a_star(str,num):
             if tuple(next[0:-1]) not in cost_so_far:
                 cost_so_far[tuple(next[0:-1])] = new_cost
                 frontier.put((new_cost,next))
+                came_from[tuple(next[0:-1])] = current[0:-1]
     end = timeit.default_timer()
     during_time = end - start
-
-    return result, during_time
+    sequence.append(result[0:-1])
+    k=0
+    while True:
+        if tuple(sequence[k]) not in came_from:
+            break
+        back=came_from[tuple(sequence[k])]
+        k=k+1
+        sequence.append(back)
+    return result, during_time, sequence
 
 
 print('Enter the number of queen:')
@@ -106,7 +117,8 @@ a=int(input())
 queen=random_list(1,N,N)
 queen.append(0)
 if a==1:
-    result,time = a_star(queen,N)
+    result,time, sequence = a_star(queen,N)
+    print('sequence:',sequence[::-1])
 elif a==2:
     result,restart_number,time = restart(queen,N)
     #print('attcak:', attack_number(result,N))
