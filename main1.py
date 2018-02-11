@@ -45,11 +45,13 @@ def hill_climbing(str,num):
     frontier.put((0,str))
     frontier_attack = 10000
     current_attack = 0
+    nodes = 0
     while True:
         current1 = frontier.get()
         current = current1[-1]
         frontier.queue.clear()
         current_attack = attack_number(current,num)
+        nodes = 20+nodes
         if current_attack == 0:
             result = current #111
             break
@@ -62,16 +64,18 @@ def hill_climbing(str,num):
         for next in neighbour:
             priority = 10*attack_number(next,num)+ 100 + next[num]
             frontier.put((priority,next))
-    return result
+    return result, nodes
 
 def restart(str,num):
-    i=-1
+    restart_number=-1
     result = []
     start = timeit.default_timer()
+    all_nodes=0
     while True:
-        peak = hill_climbing(str, num)
+        peak, thistime_nodes = hill_climbing(str, num)
+        all_nodes=all_nodes+thistime_nodes
         result.append(list(peak))
-        i=i+1
+        restart_number=restart_number+1
         end = timeit.default_timer()
         a = attack_number(peak,num)
         if (end-start) > 10 or a == 0:
@@ -79,7 +83,7 @@ def restart(str,num):
         str = random_list(1,num,num)
         str.append(0)
     during_time = end-start
-    return result,i,during_time
+    return result,restart_number,during_time,all_nodes
 
 def a_star(str,num,depth):
     sequence = []
@@ -143,11 +147,12 @@ if a==1:
     print('the node expanded vs the length of solution path:%d vs %d'%(node_expanded,len(sequence)))
     print('node expanded:', node_expanded)
 elif a==2:
-    result,restart_number,time = restart(queen,N)
+    result,restart_number,time, all_nodes = restart(queen,N)
     print('end state:', result[-1][0:-1])
     print('cost:', result[-1][-1])
     print('number of restart',restart_number)
     print('length:',len(result))
+    print('nodes expanded:',all_nodes)
 else:
     print('input error')
 print("Time used:",time)
