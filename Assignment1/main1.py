@@ -115,18 +115,18 @@ def a_star(str,num,depth):
         back=came_from[tuple(sequence[k])]
         k=k+1
         sequence.append(back)
-    effective=len(cost_so_far)/len(sequence)
-    return result, sequence, effective
+    node_expanded=len(cost_so_far)
+    return result, sequence, node_expanded
 
 def ID_a_star(str,num):
     start = timeit.default_timer()
     for i in range(num+1):
-        result, sequence, effective = a_star(str, num, i+1)
+        result, sequence, node_expanded = a_star(str, num, i+1)
         if attack_number(result, num)==0:
             break
     end = timeit.default_timer()
     during_time = end - start
-    return result, during_time, sequence, effective
+    return result, during_time, sequence, node_expanded
 
 print('Enter the number of queen:')
 N=int(input())
@@ -136,10 +136,12 @@ queen=random_list(1,N,N)
 queen.append(0)
 print('start sate:',queen[0:-1])
 if a==1:
-    result,time, sequence, effective = ID_a_star(queen,N)
+    result,time, sequence, node_expanded = ID_a_star(queen,N)
+    print('end state:', result[0:-1])
     print('sequence:',sequence[::-1])
-    print('effective', effective)
-    print('end state:',result[0:-1])
+    print('the node expanded vs the length of solution path:%d vs %d'%(node_expanded,len(sequence)))
+    print('node expanded:', node_expanded)
+
 elif a==2:
     result,restart_number,time = restart(queen,N)
     print('end state:', result[-1][0:-1])
