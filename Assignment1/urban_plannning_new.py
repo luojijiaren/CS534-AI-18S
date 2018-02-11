@@ -43,7 +43,7 @@ map1.setToxicSite([[1,1]])
 map1.setScenicView([[2,3]])
 map1.setCostMap([[99,1,2,4],[3,4,-1,3],[6,0,2,3]]) #99 means this site is 'X', -1 means this site is 'S'
 
-map2 = Map(1,2,2)
+map2 = Map(4,2,4)
 map2.setToxicSite([[1,4],[2,2],[3,5]])
 map2.setScenicView([[5,1],[5,3]])
 map2.setCostMap([[2,3,3,99,6],[4,99,3,2,3],[3,0,1,6,99],[7,6,5,8,5],[-1,6,-1,9,1],[4,7,2,6,5]])
@@ -311,7 +311,9 @@ def selection(scores,population):
     length = len(population)
 
     for i in range(len(scores)):
-        scores[i] = scores[i] + 10000
+        scores[i] = 10000 + scores[i]
+
+    print(scores)
 
     scores = np.asarray(scores)
     pop_new = np.asarray(population)
@@ -421,13 +423,31 @@ def mutation(child, available_position, mutation_rate):
 
     return child
 
+def new_mutation(child,map):
+    temp_queue = queue.PriorityQueue()
+    available_position = getAvailablePosition(map)
+    score_list = []
+
+    current_successor = generateSuccessors(child, available_position)
+
+    for length in range(len(current_successor)):
+        temp_score = calculateScore(map, current_successor[length])
+        score_list.append(temp_score)
+        temp_queue.put((10000 - temp_score, current_successor[length]))
+
+    score_list.sort(reverse=True)
+    result = copy.deepcopy(temp_queue.get()[1])
+
+    return result
+
+
 def GeneticAlgorithm(map,generations):
 
-    colony_size = colonySize(map)
+    colony_size = 10#colonySize(map)
     upper = upperBound(map)
     generations = generations
     available_position = getAvailablePosition(map)
-    mutation_rate = 0.03
+    mutation_rate = 1
     score = []
     population = []
     temp_queue = queue.PriorityQueue()
@@ -442,14 +462,17 @@ def GeneticAlgorithm(map,generations):
         for index in range(len(population)):
             score.append(calculateScore(map,population[index]))
 
-        population = selection(score,population)
+        #population = selection(score,population)
 
         # cross over & mutation
         pop_copy = copy.deepcopy(population)
         for l_ in range(len(population)):
-            child = copy.deepcopy(crossOver(population[l_],pop_copy,map))
+            #child = copy.deepcopy(crossOver(population[l_],pop_copy,map))
+            child = copy.deepcopy(population[l_])
             #print("child: " + str(child))
-            child = copy.deepcopy(mutation(child,available_position,mutation_rate))
+            #child = copy.deepcopy(mutation(child,available_position,mutation_rate))
+
+            child = copy.deepcopy(new_mutation(child,map))
             population[l_] = copy.deepcopy(child)
 
         # mutation
@@ -487,7 +510,7 @@ print("upper bound :" + str(upperBound(map2)))
 
 print("Genetic Algorithm: ")
 start = timeit.default_timer()
-result = GeneticAlgorithm(map2,15)
+result = GeneticAlgorithm(map2,10)
 end = timeit.default_timer()
 
 print("The result: ")
@@ -506,16 +529,4 @@ print("The result: ")
 print(result)
 print("The score: "+str(score))
 print("Elpased Time: " + str(end-start))
-
-
-
-
-
-
-
-
-
-
-
-
 
