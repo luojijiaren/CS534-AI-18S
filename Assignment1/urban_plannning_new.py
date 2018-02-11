@@ -4,6 +4,8 @@ import queue
 from scipy.special import comb
 import numpy as np
 import timeit
+import tkinter as tk
+from tkinter import filedialog
 
 class Map:
     def __init__(self,industrial, commercial, residential):
@@ -37,17 +39,67 @@ class Map:
         self.row = len(iniMap)-3
         self.column = len(iniMap[3])
 
+# Read file through using a dialog
+
+# File Dialog box
+root = tk.Tk()
+root.withdraw()
+file_path = filedialog.askopenfilename()
+fobj = open(file_path)
+
+# x is the total content reading from file
+x= []
+# the site number, [0] - industrial, [1] - commercial [2] - residential
+site_number = []
+# scenic view coordinates
+scenicPosition = []
+# toxic view coordinates
+toxicPosition = []
+
+for line in fobj:
+    x.append(line.rstrip())
+
+for i in range(0,3):
+    temp = int(x[i])
+    site_number.append(temp)
+
+cost_map = []
+for j in range(3,len(x)):
+    line = []
+    for m in range(len(x[j])):
+        if x[j][m] == 'X':
+            cost = 99
+            line.append(cost)
+            toxicPosition.append([j+1,m+1])
+        elif x[j][m] == 'S':
+            cost = -1
+            line.append(cost)
+            scenicPosition.append([j+1,m+1])
+        elif x[j][m] != ',':
+            cost = int(x[j][m])
+            line.append(cost)
+    cost_map.append(line)
+
+print("site number :" + str(site_number))
+print("cost Map " + str(cost_map))
+print("scenic view " + str(scenicPosition))
+print("toxic view " + str(toxicPosition))
+
 # Generate the Map 1 (Sample1.txt)
 map1 = Map(1,1,1)
 map1.setToxicSite([[1,1]])
 map1.setScenicView([[2,3]])
 map1.setCostMap([[99,1,2,4],[3,4,-1,3],[6,0,2,3]]) #99 means this site is 'X', -1 means this site is 'S'
 
-map2 = Map(4,2,4)
-map2.setToxicSite([[1,4],[2,2],[3,5]])
-map2.setScenicView([[5,1],[5,3]])
-map2.setCostMap([[2,3,3,99,6],[4,99,3,2,3],[3,0,1,6,99],[7,6,5,8,5],[-1,6,-1,9,1],[4,7,2,6,5]])
+# map2 = Map(4,2,4)
+# map2.setToxicSite([[1,4],[2,2],[3,5]])
+# map2.setScenicView([[5,1],[5,3]])
+# map2.setCostMap([[2,3,3,99,6],[4,99,3,2,3],[3,0,1,6,99],[7,6,5,8,5],[-1,6,-1,9,1],[4,7,2,6,5]])
 
+map2 = Map(site_number[0],site_number[1],site_number[2])
+map2.setToxicSite(toxicPosition)
+map2.setScenicView(scenicPosition)
+map2.setCostMap(cost_map)
 
 def iniPosition(map):
     position = []
@@ -107,7 +159,6 @@ def removeSameElement(ele,temp):
     for j in range(len(result)):
         if ele[0] == temp[j][0] and ele[1] == temp[j][1]:
             result.pop(j)
-
     return result
 
 def getAvailablePosition(map):
@@ -119,6 +170,11 @@ def getAvailablePosition(map):
             else:
                 available_position.append([i + 1, j + 1])
     return available_position
+
+# get the system time
+def getTime():
+    time = timeit.default_timer()
+    return time
 
 def calculateScore(map,position):
     score = 0
@@ -171,7 +227,6 @@ def calculateScore(map,position):
         for res_l in range(len(resid_index)):
             if ManhattanDistance(position[comme_index[com_l]][:-1],position[resid_index[res_l]][:-1]) <= 3:
                 score = score + 5
-
 
     ## Commercial compete with each other, <=2 , -5
     for com_l_1 in range(0,len(comme_index)-1):
@@ -247,7 +302,6 @@ def divide(number):
 
     r1 = int(r1)
     r2 = int(r2)
-
     return r1,r2
 
 def getFirstPosition(n,position):
@@ -270,8 +324,6 @@ def getPositions(n,position):
     result.append(temp[-1])
     return result
 
-
-
 # Hill Climbing
 def hillClimbing (map):
 
@@ -280,6 +332,13 @@ def hillClimbing (map):
     available_position = getAvailablePosition(map)
     temp_queue.put((0,ini_position))
     score_list = []
+    start = getTime()
+
+    #function upper bound
+    upper_bound = upperBound(map)
+
+    #record the value of each restart.
+    score_restart = queue.PriorityQueue()
 
     while True:
 
@@ -299,12 +358,26 @@ def hillClimbing (map):
         score_list.sort(reverse=True)
 
         print("Score: " + str(score_list[0]) + " Previous score :" + str(previous_score))
-        if score_list[0] <= previous_score:
-            result = copy.deepcopy(temp_queue.get()[1])
-            score = previous_score
-            break
 
-    return result,score
+
+        if score_list[0] <= previous_score:
+            time_now = getTime()
+
+            if time_now - start <= 10:
+                if score_list[0] < upper_bound:
+                    re_ini_pos = iniPosition(map)
+                    temp_queue.put((0,re_ini_pos))
+                    item = [previous_score,time_now-start]
+                    score_restart.put((10000-previous_score,item))
+            elif time_now - start > 10:
+                result = copy.deepcopy(temp_queue.get()[1])
+                item = [previous_score, time_now - start]
+                score_restart.put((10000-previous_score,item))
+                score = score_restart.get()[1][0]
+                time = score_restart.get()[1][1]
+                break
+
+    return result,score,time
 
 def selection(scores,population):
 
@@ -485,10 +558,8 @@ def GeneticAlgorithm(map,generations):
 
     return result
 
-
 # Test functions on the following:
 #available_position = getAvailablePosition(map2)
-
 
 # print("")
 # print("The Map Idle Positions: ",end="")
@@ -503,14 +574,15 @@ def GeneticAlgorithm(map,generations):
 # print("The score: "+str(score))
 # print("Elpased Time: " + str(end-start))
 
-print("Colony Size: " + str(colonySize(map2)))
-print("upper bound :" + str(upperBound(map2)))
+# print("Colony Size: " + str(colonySize(map2)))
+# print("upper bound :" + str(upperBound(map2)))
+#
 
 ### Genetic Algorithm:
 
 print("Genetic Algorithm: ")
 start = timeit.default_timer()
-result = GeneticAlgorithm(map2,10)
+result = GeneticAlgorithm(map2,30)
 end = timeit.default_timer()
 
 print("The result: ")
@@ -522,11 +594,12 @@ print("Elpased Time: " + str(end-start))
 
 print("Hill Climbing: ")
 start = timeit.default_timer()
-result,score = hillClimbing(map2)
+result,score,time_1 = hillClimbing(map2)
 end = timeit.default_timer()
 
 print("The result: ")
 print(result)
 print("The score: "+str(score))
+print("When achieved: " + str(time_1))
 print("Elpased Time: " + str(end-start))
 

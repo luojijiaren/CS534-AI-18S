@@ -1,6 +1,6 @@
 import random
 import queue
-import time
+import timeit
 
 def random_list(start, end, number):
     start = int(start)
@@ -53,16 +53,35 @@ def hill_climbing(str,num):
         frontier_attack = current_attack
         neighbour = a_star_find_neighbour(current,num)
         for next in neighbour:
-            priority = attack_number(next,num)
+            priority = attack_number(next,num)+ 10 + next[num]
             frontier.put((priority,next))
 
     return result
 
+def restart(str,num):
+    i=0
+    result = []
+    start = timeit.default_timer()
+    while True:
+        peak = hill_climbing(str, num)
+        result.append(list(peak))
+        i=i+1
+        end = timeit.default_timer()
+        if (end-start)>=10:
+            break
+        str = random_list(1,num,num)
+        str.append(0)
+    during_time = end-start
+    return result,i,during_time
+
 def a_star(str,num):
+    sequence = []
+    start = timeit.default_timer()
     frontier = queue.PriorityQueue()
     frontier.put((0,str))
     cost_so_far = {}
     cost_so_far[tuple(str[0:-1])] = 0
+    came_from = {}
     while not frontier.empty():
         current1 = frontier.get()
         current=current1[-1]
@@ -75,7 +94,19 @@ def a_star(str,num):
             if tuple(next[0:-1]) not in cost_so_far:
                 cost_so_far[tuple(next[0:-1])] = new_cost
                 frontier.put((new_cost,next))
-    return result
+                came_from[tuple(next[0:-1])] = current[0:-1]
+    end = timeit.default_timer()
+    during_time = end - start
+    sequence.append(result[0:-1])
+    k=0
+    while True:
+        if tuple(sequence[k]) not in came_from:
+            break
+        back=came_from[tuple(sequence[k])]
+        k=k+1
+        sequence.append(back)
+    effective=len(cost_so_far)/len(sequence)
+    return result, during_time, sequence, effective
 
 
 print('Enter the number of queen:')
@@ -84,16 +115,14 @@ print('1 for A*, 2 for hill climbing:')
 a=int(input())
 queen=random_list(1,N,N)
 queen.append(0)
-start = time.clock()
 if a==1:
-    result=a_star(queen,N)
+    result,time, sequence, effective = a_star(queen,N)
+    print('sequence:',sequence[::-1])
+    print('effective', effective)
 elif a==2:
-    result=hill_climbing(queen,N)
-    print('attcak:', attack_number(result,N))
+    result,restart_number,time = restart(queen,N)
 else:
     print('input error')
-elapsed = (time.clock() - start)
 print(queen[0:-1])
 print(result[0:-1])
-#print('cost=:',result[-1])
-print("Time used:",elapsed)
+print("Time used:",time)
