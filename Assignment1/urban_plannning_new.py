@@ -530,15 +530,3 @@ print(result)
 print("The score: "+str(score))
 print("Elpased Time: " + str(end-start))
 
-
-
-
-
-
-
-
-
-
-
-
-
