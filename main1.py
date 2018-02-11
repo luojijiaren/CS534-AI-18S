@@ -62,7 +62,6 @@ def hill_climbing(str,num):
         for next in neighbour:
             priority = 10*attack_number(next,num)+ 100 + next[num]
             frontier.put((priority,next))
-
     return result
 
 def restart(str,num):
@@ -143,14 +142,12 @@ if a==1:
     print('sequence:',sequence[::-1])
     print('the node expanded vs the length of solution path:%d vs %d'%(node_expanded,len(sequence)))
     print('node expanded:', node_expanded)
-
 elif a==2:
     result,restart_number,time = restart(queen,N)
     print('end state:', result[-1][0:-1])
+    print('cost:', result[-1][-1])
     print('number of restart',restart_number)
     print('length:',len(result))
-
 else:
     print('input error')
-
 print("Time used:",time)
