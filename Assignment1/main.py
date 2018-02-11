@@ -2,6 +2,10 @@ import random
 import queue
 import timeit
 
+# generate a random number*number chessboard with each column has one queen
+# input: start and end is the range of the station of each queen
+#        number means this chessboard's size is number*number
+# output: a 1*N list means the column and row of each queen
 def random_list(start, end, number):
     start = int(start)
     end = int(end)
@@ -11,6 +15,9 @@ def random_list(start, end, number):
         random_list1.append(random.randint(start, end))
     return random_list1
 
+# feature:calculate the attack number of a chessboard
+# input: str is a list of the chessboard, number is the th size of chessboard
+# output: the number of attack of this board
 def attack_number(str, num, attact_num=0):
     for i in range(num):
         for j in range(i+1,num):
@@ -21,6 +28,9 @@ def attack_number(str, num, attact_num=0):
                     attact_num = attact_num + 1
     return attact_num
 
+# feature: find the neighbour of 
+# input: str is a list of the chessboard, number is the th size of chessboard
+# output: the number of attack of this board
 def a_star_find_neighbour(str,num):
     neighbour=[]
     k = 0
@@ -59,7 +69,7 @@ def hill_climbing(str,num):
     return result
 
 def restart(str,num):
-    i=0
+    i=-1
     result = []
     start = timeit.default_timer()
     while True:
@@ -116,14 +126,19 @@ print('1 for A*, 2 for hill climbing:')
 a=int(input())
 queen=random_list(1,N,N)
 queen.append(0)
+print('start sate:',queen[0:-1])
 if a==1:
     result,time, sequence, effective = a_star(queen,N)
     print('sequence:',sequence[::-1])
     print('effective', effective)
+    print('end state:',result[0:-1])
 elif a==2:
     result,restart_number,time = restart(queen,N)
+    print('end state:', result[-1][0:-1])
+    print('number of restart',restart_number)
+    print('length:',len(result))
+
 else:
     print('input error')
-print(queen[0:-1])
-print(result[0:-1])
+
 print("Time used:",time)
