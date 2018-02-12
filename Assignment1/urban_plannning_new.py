@@ -3,6 +3,7 @@ import copy
 import queue
 from scipy.special import comb
 import numpy as np
+import heapq
 import timeit
 import tkinter as tk
 from tkinter import filedialog
@@ -155,10 +156,12 @@ def generateSuccessors (position,ini_avail_position):
     return result_position
 
 def removeSameElement(ele,temp):
+
     result = copy.deepcopy(temp)
     for j in range(len(result)):
         if ele[0] == temp[j][0] and ele[1] == temp[j][1]:
             result.pop(j)
+
     return result
 
 def getAvailablePosition(map):
@@ -364,20 +367,21 @@ def hillClimbing (map):
             time_now = getTime()
 
             if time_now - start <= 10:
+
                 if score_list[0] < upper_bound:
                     re_ini_pos = iniPosition(map)
                     temp_queue.put((0,re_ini_pos))
                     item = [previous_score,time_now-start]
                     score_restart.put((10000-previous_score,item))
+
             elif time_now - start > 10:
                 result = copy.deepcopy(temp_queue.get()[1])
                 item = [previous_score, time_now - start]
                 score_restart.put((10000-previous_score,item))
-                score = score_restart.get()[1][0]
-                time = score_restart.get()[1][1]
+                score = score_restart.get()[1]
                 break
 
-    return result,score,time
+    return result,score
 
 def selection(scores,population):
 
@@ -385,8 +389,6 @@ def selection(scores,population):
 
     for i in range(len(scores)):
         scores[i] = 10000 + scores[i]
-
-    print(scores)
 
     scores = np.asarray(scores)
     pop_new = np.asarray(population)
@@ -397,12 +399,187 @@ def selection(scores,population):
 
     return pop_new
 
-def elitism():
+def elitism_selection(score,population):
 
-    return
+    new_population = []
+
+    length = len(population)
+    first_part = 0
+
+    if length % 2 == 0:
+        first_part = int(length/2)
+    elif length % 2 != 0:
+        first_part = int((length-1)/2)
+
+    score = np.asarray(score)
+
+    # get the index of several biggest element
+    index = heapq.nlargest(first_part, range(len(score)), score.take)
+
+    if length % 2 == 0:
+
+        for i in range(len(index)):
+            new_population.append(population[index[i]])
+
+        for j in range(len(index)):
+            new_population.append(population[index[j]])
+
+    elif length % 2 == 1:
+
+        for k in range(len(index)):
+            new_population.append(population[index[k]])
+
+        new_population.append(population[index[0]])
+
+    return new_population
+
+
+# population: the colony for each generation
+# map: the map
+## population is a Queue
+
+def crossover_2(population,map):
+
+    ### These parameters are used for the crossover on different parts
+    # get the length
+    industrial = map.industrial
+    commercial = map.commercial
+    residential = map.residential
+    site_number = industrial + commercial + residential
+
+    inp = 0
+    comp = industrial
+    resp = industrial + commercial
+
+    pop_next = []
+    score = []
+
+    for i in range(len(population)):
+        temp_score = calculateScore(map,population[i])
+        score.append(temp_score)
+
+    score = np.asarray(score)
+
+    # get the index of several biggest element
+    # return the largest
+    index = heapq.nlargest(1, range(len(score)), score.take)
+
+    # the dominating crossover object with highest score
+    cross_dominate = copy.deepcopy(population[index[0]])
+    ind_seg_d = []
+    com_seg_d = []
+    res_seg_d = []
+
+    for i in range(inp,comp):
+        ind_seg_d.append(cross_dominate[i])
+
+    for j in range(comp,resp):
+        com_seg_d.append(cross_dominate[j])
+
+    for k in range(resp,site_number):
+        res_seg_d.append(cross_dominate[k])
+
+    number = 0
+
+    for l in range(len(population)):
+        ind_segment = []
+        com_segment = []
+        res_segment = []
+        child = []
+
+        # get genes
+        if l != index[0]:
+
+            for i in range(inp, comp):
+                ind_segment.append(population[l][i])
+            for j in range(comp, resp):
+                com_segment.append(population[l][j])
+            for k in range(resp, site_number):
+                res_segment.append(population[l][k])
+
+            #combine them
+            ind_segment.extend(ind_seg_d)
+            com_segment.extend(com_seg_d)
+            res_segment.extend(res_seg_d)
+
+            #industrial
+            ind_segment = np.array(list(set([tuple(t) for t in ind_segment])))
+            ind_segment = ind_segment.tolist()
+
+            # commercial
+            com_segment = np.array(list(set([tuple(t) for t in com_segment])))
+            com_segment = com_segment.tolist()
+
+            # residential
+            res_segment = np.array(list(set([tuple(t) for t in res_segment])))
+            res_segment = res_segment.tolist()
+
+            if len(ind_segment) < industrial or len(com_segment) < commercial or len(res_segment) < residential:
+                number = number + 1
+            else:
+
+                #ind_segment[0:industrial]
+                #com_segment[0:commercial]
+                #res_segment[0:residential]
+                ind_segment = copy.deepcopy(random.sample(ind_segment, industrial))
+                com_segment = copy.deepcopy(random.sample(com_segment, commercial))
+                res_segment = copy.deepcopy(random.sample(res_segment, residential))
+
+
+                child.extend(ind_segment)
+                child.extend(com_segment)
+                child.extend(res_segment)
+                pop_next.append(child)
+
+    remaining_number = len(population) - len(pop_next)
+
+
+    for i in range(0,remaining_number):
+        pop_next.append(cross_dominate)
+
+    #pop_next.tolsit()
+    return pop_next
+
+
+def culling(population,score):
+    new_population = []
+
+    length = len(population)
+    portion = 0
+
+    if length % 2 == 0:
+        portion = int(length / 2)
+
+
+    score = np.asarray(score)
+    # get the index of several biggest element
+    index = heapq.nlargest(portion, range(len(score)), score.take)
+
+    print(index)
+
+    if length % 2 == 0:
+
+        for i in range(portion):
+            new_population.append(population[index[0]])
+            new_population.append(population[index[1]])
+
+    elif length % 2 == 1 and length != 1:
+        portion1 = (length - 1) / 2
+
+        for j in range(portion1):
+            new_population.append(population[index[0]])
+            new_population.append(population[index[1]])
+
+        new_population.append(population)
+
+    if length == 1:
+
+        new_population.append(population[index[0]])
+
+    return new_population
+
 
 def crossOver(parent,n_population,map):
-
     # get the length
     industrial = map.industrial
     commercial = map.commercial
@@ -450,51 +627,50 @@ def crossOver(parent,n_population,map):
 
     return parent
 
-def mutation(child, available_position, mutation_rate):
 
-    # between 1 and 3
-    #number = random.sample(range(1, 4), 1)
+def mutation(population,map):
 
-    temp_iap = []
-    number = random.sample(range(1, 4), 1)
+    pop_next = copy.deepcopy(population)
 
-    if np.random.rand() < mutation_rate:
+    ind_n = map.industrial
+    com_n = map.commercial
+    res_n = map.residential
+    site_number = ind_n + com_n + res_n
 
-        for i in range(len(child)):
-            for j in range(len(available_position)):
-                temp_iap = copy.deepcopy(removeSameElement(child, available_position))
+    ind_p = 0
+    com_p = ind_n
+    res_p = ind_n + com_n
 
-            if number == 1:
-                position_range = getPositions(child)
-                #position is a list
-                position = random.sample(range(position_range[0],position_range[-1]+1),1)
+    available_pos = copy.deepcopy(getAvailablePosition(map))
 
-                #random position is also a list
-                random_position = random.sample(range(0,len(temp_iap)+1),1)
-                child[position[0]][0] = temp_iap[random_position[0]][0]
-                child[position[0]][1] = temp_iap[random_position[0]][1]
 
-            elif number == 2:
-                position_range = getPositions(child)
-                # position is a list
-                position = random.sample(range(position_range[0], position_range[-1] + 1), 1)
+    for i in range(len(population)):
+        pop_next[i] = copy.deepcopy(new_mutation(population[i],map))
 
-                # random position is also a list
-                random_position = random.sample(range(0, len(temp_iap) + 1), 1)
-                child[position[0]][0] = temp_iap[random_position[0]][0]
-                child[position[0]][1] = temp_iap[random_position[0]][1]
+        # pos = copy.deepcopy(population[i])
+        # for ele in pos:
+        #     del ele[-1]
+        #
+        # pos.extend(available_pos)
+        # list = list(set([tuple(t) for t in pos]))
 
-            elif number == 3:
-                position_range = getPositions(child)
-                # position is a list
-                position = random.sample(range(position_range[0], position_range[-1] + 1), 1)
+    # print("available pos " + str(available_pos))
 
-                # random position is also a list
-                random_position = random.sample(range(0, len(temp_iap) + 1), 1)
-                child[position[0]][0] = temp_iap[random_position[0]][0]
-                child[position[0]][1] = temp_iap[random_position[0]][1]
+    # for length in range(len(population)):
+    #     pop_next[length] = copy.deepcopy(new_mutation(pop_next[length],map))
 
-    return child
+
+
+    score = []
+    sum = 0
+    for i in range(len(pop_next)):
+        temp = calculateScore(map,pop_next[i])
+        score.append(temp)
+        sum = sum + temp
+
+    print(sum/len(pop_next))
+    return pop_next
+
 
 def new_mutation(child,map):
     temp_queue = queue.PriorityQueue()
@@ -510,53 +686,80 @@ def new_mutation(child,map):
 
     score_list.sort(reverse=True)
     result = copy.deepcopy(temp_queue.get()[1])
-
     return result
 
 
 def GeneticAlgorithm(map,generations):
 
-    colony_size = 10#colonySize(map)
-    upper = upperBound(map)
+    colony_size = 50#colonySize(map)
     generations = generations
-    available_position = getAvailablePosition(map)
-    mutation_rate = 1
     score = []
     population = []
     temp_queue = queue.PriorityQueue()
 
     for _ in range(colony_size):
-        population.append(iniPosition(map))
+        temp_ini = iniPosition(map)
+        population.append(temp_ini)
 
     for __ in range(generations):
+        print("------- Loop -------" + str(__))
 
-        print("-------Loop  -----" + str(__))
         del score[:]
         for index in range(len(population)):
             score.append(calculateScore(map,population[index]))
+        #
+        # #population = copy.deepcopy(selection(score,population))
+        # population = copy.deepcopy(elitism_selection(score,population))
 
-        #population = selection(score,population)
-
-        # cross over & mutation
-        pop_copy = copy.deepcopy(population)
-        for l_ in range(len(population)):
-            #child = copy.deepcopy(crossOver(population[l_],pop_copy,map))
-            child = copy.deepcopy(population[l_])
-            #print("child: " + str(child))
-            #child = copy.deepcopy(mutation(child,available_position,mutation_rate))
-
-            child = copy.deepcopy(new_mutation(child,map))
-            population[l_] = copy.deepcopy(child)
+        # cross over
+        #population = copy.deepcopy(crossover_2(population,map))
+        population = culling(population,score)
 
         # mutation
+        population = copy.deepcopy(mutation(population,map))
+        # child = []
+        # for l_ in range(len(population)):
+        #     child = copy.deepcopy(population[l_])
+        #     child = copy.deepcopy(new_mutation(child, map))
+        #     population[l_] = copy.deepcopy(child)
 
-    for j in range(len(population)):
-        temp_score = calculateScore(map,population[j])
-        temp_queue.put((10000-temp_score,population[j]))
+        for j in range(len(population)):
+            temp_score = calculateScore(map, population[j])
+            temp_queue.put((10000 - temp_score, population[j]))
 
     result = temp_queue.get()
 
     return result
+
+
+    # for _ in range(colony_size):
+    #     population.append(iniPosition(map))
+    #
+    # for __ in range(generations):
+    #
+    #     print("------- Loop -------" + str(__))
+    #     del score[:]
+    #     for index in range(len(population)):
+    #         score.append(calculateScore(map,population[index]))
+    #
+    #     #population = selection(score,population)
+    #
+    #     # cross over & mutation
+    #
+    #     pop_copy = copy.deepcopy(population)
+    #     for l_ in range(len(population)):
+    #         #child = copy.deepcopy(crossOver(population[l_],pop_copy,map))
+    #         child = copy.deepcopy(population[l_])
+    #         #print("child: " + str(child))
+    #         #child = copy.deepcopy(mutation(child,available_position,mutation_rate))
+    #         child = copy.deepcopy(new_mutation(child,map))
+    #         population[l_] = copy.deepcopy(child)
+    #
+    # # mutation
+    # for j in range(len(population)):
+    #     temp_score = calculateScore(map,population[j])
+    #     temp_queue.put((10000-temp_score,population[j]))
+
 
 # Test functions on the following:
 #available_position = getAvailablePosition(map2)
@@ -578,11 +781,11 @@ def GeneticAlgorithm(map,generations):
 # print("upper bound :" + str(upperBound(map2)))
 #
 
-### Genetic Algorithm:
+## Genetic Algorithm:
 
 print("Genetic Algorithm: ")
 start = timeit.default_timer()
-result = GeneticAlgorithm(map2,30)
+result = GeneticAlgorithm(map2,15)
 end = timeit.default_timer()
 
 print("The result: ")
@@ -590,16 +793,44 @@ print(result)
 print("The score: "+str(10000 - result[0]))
 print("Elpased Time: " + str(end-start))
 
-# Hill Climbing:
+# # Hill Climbing:
+#
+# print("Hill Climbing: ")
+# start = timeit.default_timer()
+# result,score = hillClimbing(map2)
+# end = timeit.default_timer()
+#
+# print("The result: ")
+# print(result)
+# print("The score: "+str(score[0]))
+# print("When achieved: " + str(score[1]))
+# print("Elpased Time: " + str(end-start))
 
-print("Hill Climbing: ")
-start = timeit.default_timer()
-result,score,time_1 = hillClimbing(map2)
-end = timeit.default_timer()
 
-print("The result: ")
-print(result)
-print("The score: "+str(score))
-print("When achieved: " + str(time_1))
-print("Elpased Time: " + str(end-start))
+#### Test CrossOver Function
 
+# Cross Over should contain 2 methods,
+# First is culling, second is elitism
+
+# pop = []
+# score_1 = []
+# score_2 = []
+# for i in range(0,10):
+#     temp = iniPosition(map2)
+#     pop.append(temp)
+#     score_1.append(calculateScore(map2,temp))
+#
+# pop_next = crossover_2(pop,map2)
+#
+# for j in range(len(pop_next)):
+#     score_2.append(calculateScore(map2,pop_next[j]))
+#
+# print(score_1)
+# print(score_2)
+#
+# temp = 0
+# for i in range(0,10):
+#     temp = score_2[i] - score_1[i]
+#
+# temp = int(temp/10)
+# print("average changing:"+str(temp))
