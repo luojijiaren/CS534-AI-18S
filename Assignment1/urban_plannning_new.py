@@ -140,69 +140,68 @@ def ManhattanDistance(a,b):
 def generateSuccessors (position,ini_avail_position):
 
     result_position = []
-    temp_iap = copy.deepcopy(ini_avail_position)
+    ini_ap = copy.deepcopy(ini_avail_position)
 
-    for i in range(len(position)):
-        for j in range(len(temp_iap)):
-            temp_iap = copy.deepcopy(removeSameElement(position[i],temp_iap))
+    # Remove the element in position from initial available position
+    for ele in position:
+        temp = ele[:-1]
+        while temp in ini_ap:
+            ini_ap.remove(temp)
 
     for n in range(len(position)):
-        for m in range(len(temp_iap)):
+        for m in range(len(ini_ap)):
             temp_position = copy.deepcopy(position)
-            temp_position[n][0] = temp_iap[m][0]
-            temp_position[n][1] = temp_iap[m][1]
+            temp_position[n][0] = ini_ap[m][0]
+            temp_position[n][1] = ini_ap[m][1]
             result_position.append(temp_position)
 
     return result_position
 
-def removeSameElement(ele,temp):
-
-    result = copy.deepcopy(temp)
-    for j in range(len(result)):
-        if ele[0] == temp[j][0] and ele[1] == temp[j][1]:
-            result.pop(j)
-
-    return result
-
+# get the cost of each positions (except the X and S site)
 def getAvailablePosition(map):
     available_position = []
+
     for i in range(len(map.costMap)):
         for j in range(len(map.costMap[i])):
             if map.costMap[i][j] == -1 or map.costMap[i][j] == 99:
                 continue
             else:
                 available_position.append([i + 1, j + 1])
+
     return available_position
+
 
 # get the system time
 def getTime():
     time = timeit.default_timer()
     return time
 
+# In this progam the socre is the same as the fitness
 def calculateScore(map,position):
     score = 0
 
     #pentaly for within 2 tiles from toxic site
-    for i in range(len(position)):
-        for j in range(len(map.toxicCoord)):
-            if ManhattanDistance(position[i][:-1],map.toxicCoord[j]) <=2 :
-                if position[i][2] == 1:
+
+    for ele in position:
+        for ele_1 in map.toxicCoord:
+            if ManhattanDistance(ele[:-1],ele_1) <=2:
+                if ele[2] == 1:
                     score = score - 10
-                elif position[i][2] == 2:
+                elif ele[2] == 2:
                     score = score - 20
-                elif position[i][2] == 3:
+                elif ele[2] == 3:
                     score = score - 20
 
     #Bonus for near Scenic Site, Residental only
-    for m in range(len(position)):
-        if position[m][2] == 3:
-            for n in range(len(map.scenicCoord)):
-                if ManhattanDistance([position[m][0],position[m][1]],map.scenicCoord[n]) <= 2:
+    for ele in position:
+        if ele[2] == 3:
+            for ele_1 in map.scenicCoord:
+                if ManhattanDistance(ele[:-1],ele_1) <= 2:
                     score = score + 10
 
     # Construction cost on different sites:
-    for nn in range(len(position)):
-        cost = map.costMap[position[nn][0] - 1][position[nn][1] - 1]
+    for ele in position:
+        cost = map.costMap[ele[0]-1][ele[1]-1]
         score = score - cost
 
     # I,C,R sites points calculation
@@ -247,85 +246,30 @@ def calculateScore(map,position):
     return score
 
 # On the following are functions for Genetic Algorithm
-def colonySize(map):
 
-    row = len(map.costMap)
-    column = len(map.costMap[0])
-    number = row*column
-    site_number = map.siteAmount
-    colony_size = site_number*(number - site_number)
-    return colony_size
-
+# used in the restart process
 def upperBound(map):
-
     cost_list = []
     for i in range(len(map.costMap)):
         for j in range(len(map.costMap[i])):
             cost_list.append(map.costMap[i][j])
-
     cost_list.sort()
-
     while -1 in cost_list:
         cost_list.remove(-1)
     while 99 in cost_list:
         cost_list.remove(99)
-
     bonus_S = map.residential * len(map.scenicCoord)*10
-
     bonus_1 = map.residential * map.commercial*5
-
     if map.industrial >= 2:
         bonus_2 = int(comb(map.industrial,2))*3
     else:
         bonus_2 = 0
-
     print(bonus_2)
-
     print(cost_list[:map.siteAmount])
     cost = sum(cost_list[:map.siteAmount])
     print(cost)
-
     upper_final = bonus_S + bonus_1 + bonus_2 - cost
-
     return upper_final
-
-def divide(number):
-    r1 = 0
-    r2 = 0
-
-    if number == 1:
-        r1 = 1
-        r2 = 1
-    elif number % 2 == 0:
-        r1 = number / 2
-        r2 = number / 2
-    elif number % 2 == 1:
-        r1 = (number-1)/2
-        r2 = (number+1)/2
-
-    r1 = int(r1)
-    r2 = int(r2)
-    return r1,r2
-
-def getFirstPosition(n,position):
-    temp = []
-    for i in range(len(position)):
-        if position[i][2] == n:
-            temp.append(i)
-
-    print("temp :" + str(temp))
-    result = temp[0]
-    return result
-
-def getPositions(n,position):
-    temp = []
-    result = []
-    for i in range(len(position)):
-        if position[i][2] == n:
-            temp.append(i)
-    result.append(temp[0])
-    result.append(temp[-1])
-    return result
 
 # Hill Climbing
 def hillClimbing (map):
@@ -384,310 +328,448 @@ def hillClimbing (map):
     return result,score
 
 def selection(scores,population):
-
     length = len(population)
-
     for i in range(len(scores)):
         scores[i] = 10000 + scores[i]
-
     scores = np.asarray(scores)
     pop_new = np.asarray(population)
-
-    x = np.random.choice(np.arange(length), size=length, replace=True, p = scores/scores.sum())
-    pop_new = pop_new[x]
+    # according to the fitness, perform selection (through index)
+    index = np.random.choice(np.arange(length), size=length, replace=True, p = scores/scores.sum())
+    index = index.tolist()
+    # filter duplicated elements
+    index = list(set(index))
+    pop_new = pop_new[index]
     pop_new = pop_new.tolist()
 
     return pop_new
 
-def elitism_selection(score,population):
+def elitism_selection(population,map):
 
-    new_population = []
+    score = 0
+    index = 0
+    # find the best fitness
+    for i in range(len(population)):
+        temp_score = calculateScore(map,population[i])
+        if i == 0:
+            score = temp_score
+            index = i
+        else:
+            if temp_score > score:
+                score = temp_score
+                index = i
 
-    length = len(population)
-    first_part = 0
+    elite = copy.deepcopy(population[index])
 
-    if length % 2 == 0:
-        first_part = int(length/2)
-    elif length % 2 != 0:
-        first_part = int((length-1)/2)
+    #After elitism selection, the following elements
+    del population[index]
+    pop_sel = population
 
-    score = np.asarray(score)
+    return elite,pop_sel
 
-    # get the index of several biggest element
-    index = heapq.nlargest(first_part, range(len(score)), score.take)
+def culling(population,map):
+    score = 0
+    index = 0
+    # find the best fitness
+    for i in range(len(population)):
+        temp_score = calculateScore(map, population[i])
 
-    if length % 2 == 0:
+        if i == 0:
+            score = temp_score
+            index = i
+        else:
+            if temp_score < score:
+                score = temp_score
+                index = i
 
-        for i in range(len(index)):
-            new_population.append(population[index[i]])
+    # Remove the weakest element
+    del population[index]
+    pop_sel = population
 
-        for j in range(len(index)):
-            new_population.append(population[index[j]])
-
-    elif length % 2 == 1:
-
-        for k in range(len(index)):
-            new_population.append(population[index[k]])
-
-        new_population.append(population[index[0]])
-
-    return new_population
+    return pop_sel
 
 
 # population: the colony for each generation
 # map: the map
 ## population is a Queue
 
-def crossover_2(population,map):
+def crossover(pop_size,population,map):
 
-    ### These parameters are used for the crossover on different parts
-    # get the length
-    industrial = map.industrial
-    commercial = map.commercial
-    residential = map.residential
-    site_number = industrial + commercial + residential
+    indp = 0
+    comp = map.industrial
+    resp = map.industrial + map.commercial
+    site_number = map.industrial + map.commercial + map.residential
+    child = []
+    random.shuffle(population)
 
-    inp = 0
-    comp = industrial
-    resp = industrial + commercial
+    temp_population = copy.deepcopy(population)
 
-    pop_next = []
-    score = []
+    #index = random.sample(range(0,len(population)),len(population))
+    for i in range(len(population)-1):
+        child_1 =[]
+        child_2 =[]
+        temp_chrom_ind = []
+        temp_chrom_com = []
+        temp_chrom_res = []
 
-    for i in range(len(population)):
-        temp_score = calculateScore(map,population[i])
-        score.append(temp_score)
+        for j in range(indp,comp):
+            t1 = temp_population[i][j][:-1]
+            temp_chrom_ind.append([t1[0],t1[1]])
 
-    score = np.asarray(score)
+        for j1 in range(indp, comp):
+            t2 = temp_population[i+1][j1][:-1]
+            temp_chrom_ind.append([t2[0],t2[1]])
 
-    # get the index of several biggest element
-    # return the largest
-    index = heapq.nlargest(1, range(len(score)), score.take)
+        for m in range(comp,resp):
+            # temp_chrom_com.append(temp_population[i][m][:-1])
+            t3 = temp_population[i][m][:-1]
+            temp_chrom_com.append([t3[0], t3[1]])
 
-    # the dominating crossover object with highest score
-    cross_dominate = copy.deepcopy(population[index[0]])
-    ind_seg_d = []
-    com_seg_d = []
-    res_seg_d = []
+        for m2 in range(comp, resp):
+            #temp_chrom_com.append(temp_population[i + 1][m2][:-1])
+            t4 = temp_population[i + 1][m2][:-1]
+            temp_chrom_com.append([t4[0], t4[1]])
 
-    for i in range(inp,comp):
-        ind_seg_d.append(cross_dominate[i])
+        for n in range(resp,site_number):
+            #temp_chrom_res.append(temp_population[i][n][:-1])
+            t5 = temp_population[i][n][:-1]
+            temp_chrom_res.append([t5[0], t5[1]])
 
-    for j in range(comp,resp):
-        com_seg_d.append(cross_dominate[j])
+        for n3 in range(resp, site_number):
+            #temp_chrom_res.append(temp_population[i+1][n3][:-1])
+            t6 = temp_population[i + 1][n3][:-1]
+            temp_chrom_res.append([t6[0], t6[1]])
 
-    for k in range(resp,site_number):
-        res_seg_d.append(cross_dominate[k])
+        # print("chrom ind before filter", temp_chrom_ind)
+        # print("chrom com before filter", temp_chrom_com)
+        # print("chrom res before filter", temp_chrom_res)
+        #
+        # for i1 in range(len(temp_chrom_ind)):
+        #     if len(temp_chrom_ind[i1]) > 2:
+        #         del temp_chrom_ind[i1][-1]
+        #
+        # for i2 in range(len(temp_chrom_com)):
+        #     if len(temp_chrom_com[i2]) > 2:
+        #         del temp_chrom_com[i2][-1]
+        #
+        # for i3 in range(len(temp_chrom_res)):
+        #     if len(temp_chrom_res[i3]) > 2:
+        #         del temp_chrom_res[i3][-1]
+        #
+        # print("chrom ind",temp_chrom_ind)
+        # print("chrom com", temp_chrom_com)
+        # print("chrom res",temp_chrom_res)
 
-    number = 0
+        # remove the duplicated elements for all the chromosome
+        # industrial chromosome
+        temp_chrom_ind = np.array(list(set([tuple(t) for t in temp_chrom_ind])))
+        temp_chrom_ind = temp_chrom_ind.tolist()
+        # commercial chromosome
+        temp_chrom_com = np.array(list(set([tuple(t) for t in temp_chrom_com])))
+        temp_chrom_com = temp_chrom_com.tolist()
+        # residential chromsome
+        temp_chrom_res = np.array(list(set([tuple(t) for t in temp_chrom_res])))
+        temp_chrom_res = temp_chrom_res.tolist()
 
-    for l in range(len(population)):
-        ind_segment = []
-        com_segment = []
-        res_segment = []
-        child = []
+        # crossover on industrial site
+        if len(temp_chrom_ind) < 2*map.industrial:
+            #index_ind_1 = random.sample(range(0,len(temp_chrom_ind)),map.industrial)
+            #index_ind_2 = random.sample(range(0,len(temp_chrom_ind)),map.industrial)
 
-        # get genes
-        if l != index[0]:
+            if len(temp_chrom_ind) < map.industrial:
 
-            for i in range(inp, comp):
-                ind_segment.append(population[l][i])
-            for j in range(comp, resp):
-                com_segment.append(population[l][j])
-            for k in range(resp, site_number):
-                res_segment.append(population[l][k])
+                remaining = map.industrial - len(temp_chrom_ind)
+                child_1.extend(temp_chrom_ind)
+                child_2.extend(temp_chrom_ind)
 
-            #combine them
-            ind_segment.extend(ind_seg_d)
-            com_segment.extend(com_seg_d)
-            res_segment.extend(res_seg_d)
+                for i in range(0,remaining):
+                    child_1.extend(temp_chrom_ind[0])
+                    #index_ind_2 = random.sample(range(0, len(temp_chrom_ind)), 1)
+                    child_2.extend(temp_chrom_ind[0])
 
-            #industrial
-            ind_segment = np.array(list(set([tuple(t) for t in ind_segment])))
-            ind_segment = ind_segment.tolist()
-
-            # commercial
-            com_segment = np.array(list(set([tuple(t) for t in com_segment])))
-            com_segment = com_segment.tolist()
-
-            # residential
-            res_segment = np.array(list(set([tuple(t) for t in res_segment])))
-            res_segment = res_segment.tolist()
-
-            if len(ind_segment) < industrial or len(com_segment) < commercial or len(res_segment) < residential:
-                number = number + 1
-            else:
-
-                #ind_segment[0:industrial]
-                #com_segment[0:commercial]
-                #res_segment[0:residential]
-                ind_segment = copy.deepcopy(random.sample(ind_segment, industrial))
-                com_segment = copy.deepcopy(random.sample(com_segment, commercial))
-                res_segment = copy.deepcopy(random.sample(res_segment, residential))
-
-
-                child.extend(ind_segment)
-                child.extend(com_segment)
-                child.extend(res_segment)
-                pop_next.append(child)
-
-    remaining_number = len(population) - len(pop_next)
-
-
-    for i in range(0,remaining_number):
-        pop_next.append(cross_dominate)
-
-    #pop_next.tolsit()
-    return pop_next
-
-
-def culling(population,score):
-    new_population = []
-
-    length = len(population)
-    portion = 0
-
-    if length % 2 == 0:
-        portion = int(length / 2)
+            elif len(temp_chrom_ind) >= map.industrial:
+                index_ind_1 = random.sample(range(0, len(temp_chrom_ind)), map.industrial)
+                index_ind_2 = random.sample(range(0, len(temp_chrom_ind)), map.industrial)
+                temp_chrom_ind = np.asarray(temp_chrom_ind)
+                ind_seg_1 = temp_chrom_ind[index_ind_1]
+                ind_seg_2 = temp_chrom_ind[index_ind_2]
+                ind_seg_1 = ind_seg_1.tolist()
+                ind_seg_2 = ind_seg_2.tolist()
+                child_1.extend(ind_seg_1)
+                child_2.extend(ind_seg_2)
 
 
-    score = np.asarray(score)
-    # get the index of several biggest element
-    index = heapq.nlargest(portion, range(len(score)), score.take)
+            # temp_chrom_ind = np.asarray(temp_chrom_ind)
+            # ind_seg_1 = temp_chrom_ind[index_ind_1]
+            # ind_seg_2 = temp_chrom_ind[index_ind_2]
+            # ind_seg_1 = ind_seg_1.tolist()
+            # ind_seg_2 = ind_seg_2.tolist()
+            # child_1.extend(ind_seg_1)
+            # child_2.extend(ind_seg_2)
+        else:
+            # random crossover here
+            length = map.industrial
 
-    print(index)
+            ind_seg_1 = []
+            ind_seg_2 = []
+            if length % 2 == 0:
+                half = int(length/2)
+            elif length % 2 == 1:
+                half = int((length+1)/2)
 
-    if length % 2 == 0:
+            index_sample = random.sample(range(0,map.industrial),half)
 
-        for i in range(portion):
-            new_population.append(population[index[0]])
-            new_population.append(population[index[1]])
+            ind_seg_1.extend(temp_chrom_ind[0:map.industrial])
+            ind_seg_2.extend(temp_chrom_ind[map.industrial:2*map.industrial])
 
-    elif length % 2 == 1 and length != 1:
-        portion1 = (length - 1) / 2
+            for ele in index_sample:
+                temp_1 = copy.deepcopy(ind_seg_2[ele])
+                temp_2 = copy.deepcopy(ind_seg_1[ele])
+                ind_seg_1[ele] = copy.deepcopy(temp_1)
+                ind_seg_2[ele] = copy.deepcopy(temp_2)
+            child_1.extend(ind_seg_1)
+            child_2.extend(ind_seg_2)
 
-        for j in range(portion1):
-            new_population.append(population[index[0]])
-            new_population.append(population[index[1]])
+        #cross over on commercial site:
+        if len(temp_chrom_com) < 2 * map.commercial:
+            #index_com_1 = random.sample(range(0, len(temp_chrom_com)), map.commercial)
+            #index_com_2 = random.sample(range(0, len(temp_chrom_com)), map.commercial)
+            if len(temp_chrom_com) < map.commercial:
 
-        new_population.append(population)
+                remaining = map.commercial - len(temp_chrom_com)
+                child_1.extend(temp_chrom_com)
+                child_2.extend(temp_chrom_com)
 
-    if length == 1:
+                for i in range(0,remaining):
+                    #index_com_1 = random.sample(range(0,len(temp_chrom_com)),1)
+                    child_1.extend(temp_chrom_com[0])
+                    #index_com_2 = random.sample(range(0, len(temp_chrom_com)), 1)
+                    child_2.extend(temp_chrom_com[0])
 
-        new_population.append(population[index[0]])
+            elif len(temp_chrom_com) >= map.commercial:
+                index_com_1 = random.sample(range(0, len(temp_chrom_com)), map.commercial)
+                index_com_2 = random.sample(range(0, len(temp_chrom_com)), map.commercial)
+                temp_chrom_com = np.asarray(temp_chrom_com)
+                com_seg_1 = temp_chrom_com[index_com_1]
+                com_seg_2 = temp_chrom_com[index_com_2]
+                com_seg_1 = com_seg_1.tolist()
+                com_seg_2 = com_seg_2.tolist()
+                child_1.extend(com_seg_1)
+                child_2.extend(com_seg_2)
 
-    return new_population
+            # index_com_1 = []
+            # index_com_2 = []
+            #
+            # for i in range(map.commercial):
+            #     temp_1 = random.sample(range(0, len(temp_chrom_com)), 1)
+            #     temp_2 = random.sample(range(0, len(temp_chrom_com)), 1)
+            #     index_com_1.extend(temp_1)
+            #     index_com_2.extend(temp_2)
+            #
+            # temp_chrom_com = np.asarray(temp_chrom_com)
+            # com_seg_1 = temp_chrom_com[index_com_1]
+            # com_seg_2 = temp_chrom_com[index_com_2]
+            # com_seg_1 = com_seg_1.tolist()
+            # com_seg_2 = com_seg_2.tolist()
+            # child_1.extend(com_seg_1)
+            # child_2.extend(com_seg_2)
+        else:
+            # random crossover here
+            length = map.commercial
 
+            com_seg_1 = []
+            com_seg_2 = []
+            if length % 2 == 0:
+                half = int(length / 2)
+            elif length % 2 == 1:
+                half = int((length + 1) / 2)
 
-def crossOver(parent,n_population,map):
-    # get the length
-    industrial = map.industrial
-    commercial = map.commercial
-    residential = map.residential
+            index_sample = random.sample(range(0, map.commercial), half)
 
-    # divide the length
-    in_1,in_2 = divide(industrial)
-    com_1,com_2 = divide(commercial)
-    res_1,res_2 = divide(residential)
+            com_seg_1.extend(temp_chrom_com[0:map.commercial])
+            com_seg_2.extend(temp_chrom_com[map.commercial:2 * map.commercial])
 
-    inp = 0
-    comp = industrial
-    resp = industrial + commercial
+            for ele in index_sample:
+                temp_1 = copy.deepcopy(com_seg_2[ele])
+                temp_2 = copy.deepcopy(com_seg_1[ele])
+                com_seg_1[ele] = copy.deepcopy(temp_1)
+                com_seg_2[ele] = copy.deepcopy(temp_2)
 
-    #should be the new child
+            child_1.extend(com_seg_1)
+            child_2.extend(com_seg_2)
 
-    random_position = random.sample(range(0,len(n_population)),1)
-    #print("random position :" + str(random_position))
+        # cross over on residential site:
+        if len(temp_chrom_res) < 2 * map.residential:
 
-    pop = copy.deepcopy(n_population[random_position[0]])
+            if len(temp_chrom_res) < map.residential:
 
-    #crossover on Industrial:
+                remaining = map.residential - len(temp_chrom_res)
+                child_1.extend(temp_chrom_res)
+                child_2.extend(temp_chrom_res)
 
-    for j in range(inp,inp+in_1):
-        #new_parent[inp : inp + in_1-1] = copy.deepcopy(pop[inp + industrial - in_2 : inp + industrial - 1])
-        parent[j][0] = copy.deepcopy(pop[inp + industrial - 1 - j][0])
-        parent[j][1] = copy.deepcopy(pop[inp + industrial - 1 - j][1])
-        parent[j][2] = copy.deepcopy(pop[inp + industrial - 1 - j][2])
+                for i in range(0,remaining):
+                    #index_res_1 = random.sample(range(0,len(temp_chrom_res)),1)
+                    child_1.extend(temp_chrom_com[0])
+                    #index_res_2 = random.sample(range(0, len(temp_chrom_res)), 1)
+                    child_2.extend(temp_chrom_com[0])
 
-    #crossover on commercial:
-    for m in range(comp,comp+com_1):
-        parent[m][0] = copy.deepcopy(pop[comp + commercial - 1 - m][0])
-        parent[m][1] = copy.deepcopy(pop[comp + commercial - 1 - m][1])
-        parent[m][2] = copy.deepcopy(pop[comp + commercial - 1 - m][2])
+            elif len(temp_chrom_res) >= map.residential:
+                index_res_1 = random.sample(range(0, len(temp_chrom_res)), map.residential)
+                index_res_2 = random.sample(range(0, len(temp_chrom_res)), map.residential)
+                temp_chrom_res = np.asarray(temp_chrom_res)
+                res_seg_1 = temp_chrom_res[index_res_1]
+                res_seg_2 = temp_chrom_res[index_res_2]
+                res_seg_1 = res_seg_1.tolist()
+                res_seg_2 = res_seg_2.tolist()
+                child_1.extend(res_seg_1)
+                child_2.extend(res_seg_2)
 
-    #new_parent[comp : comp + com_1 - 1] = copy.deepcopy(pop[comp + commercial - com_2 : comp + commercial - 1])
+            # index_res_1 = []
+            # index_res_2 = []
+            #
+            # for i in range(map.residential):
+            #     temp_1 = random.sample(range(0, len(temp_chrom_res)), 1)
+            #     temp_2 = random.sample(range(0, len(temp_chrom_res)), 1)
+            #     index_res_1.extend(temp_1)
+            #     index_res_2.extend(temp_2)
+            #
+            # # print("chrom res",temp_chrom_res)
+            # # print("index res 1",index_res_1)
+            # # print("index res 2", index_res_2)
+            #
+            # temp_chrom_res = np.asarray(temp_chrom_res)
+            # res_seg_1 = temp_chrom_res[index_res_1]
+            # res_seg_2 = temp_chrom_res[index_res_2]
+            # res_seg_1 = res_seg_1.tolist()
+            # res_seg_2 = res_seg_2.tolist()
+            # child_1.extend(res_seg_1)
+            # child_2.extend(res_seg_2)
+            #print("child 2",child_2)
 
-    #crossover on residential:
-    for n in range(resp,resp+res_1):
-        parent[n][0] = copy.deepcopy(pop[resp + residential - 1 - n][0])
-        parent[n][1] = copy.deepcopy(pop[resp + residential - 1 - n][1])
-        parent[n][2] = copy.deepcopy(pop[resp + residential - 1 - n][2])
+        else:
+            # random crossover here
+            length = map.residential
 
-    #new_parent[resp: resp + res_1 - 1] = copy.deepcopy(pop[resp + residential - res_2: resp + residential - 1])
+            res_seg_1 = []
+            res_seg_2 = []
+            if length % 2 == 0:
+                half = int(length / 2)
+            elif length % 2 == 1:
+                half = int((length + 1) / 2)
 
-    return parent
+            index_sample = random.sample(range(0, map.residential), half)
+            # print("map.residential"+str(map.residential))
+            # print("half:"+str(half))
+            # print("index sample: " + str(index_sample))
+            # print("chrom res:",temp_chrom_res)
 
+            res_seg_1.extend(temp_chrom_res[0:map.residential])
+            res_seg_2.extend(temp_chrom_res[map.residential:2 * map.residential])
 
-def mutation(population,map):
+            for ele in index_sample:
+                # print("ele",ele)
+                temp_1 = copy.deepcopy(res_seg_2[ele])
+                temp_2 = copy.deepcopy(res_seg_1[ele])
+                res_seg_1[ele] = copy.deepcopy(temp_1)
+                res_seg_2[ele] = copy.deepcopy(temp_2)
+
+            child_1.extend(res_seg_1)
+            child_2.extend(res_seg_2)
+
+        # print("old child 1", child_1)
+        # remove all the same genes in the chromosome
+        child_1 = np.array(list(set([tuple(t) for t in child_1])))
+        child_1 = child_1.tolist()
+
+        child_2 = np.array(list(set([tuple(t) for t in child_2])))
+        child_2 = child_2.tolist()
+
+        if len(child_1) == site_number:
+            child.append(child_1)
+            # print("child 1",child_1)
+
+        if len(child_2) == site_number:
+            child.append(child_2)
+            # print("child 2",child_2)
+
+    new_pop = []
+
+    # if population size is larger than the child size
+    # Then extend all the children and pick some randomly
+    # Or choose the children randomly
+    # print("pop size",pop_size)
+    # print("child length",len(child))
+    if pop_size <= len(child):
+        index = random.sample(range(0,len(child)),pop_size)
+        for i in index:
+            new_pop.append(child[i])
+    else:
+        new_pop.extend(child)
+        diff = pop_size - len(child)
+
+        # if the difference is smaller than the child length
+        if diff < len(child):
+            index = random.sample(range(0,len(child)),pop_size-len(child))
+            for j in index:
+                new_pop.append(child[j])
+        else:
+        #if the difference is larger than the child length
+            integer_part = int(diff/len(child))
+            remaining = diff - integer_part*len(child)
+
+            for k in range(0,integer_part):
+                index = random.sample(range(0, len(child)), len(child))
+                for j in index:
+                    new_pop.append(child[j])
+
+            index_2 = random.sample(range(0, len(child)), remaining)
+            for j1 in index_2:
+                new_pop.append(child[j1])
+
+    # print("new pop without class",new_pop)
+
+    for j in range (len(new_pop)):
+        for ele in new_pop[j][0:map.industrial]:
+            ele.append(1)
+        for ele_1 in new_pop[j][map.industrial:map.industrial + map.commercial]:
+            ele_1.append(2)
+        for ele_2 in new_pop[j][map.industrial + map.commercial:map.industrial + map.commercial + map.residential]:
+            ele_2.append(3)
+
+    for length in range(len(new_pop)):
+        for ele in new_pop[length]:
+                ele[:3]
+
+    # print("new_pop",new_pop)
+    return new_pop
+
+def mutation(population,ini_avail_position):
 
     pop_next = copy.deepcopy(population)
 
-    ind_n = map.industrial
-    com_n = map.commercial
-    res_n = map.residential
-    site_number = ind_n + com_n + res_n
+    ini_ap = copy.deepcopy(ini_avail_position)
 
-    ind_p = 0
-    com_p = ind_n
-    res_p = ind_n + com_n
-
-    available_pos = copy.deepcopy(getAvailablePosition(map))
-
-
+    # Remove the element in position from initial available position
     for i in range(len(population)):
-        pop_next[i] = copy.deepcopy(new_mutation(population[i],map))
+        for ele in population[i]:
+            temp = ele[:-1]
+            while temp in ini_ap:
+                ini_ap.remove(temp)
 
-        # pos = copy.deepcopy(population[i])
-        # for ele in pos:
-        #     del ele[-1]
-        #
-        # pos.extend(available_pos)
-        # list = list(set([tuple(t) for t in pos]))
+        if len(ini_ap) > len(population[i]):
+            index_sample = random.sample(range(0,len(ini_ap)),len(population[i]))
 
-    # print("available pos " + str(available_pos))
+            for j in range(len(population[i])):
+                pop_next[i][j][0] = ini_ap[index_sample[j]][0]
+                pop_next[i][j][1] = ini_ap[index_sample[j]][1]
+        else:
+            index_sample = random.sample(range(0,len(ini_ap)),len(ini_ap))
+            index_sample_2 = random.sample(range(0,len(population[i])),len(ini_ap))
 
-    # for length in range(len(population)):
-    #     pop_next[length] = copy.deepcopy(new_mutation(pop_next[length],map))
+            for n in range(len(index_sample)):
+                pop_next[i][index_sample_2[n]][0] = ini_ap[index_sample[n]][0]
+                pop_next[i][index_sample_2[n]][1] = ini_ap[index_sample[n]][1]
 
-
-
-    score = []
-    sum = 0
-    for i in range(len(pop_next)):
-        temp = calculateScore(map,pop_next[i])
-        score.append(temp)
-        sum = sum + temp
-
-    print(sum/len(pop_next))
     return pop_next
-
-
-def new_mutation(child,map):
-    temp_queue = queue.PriorityQueue()
-    available_position = getAvailablePosition(map)
-    score_list = []
-
-    current_successor = generateSuccessors(child, available_position)
-
-    for length in range(len(current_successor)):
-        temp_score = calculateScore(map, current_successor[length])
-        score_list.append(temp_score)
-        temp_queue.put((10000 - temp_score, current_successor[length]))
-
-    score_list.sort(reverse=True)
-    result = copy.deepcopy(temp_queue.get()[1])
-    return result
-
 
 def GeneticAlgorithm(map,generations):
 
@@ -696,6 +778,8 @@ def GeneticAlgorithm(map,generations):
     score = []
     population = []
     temp_queue = queue.PriorityQueue()
+
+    ini_available_position = getAvailablePosition(map)
 
     for _ in range(colony_size):
         temp_ini = iniPosition(map)
@@ -707,21 +791,22 @@ def GeneticAlgorithm(map,generations):
         del score[:]
         for index in range(len(population)):
             score.append(calculateScore(map,population[index]))
-        #
-        # #population = copy.deepcopy(selection(score,population))
-        # population = copy.deepcopy(elitism_selection(score,population))
 
-        # cross over
-        #population = copy.deepcopy(crossover_2(population,map))
-        population = culling(population,score)
+        #selection:
+        population = copy.deepcopy(selection(score,population))
 
-        # mutation
-        population = copy.deepcopy(mutation(population,map))
-        # child = []
-        # for l_ in range(len(population)):
-        #     child = copy.deepcopy(population[l_])
-        #     child = copy.deepcopy(new_mutation(child, map))
-        #     population[l_] = copy.deepcopy(child)
+        #elitism:
+        elite, population = elitism_selection(population,map)
+
+        #corss over:
+        population = crossover(colony_size,population,map)
+
+        #put elitism into it:
+        population.append(elite)
+        del population[0]
+
+        #mutation:
+        population = mutation(population,ini_available_position,)
 
         for j in range(len(population)):
             temp_score = calculateScore(map, population[j])
@@ -732,60 +817,11 @@ def GeneticAlgorithm(map,generations):
     return result
 
 
-    # for _ in range(colony_size):
-    #     population.append(iniPosition(map))
-    #
-    # for __ in range(generations):
-    #
-    #     print("------- Loop -------" + str(__))
-    #     del score[:]
-    #     for index in range(len(population)):
-    #         score.append(calculateScore(map,population[index]))
-    #
-    #     #population = selection(score,population)
-    #
-    #     # cross over & mutation
-    #
-    #     pop_copy = copy.deepcopy(population)
-    #     for l_ in range(len(population)):
-    #         #child = copy.deepcopy(crossOver(population[l_],pop_copy,map))
-    #         child = copy.deepcopy(population[l_])
-    #         #print("child: " + str(child))
-    #         #child = copy.deepcopy(mutation(child,available_position,mutation_rate))
-    #         child = copy.deepcopy(new_mutation(child,map))
-    #         population[l_] = copy.deepcopy(child)
-    #
-    # # mutation
-    # for j in range(len(population)):
-    #     temp_score = calculateScore(map,population[j])
-    #     temp_queue.put((10000-temp_score,population[j]))
-
-
-# Test functions on the following:
-#available_position = getAvailablePosition(map2)
-
-# print("")
-# print("The Map Idle Positions: ",end="")
-# print(available_position)
-#
-# start = timeit.default_timer()
-# result,score = hillClimbing(map2)
-# end = timeit.default_timer()
-#
-# print("The result: ")
-# print(result)
-# print("The score: "+str(score))
-# print("Elpased Time: " + str(end-start))
-
-# print("Colony Size: " + str(colonySize(map2)))
-# print("upper bound :" + str(upperBound(map2)))
-#
-
-## Genetic Algorithm:
+# Genetic Algorithm:
 
 print("Genetic Algorithm: ")
 start = timeit.default_timer()
-result = GeneticAlgorithm(map2,15)
+result = GeneticAlgorithm(map2,200)
 end = timeit.default_timer()
 
 print("The result: ")
@@ -793,8 +829,8 @@ print(result)
 print("The score: "+str(10000 - result[0]))
 print("Elpased Time: " + str(end-start))
 
-# # Hill Climbing:
-#
+##Hill Climbing:
+
 # print("Hill Climbing: ")
 # start = timeit.default_timer()
 # result,score = hillClimbing(map2)
@@ -807,30 +843,3 @@ print("Elpased Time: " + str(end-start))
 # print("Elpased Time: " + str(end-start))
 
 
-#### Test CrossOver Function
-
-# Cross Over should contain 2 methods,
-# First is culling, second is elitism
-
-# pop = []
-# score_1 = []
-# score_2 = []
-# for i in range(0,10):
-#     temp = iniPosition(map2)
-#     pop.append(temp)
-#     score_1.append(calculateScore(map2,temp))
-#
-# pop_next = crossover_2(pop,map2)
-#
-# for j in range(len(pop_next)):
-#     score_2.append(calculateScore(map2,pop_next[j]))
-#
-# print(score_1)
-# print(score_2)
-#
-# temp = 0
-# for i in range(0,10):
-#     temp = score_2[i] - score_1[i]
-#
-# temp = int(temp/10)
-# print("average changing:"+str(temp))
