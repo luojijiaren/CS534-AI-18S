@@ -327,6 +327,13 @@ def hillClimbing (map):
 
     return result,score
 
+# Remove the same element:
+
+def RemoveSameElement(old_list):
+    new_list = np.array(list(set([tuple(t) for t in old_list])))
+    new_list = new_list.tolist()
+    return new_list
+
 def selection(scores,population):
     length = len(population)
     for i in range(len(scores)):
@@ -392,7 +399,7 @@ def culling(population,map):
 # map: the map
 ## population is a Queue
 
-def crossover(pop_size,population,map):
+def crossover(pop_size,population,map, elite):
 
     indp = 0
     comp = map.industrial
@@ -439,25 +446,6 @@ def crossover(pop_size,population,map):
             t6 = temp_population[i + 1][n3][:-1]
             temp_chrom_res.append([t6[0], t6[1]])
 
-        # print("chrom ind before filter", temp_chrom_ind)
-        # print("chrom com before filter", temp_chrom_com)
-        # print("chrom res before filter", temp_chrom_res)
-        #
-        # for i1 in range(len(temp_chrom_ind)):
-        #     if len(temp_chrom_ind[i1]) > 2:
-        #         del temp_chrom_ind[i1][-1]
-        #
-        # for i2 in range(len(temp_chrom_com)):
-        #     if len(temp_chrom_com[i2]) > 2:
-        #         del temp_chrom_com[i2][-1]
-        #
-        # for i3 in range(len(temp_chrom_res)):
-        #     if len(temp_chrom_res[i3]) > 2:
-        #         del temp_chrom_res[i3][-1]
-        #
-        # print("chrom ind",temp_chrom_ind)
-        # print("chrom com", temp_chrom_com)
-        # print("chrom res",temp_chrom_res)
 
         # remove the duplicated elements for all the chromosome
         # industrial chromosome
@@ -470,6 +458,7 @@ def crossover(pop_size,population,map):
         temp_chrom_res = np.array(list(set([tuple(t) for t in temp_chrom_res])))
         temp_chrom_res = temp_chrom_res.tolist()
 
+        test_ind_co_branch = 0
         # crossover on industrial site
         if len(temp_chrom_ind) < 2*map.industrial:
             #index_ind_1 = random.sample(range(0,len(temp_chrom_ind)),map.industrial)
@@ -481,11 +470,16 @@ def crossover(pop_size,population,map):
                 child_1.extend(temp_chrom_ind)
                 child_2.extend(temp_chrom_ind)
 
+                #temp = [temp_chrom_ind[0][0],temp_chrom_ind[0][1]]
                 for i in range(0,remaining):
-                    child_1.extend(temp_chrom_ind[0])
-                    #index_ind_2 = random.sample(range(0, len(temp_chrom_ind)), 1)
-                    child_2.extend(temp_chrom_ind[0])
 
+                    index = random.sample(range(0,len(temp_chrom_ind)),1)
+                    temp = [temp_chrom_ind[index[0]][0],temp_chrom_ind[index[0]][1]]
+                    child_1.append(temp)
+                    # index = random.sample(range(0, len(temp_chrom_ind)), 1)
+                    child_2.append(temp)
+
+                    test_ind_co_branch = 1
             elif len(temp_chrom_ind) >= map.industrial:
                 index_ind_1 = random.sample(range(0, len(temp_chrom_ind)), map.industrial)
                 index_ind_2 = random.sample(range(0, len(temp_chrom_ind)), map.industrial)
@@ -497,15 +491,10 @@ def crossover(pop_size,population,map):
                 child_1.extend(ind_seg_1)
                 child_2.extend(ind_seg_2)
 
+                test_ind_co_branch = 2
 
-            # temp_chrom_ind = np.asarray(temp_chrom_ind)
-            # ind_seg_1 = temp_chrom_ind[index_ind_1]
-            # ind_seg_2 = temp_chrom_ind[index_ind_2]
-            # ind_seg_1 = ind_seg_1.tolist()
-            # ind_seg_2 = ind_seg_2.tolist()
-            # child_1.extend(ind_seg_1)
-            # child_2.extend(ind_seg_2)
         else:
+            test_ind_co_branch = 3
             # random crossover here
             length = map.industrial
 
@@ -528,24 +517,36 @@ def crossover(pop_size,population,map):
                 ind_seg_2[ele] = copy.deepcopy(temp_2)
             child_1.extend(ind_seg_1)
             child_2.extend(ind_seg_2)
-
+        # print("*****************************************")
+        # print("after industrial crossover")
+        # print("child 1",child_1)
+        # print("child 2",child_2)
+        # print("branch",test_ind_co_branch)
+        # print("*****************************************")
+        test_com_branch = 0
         #cross over on commercial site:
         if len(temp_chrom_com) < 2 * map.commercial:
             #index_com_1 = random.sample(range(0, len(temp_chrom_com)), map.commercial)
             #index_com_2 = random.sample(range(0, len(temp_chrom_com)), map.commercial)
             if len(temp_chrom_com) < map.commercial:
-
+                test_com_branch = 1
                 remaining = map.commercial - len(temp_chrom_com)
                 child_1.extend(temp_chrom_com)
                 child_2.extend(temp_chrom_com)
 
+                #temp = [temp_chrom_com[0][0], temp_chrom_com[0][1]]
                 for i in range(0,remaining):
+                    index = random.sample(range(0, len(temp_chrom_com)), 1)
+                    temp = [temp_chrom_com[index[0]][0], temp_chrom_com[index[0]][1]]
                     #index_com_1 = random.sample(range(0,len(temp_chrom_com)),1)
-                    child_1.extend(temp_chrom_com[0])
+                    # index = random.sample(range(0, len(temp_chrom_com)), 1)
+                    child_1.append(temp)
                     #index_com_2 = random.sample(range(0, len(temp_chrom_com)), 1)
-                    child_2.extend(temp_chrom_com[0])
+                    # index = random.sample(range(0, len(temp_chrom_com)), 1)
+                    child_2.append(temp)
 
             elif len(temp_chrom_com) >= map.commercial:
+                test_com_branch = 2
                 index_com_1 = random.sample(range(0, len(temp_chrom_com)), map.commercial)
                 index_com_2 = random.sample(range(0, len(temp_chrom_com)), map.commercial)
                 temp_chrom_com = np.asarray(temp_chrom_com)
@@ -556,23 +557,8 @@ def crossover(pop_size,population,map):
                 child_1.extend(com_seg_1)
                 child_2.extend(com_seg_2)
 
-            # index_com_1 = []
-            # index_com_2 = []
-            #
-            # for i in range(map.commercial):
-            #     temp_1 = random.sample(range(0, len(temp_chrom_com)), 1)
-            #     temp_2 = random.sample(range(0, len(temp_chrom_com)), 1)
-            #     index_com_1.extend(temp_1)
-            #     index_com_2.extend(temp_2)
-            #
-            # temp_chrom_com = np.asarray(temp_chrom_com)
-            # com_seg_1 = temp_chrom_com[index_com_1]
-            # com_seg_2 = temp_chrom_com[index_com_2]
-            # com_seg_1 = com_seg_1.tolist()
-            # com_seg_2 = com_seg_2.tolist()
-            # child_1.extend(com_seg_1)
-            # child_2.extend(com_seg_2)
         else:
+            test_com_branch = 3
             # random crossover here
             length = map.commercial
 
@@ -596,23 +582,38 @@ def crossover(pop_size,population,map):
 
             child_1.extend(com_seg_1)
             child_2.extend(com_seg_2)
+        # print("*****************************************")
+        # print("after commercial crossover")
+        # print("child 1", child_1)
+        # print("child 2", child_2)
+        # print("com co branch",test_com_branch)
+        # print("*****************************************")
 
+        test_res_branch = 0
         # cross over on residential site:
         if len(temp_chrom_res) < 2 * map.residential:
 
             if len(temp_chrom_res) < map.residential:
+                test_res_branch = 1
 
                 remaining = map.residential - len(temp_chrom_res)
                 child_1.extend(temp_chrom_res)
                 child_2.extend(temp_chrom_res)
 
+                #temp = [temp_chrom_res[0][0], temp_chrom_res[0][1]]
+
                 for i in range(0,remaining):
+                    index = random.sample(range(0, len(temp_chrom_res)), 1)
+                    temp = [temp_chrom_res[index[0]][0], temp_chrom_res[index[0]][1]]
                     #index_res_1 = random.sample(range(0,len(temp_chrom_res)),1)
-                    child_1.extend(temp_chrom_com[0])
+                    # index = random.sample(range(0, len(temp_chrom_com)), 1)
+                    child_1.append(temp)
                     #index_res_2 = random.sample(range(0, len(temp_chrom_res)), 1)
-                    child_2.extend(temp_chrom_com[0])
+                    child_2.append(temp)
 
             elif len(temp_chrom_res) >= map.residential:
+
+                test_res_branch = 2
                 index_res_1 = random.sample(range(0, len(temp_chrom_res)), map.residential)
                 index_res_2 = random.sample(range(0, len(temp_chrom_res)), map.residential)
                 temp_chrom_res = np.asarray(temp_chrom_res)
@@ -623,29 +624,8 @@ def crossover(pop_size,population,map):
                 child_1.extend(res_seg_1)
                 child_2.extend(res_seg_2)
 
-            # index_res_1 = []
-            # index_res_2 = []
-            #
-            # for i in range(map.residential):
-            #     temp_1 = random.sample(range(0, len(temp_chrom_res)), 1)
-            #     temp_2 = random.sample(range(0, len(temp_chrom_res)), 1)
-            #     index_res_1.extend(temp_1)
-            #     index_res_2.extend(temp_2)
-            #
-            # # print("chrom res",temp_chrom_res)
-            # # print("index res 1",index_res_1)
-            # # print("index res 2", index_res_2)
-            #
-            # temp_chrom_res = np.asarray(temp_chrom_res)
-            # res_seg_1 = temp_chrom_res[index_res_1]
-            # res_seg_2 = temp_chrom_res[index_res_2]
-            # res_seg_1 = res_seg_1.tolist()
-            # res_seg_2 = res_seg_2.tolist()
-            # child_1.extend(res_seg_1)
-            # child_2.extend(res_seg_2)
-            #print("child 2",child_2)
-
         else:
+            test_res_branch = 3
             # random crossover here
             length = map.residential
 
@@ -657,10 +637,7 @@ def crossover(pop_size,population,map):
                 half = int((length + 1) / 2)
 
             index_sample = random.sample(range(0, map.residential), half)
-            # print("map.residential"+str(map.residential))
-            # print("half:"+str(half))
-            # print("index sample: " + str(index_sample))
-            # print("chrom res:",temp_chrom_res)
+
 
             res_seg_1.extend(temp_chrom_res[0:map.residential])
             res_seg_2.extend(temp_chrom_res[map.residential:2 * map.residential])
@@ -675,13 +652,23 @@ def crossover(pop_size,population,map):
             child_1.extend(res_seg_1)
             child_2.extend(res_seg_2)
 
+        # print("*****************************************")
+        # print("after commercial crossover")
+        # print("child 1", child_1)
+        # print("child 2", child_2)
+        # print("res co branch",test_res_branch)
+        # print("*****************************************")
+
         # print("old child 1", child_1)
         # remove all the same genes in the chromosome
-        child_1 = np.array(list(set([tuple(t) for t in child_1])))
-        child_1 = child_1.tolist()
+        # print("-----------")
+        #child_1 = np.array(list(set([tuple(t) for t in child_1])))
+        #child_1 = child_1.tolist()
+        child_1 = RemoveSameElement(child_1)
 
-        child_2 = np.array(list(set([tuple(t) for t in child_2])))
-        child_2 = child_2.tolist()
+        child_2 = RemoveSameElement(child_2)
+        # child_2 = np.array(list(set([tuple(t) for t in child_2])))
+        # child_2 = child_2.tolist()
 
         if len(child_1) == site_number:
             child.append(child_1)
@@ -690,7 +677,6 @@ def crossover(pop_size,population,map):
         if len(child_2) == site_number:
             child.append(child_2)
             # print("child 2",child_2)
-
     new_pop = []
 
     # if population size is larger than the child size
@@ -698,33 +684,42 @@ def crossover(pop_size,population,map):
     # Or choose the children randomly
     # print("pop size",pop_size)
     # print("child length",len(child))
-    if pop_size <= len(child):
-        index = random.sample(range(0,len(child)),pop_size)
-        for i in index:
-            new_pop.append(child[i])
-    else:
-        new_pop.extend(child)
-        diff = pop_size - len(child)
-
-        # if the difference is smaller than the child length
-        if diff < len(child):
-            index = random.sample(range(0,len(child)),pop_size-len(child))
-            for j in index:
-                new_pop.append(child[j])
+    if len(child) != 0:
+        if pop_size <= len(child):
+            index = random.sample(range(0,len(child)),pop_size)
+            for i in index:
+                new_pop.append(child[i])
         else:
-        #if the difference is larger than the child length
-            integer_part = int(diff/len(child))
-            remaining = diff - integer_part*len(child)
+            new_pop.extend(child)
+            diff = pop_size - len(child)
 
-            for k in range(0,integer_part):
-                index = random.sample(range(0, len(child)), len(child))
+            # if the difference is smaller than the child length
+            if diff < len(child):
+                index = random.sample(range(0,len(child)),pop_size-len(child))
                 for j in index:
                     new_pop.append(child[j])
+            else:
+            #if the difference is larger than the child length
+                integer_part = int(diff/len(child))
+                remaining = diff - integer_part*len(child)
 
-            index_2 = random.sample(range(0, len(child)), remaining)
-            for j1 in index_2:
-                new_pop.append(child[j1])
+                for k in range(0,integer_part):
+                    index = random.sample(range(0, len(child)), len(child))
+                    for j in index:
+                        new_pop.append(child[j])
 
+                index_2 = random.sample(range(0, len(child)), remaining)
+                for j1 in index_2:
+                    new_pop.append(child[j1])
+    else:
+        #After culling, the length may be short
+        if len(new_pop) < pop_size:
+            new_pop = copy.deepcopy(population)
+            remain = pop_size - len(new_pop)
+            for i in range(0,remain):
+                new_pop.append(elite)
+        else:
+            new_pop = copy.deepcopy(population)
     # print("new pop without class",new_pop)
 
     for j in range (len(new_pop)):
@@ -740,6 +735,7 @@ def crossover(pop_size,population,map):
                 ele[:3]
 
     # print("new_pop",new_pop)
+    random.shuffle(new_pop)
     return new_pop
 
 def mutation(population,ini_avail_position):
@@ -768,6 +764,10 @@ def mutation(population,ini_avail_position):
             for n in range(len(index_sample)):
                 pop_next[i][index_sample_2[n]][0] = ini_ap[index_sample[n]][0]
                 pop_next[i][index_sample_2[n]][1] = ini_ap[index_sample[n]][1]
+
+    for length in range(len(pop_next)):
+        for ele in pop_next[length]:
+                ele[:3]
 
     return pop_next
 
@@ -798,15 +798,24 @@ def GeneticAlgorithm(map,generations):
         #elitism:
         elite, population = elitism_selection(population,map)
 
+        #print("pop length before crossover:", len(population))
         #corss over:
-        population = crossover(colony_size,population,map)
+        population = crossover(colony_size,population,map,elite)
 
+        #print("pop length after crossover:", len(population))
         #put elitism into it:
         population.append(elite)
         del population[0]
 
+        #print("pop length before mutation:", len(population))
         #mutation:
         population = mutation(population,ini_available_position,)
+
+        #print("pop length after mutation:",len(population))
+
+        for l in range(len(population)):
+            for  j in range(len(population[l])):
+                population[l][j] = population[l][j][:3]
 
         for j in range(len(population)):
             temp_score = calculateScore(map, population[j])
