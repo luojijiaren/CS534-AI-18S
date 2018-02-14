@@ -224,6 +224,7 @@ if a==1:
         exit()
     print('start sate:', queen[0:-1])
     print('end state:', result[0:-1])
+    print('cost:', result[-1])
     print('sequence:',sequence[::-1])
     print('the node expanded vs the length of solution path:%d vs %d'%(node_expanded,len(sequence)))
     print('node expanded:', node_expanded)
