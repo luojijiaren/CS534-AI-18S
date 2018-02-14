@@ -237,7 +237,6 @@ elif a==2:
     print('end state:', result[-1][0:-1])
     print('cost:', result[-1][-1])
     print('number of restart',restart_number)
-    print('length:',len(result))
     print('nodes expanded:',all_nodes)
 else:
     print('input error')
