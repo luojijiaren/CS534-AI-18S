@@ -1,9 +1,7 @@
 import random
 import copy
 import queue
-from scipy.special import comb
 import numpy as np
-import heapq
 import timeit
 import tkinter as tk
 from tkinter import filedialog
@@ -261,7 +259,7 @@ def upperBound(map):
     bonus_S = map.residential * len(map.scenicCoord)*10
     bonus_1 = map.residential * map.commercial*5
     if map.industrial >= 2:
-        bonus_2 = int(comb(map.industrial,2))*3
+        bonus_2 = int(map.industrial*(map.industrial-1)/2)*3
     else:
         bonus_2 = 0
     print(bonus_2)
