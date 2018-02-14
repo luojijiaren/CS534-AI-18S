@@ -142,8 +142,8 @@ def normal_a_star(str,num):
     node_expanded=len(cost_so_far)
     return result, during_time, sequence, node_expanded
 
-# feature: this function is used for iterative A*, it using A* to find the result in a specify depth
-#          when finding the result, break
+# feature: this function is used for iterative A*, it using A* to find the result in a specific depth
+#          when finding the result, break and return the result
 # input: str is the start state of the chessboard
 #        num is the size of chessboard
 #        depth it the depth that this function could explore
@@ -229,6 +229,10 @@ if a==1:
     print('node expanded:', node_expanded)
 elif a==2:
     result,restart_number,time, all_nodes = restart(queen,N)
+    if attack_number(result[-1][0:-1],N)==0:
+        print('successfully find the result!')
+    else:
+        print('NOT find the result')
     print('start sate:', queen[0:-1])
     print('end state:', result[-1][0:-1])
     print('cost:', result[-1][-1])
