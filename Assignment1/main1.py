@@ -94,7 +94,7 @@ def restart(str,num):
         restart_number=restart_number+1
         end = timeit.default_timer()
         a = attack_number(peak,num)
-        if (end-start) > 10 or a == 0:
+        if (end-start) > 10 or a == 0:                     # change the range of time by rewriting the 10
             break
         str = random_list(1,num,num)
         str.append(0)
