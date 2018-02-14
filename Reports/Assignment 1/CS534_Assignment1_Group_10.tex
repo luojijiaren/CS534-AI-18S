@@ -85,10 +85,10 @@ Group Member
 
 \begin{table}[htbp] 
 \begin{center}
-\begin{tabular}{l c l} 
-
-	 Yinkai & Ma  &   yma7@wpi.edu \\
-     Yixuan & Jiao  &   yjiao@wpi.edu \\
+\begin{tabular}{l l l} 
+	 
+	 Yixuan & Jiao  &   yjiao@wpi.edu \\
+     Yinkai & Ma  &   yma7@wpi.edu \\
      Jiaming & Nie  &  jnie@wpi.edu \\
      Pinyi & Xiao  &  pxiao@wpi.edu \\
 \end{tabular}
@@ -102,29 +102,81 @@ Group Member
 
 \end{titlepage}
 
-%\tableofcontents
+\tableofcontents
 %\listoffigures
 
 \section{N Queens Problem}
 
+\subsection{Methodology}
 
-\subsection{Hill Climbing Algorithm}
+\subsubsection{Hill Climbing Algorithm}
 
 
 
-\subsection{A star Algorithm}
+\subsubsection{A star Algorithm}
 
 
 \subsection{Write Up Questions}
 
+\subsubsection{The size of Puzzle}
+
+\subsubsection{Effective Branching Factor}
+
+\subsubsection{Cheaper Solutions}
+
+\subsubsection{Solutions With Less Time Complexity}
+
+
 
 \section{Urban Planning}
 
-\subsection{Hill Climbing}
+\subsection{Methodology}
 
-\subsection{Genetic Algorithm}
+\subsubsection{Hill Climbing}
+
+\subsubsection{Genetic Algorithm}
+
 
 \subsection{Write Up Question}
+
+\subsubsection{Genetic Algorithm Mechanism}
+
+
+\subparagraph{Selection}
+
+The selection from a population is to select the individuals according to a probability sequence. The probability is determined by the score of each individual in a certain population. 
+
+In a certain population, the higher score will lead to the higher probability to be fetched. 
+
+\subparagraph{Crossover}
+
+In this algorithm, crossover is using the the uniform crossover. For the gene segment on the chromosome, choose the segments randomly then perform the crossover.
+
+
+
+\subparagraph{Elitism}
+
+The elitism is performed before the culling and crossover operation. For the population in each iteration, remove the individual with the highest score 
+
+\subparagraph{Culling}
+
+\subparagraph{Mutation}
+
+\subsubsection{Program Performance}
+
+
+\subsubsection{Effects of Elitism and Culling}
+
+\subparagraph{Effects of Elitism}
+
+\subparagraph{Effects of Culling}
+
+\subsubsection{Selection and Crossover}
+
+\subparagraph{Perform of Selection}
+
+\subparagraph{Perform of Crossover}
+
 %\tableofcontents
 
 %\listoffigures

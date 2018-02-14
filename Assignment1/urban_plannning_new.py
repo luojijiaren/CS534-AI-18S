@@ -41,64 +41,62 @@ class Map:
 # Read file through using a dialog
 
 # File Dialog box
-root = tk.Tk()
-root.withdraw()
-file_path = filedialog.askopenfilename()
-fobj = open(file_path)
 
-# x is the total content reading from file
-x= []
-# the site number, [0] - industrial, [1] - commercial [2] - residential
-site_number = []
-# scenic view coordinates
-scenicPosition = []
-# toxic view coordinates
-toxicPosition = []
+def ReadFromFile():
+    root = tk.Tk()
+    root.withdraw()
+    file_path = filedialog.askopenfilename(title = "Select Map File (text file only)",filetypes = (("text files","*.txt"),("all files","*.*")))
+    fobj = open(file_path)
 
-for line in fobj:
-    x.append(line.rstrip())
+    # x is the total content reading from file
+    x= []
+    # the site number, [0] - industrial, [1] - commercial [2] - residential
+    site_number = []
+    # scenic view coordinates
+    scenicPosition = []
+    # toxic view coordinates
+    toxicPosition = []
 
-for i in range(0,3):
-    temp = int(x[i])
-    site_number.append(temp)
+    for line in fobj:
+        x.append(line.rstrip().replace(',',''))
 
-cost_map = []
-for j in range(3,len(x)):
-    line = []
-    for m in range(len(x[j])):
-        if x[j][m] == 'X':
-            cost = 99
-            line.append(cost)
-            toxicPosition.append([j+1,m+1])
-        elif x[j][m] == 'S':
-            cost = -1
-            line.append(cost)
-            scenicPosition.append([j+1,m+1])
-        elif x[j][m] != ',':
-            cost = int(x[j][m])
-            line.append(cost)
-    cost_map.append(line)
+    for i in range(0,3):
+        temp = int(x[i])
+        site_number.append(temp)
 
-print("site number :" + str(site_number))
-print("cost Map " + str(cost_map))
-print("scenic view " + str(scenicPosition))
-print("toxic view " + str(toxicPosition))
+    cost_map = []
+    for j in range(3,len(x)):
+        line = []
+        for m in range(len(x[j])):
+            if x[j][m] == 'X':
+                cost = 99
+                line.append(cost)
+                toxicPosition.append([j+1-3,m+1])
+            elif x[j][m] == 'S':
+                cost = -1
+                line.append(cost)
+                scenicPosition.append([j+1-3,m+1])
+            elif x[j][m] != ',':
+                cost = int(x[j][m])
+                line.append(cost)
+        cost_map.append(line)
+    map2 = Map(site_number[0], site_number[1], site_number[2])
+    map2.setToxicSite(toxicPosition)
+    map2.setScenicView(scenicPosition)
+    map2.setCostMap(cost_map)
+
+    return map2
 
 # Generate the Map 1 (Sample1.txt)
-map1 = Map(1,1,1)
-map1.setToxicSite([[1,1]])
-map1.setScenicView([[2,3]])
-map1.setCostMap([[99,1,2,4],[3,4,-1,3],[6,0,2,3]]) #99 means this site is 'X', -1 means this site is 'S'
+# map1 = Map(1,1,1)
+# map1.setToxicSite([[1,1]])
+# map1.setScenicView([[2,3]])
+# map1.setCostMap([[99,1,2,4],[3,4,-1,3],[6,0,2,3]]) #99 means this site is 'X', -1 means this site is 'S'
 
 # map2 = Map(4,2,4)
 # map2.setToxicSite([[1,4],[2,2],[3,5]])
 # map2.setScenicView([[5,1],[5,3]])
 # map2.setCostMap([[2,3,3,99,6],[4,99,3,2,3],[3,0,1,6,99],[7,6,5,8,5],[-1,6,-1,9,1],[4,7,2,6,5]])
-
-map2 = Map(site_number[0],site_number[1],site_number[2])
-map2.setToxicSite(toxicPosition)
-map2.setScenicView(scenicPosition)
-map2.setCostMap(cost_map)
 
 def iniPosition(map):
     position = []
@@ -262,10 +260,10 @@ def upperBound(map):
         bonus_2 = int(map.industrial*(map.industrial-1)/2)*3
     else:
         bonus_2 = 0
-    print(bonus_2)
-    print(cost_list[:map.siteAmount])
+    #print(bonus_2)
+    #print(cost_list[:map.siteAmount])
     cost = sum(cost_list[:map.siteAmount])
-    print(cost)
+    #print(cost)
     upper_final = bonus_S + bonus_1 + bonus_2 - cost
     return upper_final
 
@@ -302,13 +300,10 @@ def hillClimbing (map):
 
         score_list.sort(reverse=True)
 
-        print("Score: " + str(score_list[0]) + " Previous score :" + str(previous_score))
-
-
         if score_list[0] <= previous_score:
             time_now = getTime()
 
-            if time_now - start <= 10:
+            if time_now - start <= 60:
 
                 if score_list[0] < upper_bound:
                     re_ini_pos = iniPosition(map)
@@ -316,7 +311,7 @@ def hillClimbing (map):
                     item = [previous_score,time_now-start]
                     score_restart.put((10000-previous_score,item))
 
-            elif time_now - start > 10:
+            elif time_now - start > 60:
                 result = copy.deepcopy(temp_queue.get()[1])
                 item = [previous_score, time_now - start]
                 score_restart.put((10000-previous_score,item))
@@ -326,6 +321,14 @@ def hillClimbing (map):
     return result,score
 
 # Remove the same element:
+
+def colonySize(map):
+    row = len(map.costMap) - 3
+    column = len(map.costMap[3])
+    toxic = len(map.toxicCoord)
+    scenic = len(map.scenicCoord)
+    colonySize = map.siteAmount * (row * column - toxic - scenic)
+    return colonySize
 
 def RemoveSameElement(old_list):
     new_list = np.array(list(set([tuple(t) for t in old_list])))
@@ -515,12 +518,7 @@ def crossover(pop_size,population,map, elite):
                 ind_seg_2[ele] = copy.deepcopy(temp_2)
             child_1.extend(ind_seg_1)
             child_2.extend(ind_seg_2)
-        # print("*****************************************")
-        # print("after industrial crossover")
-        # print("child 1",child_1)
-        # print("child 2",child_2)
-        # print("branch",test_ind_co_branch)
-        # print("*****************************************")
+
         test_com_branch = 0
         #cross over on commercial site:
         if len(temp_chrom_com) < 2 * map.commercial:
@@ -580,12 +578,6 @@ def crossover(pop_size,population,map, elite):
 
             child_1.extend(com_seg_1)
             child_2.extend(com_seg_2)
-        # print("*****************************************")
-        # print("after commercial crossover")
-        # print("child 1", child_1)
-        # print("child 2", child_2)
-        # print("com co branch",test_com_branch)
-        # print("*****************************************")
 
         test_res_branch = 0
         # cross over on residential site:
@@ -650,23 +642,9 @@ def crossover(pop_size,population,map, elite):
             child_1.extend(res_seg_1)
             child_2.extend(res_seg_2)
 
-        # print("*****************************************")
-        # print("after commercial crossover")
-        # print("child 1", child_1)
-        # print("child 2", child_2)
-        # print("res co branch",test_res_branch)
-        # print("*****************************************")
-
-        # print("old child 1", child_1)
-        # remove all the same genes in the chromosome
-        # print("-----------")
-        #child_1 = np.array(list(set([tuple(t) for t in child_1])))
-        #child_1 = child_1.tolist()
         child_1 = RemoveSameElement(child_1)
 
         child_2 = RemoveSameElement(child_2)
-        # child_2 = np.array(list(set([tuple(t) for t in child_2])))
-        # child_2 = child_2.tolist()
 
         if len(child_1) == site_number:
             child.append(child_1)
@@ -677,11 +655,6 @@ def crossover(pop_size,population,map, elite):
             # print("child 2",child_2)
     new_pop = []
 
-    # if population size is larger than the child size
-    # Then extend all the children and pick some randomly
-    # Or choose the children randomly
-    # print("pop size",pop_size)
-    # print("child length",len(child))
     if len(child) != 0:
         if pop_size <= len(child):
             index = random.sample(range(0,len(child)),pop_size)
@@ -771,7 +744,7 @@ def mutation(population,ini_avail_position):
 
 def GeneticAlgorithm(map,generations):
 
-    colony_size = 50#colonySize(map)
+    colony_size = colonySize(map)
     generations = generations
     score = []
     population = []
@@ -784,7 +757,7 @@ def GeneticAlgorithm(map,generations):
         population.append(temp_ini)
 
     for __ in range(generations):
-        print("------- Loop -------" + str(__))
+        #print("------- Loop -------" + str(__))
 
         del score[:]
         for index in range(len(population)):
@@ -796,20 +769,15 @@ def GeneticAlgorithm(map,generations):
         #elitism:
         elite, population = elitism_selection(population,map)
 
-        #print("pop length before crossover:", len(population))
         #corss over:
         population = crossover(colony_size,population,map,elite)
 
-        #print("pop length after crossover:", len(population))
         #put elitism into it:
         population.append(elite)
         del population[0]
 
-        #print("pop length before mutation:", len(population))
         #mutation:
         population = mutation(population,ini_available_position,)
-
-        #print("pop length after mutation:",len(population))
 
         for l in range(len(population)):
             for  j in range(len(population[l])):
@@ -826,27 +794,41 @@ def GeneticAlgorithm(map,generations):
 
 # Genetic Algorithm:
 
-print("Genetic Algorithm: ")
-start = timeit.default_timer()
-result = GeneticAlgorithm(map2,200)
-end = timeit.default_timer()
+print("------------ Urban Planning --------------")
+print("Please Select Map File (text file only)")
+map_trial = ReadFromFile()
+print("site number :",map_trial.siteAmount)
+print("cost Map ",map_trial.costMap)
+print("scenic view ",map_trial.scenicCoord)
+print("toxic view ",map_trial.toxicCoord)
 
-print("The result: ")
-print(result)
-print("The score: "+str(10000 - result[0]))
-print("Elpased Time: " + str(end-start))
+print("Please choose: 1 for Hill Climbing. 2 for Genetic Algorithm:")
+number = int(input())
 
-##Hill Climbing:
+if number == 1:
+    print("Hill Climbing: ")
+    start = timeit.default_timer()
+    result,score = hillClimbing(map_trial)
+    end = timeit.default_timer()
 
-# print("Hill Climbing: ")
-# start = timeit.default_timer()
-# result,score = hillClimbing(map2)
-# end = timeit.default_timer()
-#
-# print("The result: ")
-# print(result)
-# print("The score: "+str(score[0]))
-# print("When achieved: " + str(score[1]))
-# print("Elpased Time: " + str(end-start))
+    print("The result: ")
+    print(result)
+    print("The score: "+str(score[0]))
+    print("When achieved: " + str(score[1]))
+    print("Elpased Time: " + str(end-start))
 
+elif number == 2:
+    print("Genetic Algorithm:")
+    start = timeit.default_timer()
+    result = GeneticAlgorithm(map_trial,1000)
+    end = timeit.default_timer()
+
+    print("The result: ")
+    print(result)
+    print("The score: "+str(10000 - result[0]))
+    print("Elpased Time: " + str(end-start))
+
+else:
+    print("Input Error. Please restart the program")
+    exit()
 

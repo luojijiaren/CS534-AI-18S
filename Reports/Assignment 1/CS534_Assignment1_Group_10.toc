@@ -1,1 +1,28 @@
 \thispagestyle {empty}
+\contentsline {section}{\numberline {1}N Queens Problem}{2}{section.1}
+\contentsline {subsection}{\numberline {1.1}Methodology}{2}{subsection.1.1}
+\contentsline {subsubsection}{\numberline {1.1.1}Hill Climbing Algorithm}{2}{subsubsection.1.1.1}
+\contentsline {subsubsection}{\numberline {1.1.2}A star Algorithm}{2}{subsubsection.1.1.2}
+\contentsline {subsection}{\numberline {1.2}Write Up Questions}{2}{subsection.1.2}
+\contentsline {subsubsection}{\numberline {1.2.1}The size of Puzzle}{2}{subsubsection.1.2.1}
+\contentsline {subsubsection}{\numberline {1.2.2}Effective Branching Factor}{2}{subsubsection.1.2.2}
+\contentsline {subsubsection}{\numberline {1.2.3}Cheaper Solutions}{2}{subsubsection.1.2.3}
+\contentsline {subsubsection}{\numberline {1.2.4}Solutions With Less Time Complexity}{2}{subsubsection.1.2.4}
+\contentsline {section}{\numberline {2}Urban Planning}{2}{section.2}
+\contentsline {subsection}{\numberline {2.1}Methodology}{2}{subsection.2.1}
+\contentsline {subsubsection}{\numberline {2.1.1}Hill Climbing}{2}{subsubsection.2.1.1}
+\contentsline {subsubsection}{\numberline {2.1.2}Genetic Algorithm}{2}{subsubsection.2.1.2}
+\contentsline {subsection}{\numberline {2.2}Write Up Question}{2}{subsection.2.2}
+\contentsline {subsubsection}{\numberline {2.2.1}Genetic Algorithm Mechanism}{2}{subsubsection.2.2.1}
+\contentsline {subparagraph}{Selection}{2}{section*.1}
+\contentsline {subparagraph}{Crossover}{2}{section*.2}
+\contentsline {subparagraph}{Elitism}{2}{section*.3}
+\contentsline {subparagraph}{Culling}{2}{section*.4}
+\contentsline {subparagraph}{Mutation}{2}{section*.5}
+\contentsline {subsubsection}{\numberline {2.2.2}Program Performance}{2}{subsubsection.2.2.2}
+\contentsline {subsubsection}{\numberline {2.2.3}Effects of Elitism and Culling}{2}{subsubsection.2.2.3}
+\contentsline {subparagraph}{Effects of Elitism}{2}{section*.6}
+\contentsline {subparagraph}{Effects of Culling}{3}{section*.7}
+\contentsline {subsubsection}{\numberline {2.2.4}Selection and Crossover}{3}{subsubsection.2.2.4}
+\contentsline {subparagraph}{Perform of Selection}{3}{section*.8}
+\contentsline {subparagraph}{Perform of Crossover}{3}{section*.9}
