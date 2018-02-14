@@ -62,16 +62,16 @@ def hill_climbing(str,num):
         current_attack = attack_number(current,num)
         nodes = 20+nodes
         if current_attack == 0:
-            result = current #111
+            result = current
             break
         if frontier_attack <= current_attack:
-            result=frontier_queen
+            result = frontier_queen
             break
         frontier_queen=list(current)
         frontier_attack = current_attack
         neighbour = find_neighbour(current,num)
         for next in neighbour:
-            priority = 10*attack_number(next,num)+ 100 + next[num]
+            priority = 10*attack_number(next,num)+ 100 + next[num]   # f(n)=g(n)+h(n)
             frontier.put((priority,next))
     return result, nodes
 
@@ -94,7 +94,7 @@ def restart(str,num):
         restart_number=restart_number+1
         end = timeit.default_timer()
         a = attack_number(peak,num)
-        if (end-start) > 10 or a == 0:
+        if (end-start) > 10 or a == 0:                     # change the range of time by rewriting the 10
             break
         str = random_list(1,num,num)
         str.append(0)
@@ -124,7 +124,7 @@ def normal_a_star(str,num):
             break
         neighbour = find_neighbour(current,num)
         for next in neighbour:
-            new_cost = attack_number(next,num) + 10 + next[num]
+            new_cost = 10*attack_number(next,num) + 10 + next[num]  # f(n)=g(n)+h(n)
             if tuple(next[0:-1]) not in cost_so_far:
                 cost_so_far[tuple(next[0:-1])] = new_cost
                 frontier.put((new_cost,next))
@@ -168,7 +168,7 @@ def a_star(str,num,depth):
         if node_deep[tuple(current[0:-1])]<depth:
             neighbour = find_neighbour(current,num)
             for next in neighbour:
-                new_cost = 10*attack_number(next,num) + 100 + next[num]
+                new_cost = 10*attack_number(next,num) + 100 + next[num]   # f(n)=g(n)+h(n)
                 if tuple(next[0:-1]) not in cost_so_far:
                     cost_so_far[tuple(next[0:-1])] = new_cost
                     frontier.put((new_cost,next))
