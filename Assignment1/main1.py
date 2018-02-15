@@ -124,7 +124,7 @@ def normal_a_star(str,num):
             break
         neighbour = find_neighbour(current,num)
         for next in neighbour:
-            new_cost = attack_number(next,num) + 10 + next[num]
+            new_cost = 10 * attack_number(next,num) + 100 + next[num]
             if tuple(next[0:-1]) not in cost_so_far:
                 cost_so_far[tuple(next[0:-1])] = new_cost
                 frontier.put((new_cost,next))
