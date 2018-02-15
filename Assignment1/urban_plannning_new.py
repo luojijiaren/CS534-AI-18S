@@ -5,6 +5,7 @@ import numpy as np
 import timeit
 import tkinter as tk
 from tkinter import filedialog
+import matplotlib.pyplot as plt
 
 class Map:
     def __init__(self,industrial, commercial, residential):
@@ -87,16 +88,40 @@ def ReadFromFile():
 
     return map2
 
-# Generate the Map 1 (Sample1.txt)
-# map1 = Map(1,1,1)
-# map1.setToxicSite([[1,1]])
-# map1.setScenicView([[2,3]])
-# map1.setCostMap([[99,1,2,4],[3,4,-1,3],[6,0,2,3]]) #99 means this site is 'X', -1 means this site is 'S'
 
-# map2 = Map(4,2,4)
-# map2.setToxicSite([[1,4],[2,2],[3,5]])
-# map2.setScenicView([[5,1],[5,3]])
-# map2.setCostMap([[2,3,3,99,6],[4,99,3,2,3],[3,0,1,6,99],[7,6,5,8,5],[-1,6,-1,9,1],[4,7,2,6,5]])
+def printMap(result,map):
+
+    row = len(map.costMap)
+    column = len(map.costMap[0])
+    ind = 0
+    com = map.industrial
+    res = map.commercial + map.industrial
+    site_number = map.commercial + map.industrial + map.residential
+
+    pb = [['O'] * column for i in range(row)]
+
+    for i in range(len(map.toxicCoord)):
+        pb[map.toxicCoord[i][0]-1][map.toxicCoord[i][1]-1] = 'X'
+
+    for j in range(len(map.scenicCoord)):
+        pb[map.scenicCoord[j][0]-1][map.scenicCoord[j][1]-1] = 'S'
+
+    for k in range(ind,com):
+        pb[result[k][0]-1][result[k][1]-1] = 'I'
+
+    for l in range(com,res):
+        pb[result[l][0] - 1][result[l][1] - 1] = 'C'
+
+    for m in range(res,site_number):
+        pb[result[m][0] - 1][result[m][1] - 1] = 'R'
+
+    for i in range(row):
+        if i != 0:
+            print("")
+        for j in range(column):
+            print(str(pb[i][j]), end="")
+    print("")
+
 
 def iniPosition(map):
     position = []
@@ -268,7 +293,7 @@ def upperBound(map):
     return upper_final
 
 # Hill Climbing
-def hillClimbing (map):
+def hillClimbing (map,time_limit):
 
     temp_queue = queue.PriorityQueue()
     ini_position = iniPosition(map)
@@ -303,7 +328,7 @@ def hillClimbing (map):
         if score_list[0] <= previous_score:
             time_now = getTime()
 
-            if time_now - start <= 60:
+            if time_now - start <= time_limit:
 
                 if score_list[0] < upper_bound:
                     re_ini_pos = iniPosition(map)
@@ -311,7 +336,7 @@ def hillClimbing (map):
                     item = [previous_score,time_now-start]
                     score_restart.put((10000-previous_score,item))
 
-            elif time_now - start > 60:
+            elif time_now - start > time_limit:
                 result = copy.deepcopy(temp_queue.get()[1])
                 item = [previous_score, time_now - start]
                 score_restart.put((10000-previous_score,item))
@@ -400,7 +425,7 @@ def culling(population,map):
 # map: the map
 ## population is a Queue
 
-def crossover(pop_size,population,map, elite):
+def crossover(pop_size,population,map):
 
     indp = 0
     comp = map.industrial
@@ -688,7 +713,8 @@ def crossover(pop_size,population,map, elite):
             new_pop = copy.deepcopy(population)
             remain = pop_size - len(new_pop)
             for i in range(0,remain):
-                new_pop.append(elite)
+                index = random.sample(range(0,len(population)),1)
+                new_pop.append(population[index[0]])
         else:
             new_pop = copy.deepcopy(population)
     # print("new pop without class",new_pop)
@@ -742,21 +768,22 @@ def mutation(population,ini_avail_position):
 
     return pop_next
 
-def GeneticAlgorithm(map,generations):
+def GeneticAlgorithm(map,time_limit):
 
     colony_size = colonySize(map)
-    generations = generations
     score = []
     population = []
     temp_queue = queue.PriorityQueue()
 
     ini_available_position = getAvailablePosition(map)
 
+    trial_use = []
     for _ in range(colony_size):
         temp_ini = iniPosition(map)
         population.append(temp_ini)
 
-    for __ in range(generations):
+    start = timeit.default_timer()
+    while True:
         #print("------- Loop -------" + str(__))
 
         del score[:]
@@ -769,8 +796,10 @@ def GeneticAlgorithm(map,generations):
         #elitism:
         elite, population = elitism_selection(population,map)
 
+        #culling:
+        population = culling(population,map)
         #corss over:
-        population = crossover(colony_size,population,map,elite)
+        population = crossover(colony_size,population,map)
 
         #put elitism into it:
         population.append(elite)
@@ -783,13 +812,23 @@ def GeneticAlgorithm(map,generations):
             for  j in range(len(population[l])):
                 population[l][j] = population[l][j][:3]
 
+        timestamp = timeit.default_timer() - start
         for j in range(len(population)):
             temp_score = calculateScore(map, population[j])
-            temp_queue.put((10000 - temp_score, population[j]))
+            temp_queue.put((10000 - temp_score, [population[j],timestamp]))
+
+        # for trial use:
+        first = temp_queue.get()
+        trial_use.append([10000-first[0],first[1][1]])
+        temp_queue.put((first[0],[first[1][0],first[1][1]]))
+        elapsedTime = timeit.default_timer() - start
+
+        if elapsedTime > time_limit:
+            break
 
     result = temp_queue.get()
 
-    return result
+    return result,elapsedTime,trial_use
 
 
 # Genetic Algorithm:
@@ -797,10 +836,10 @@ def GeneticAlgorithm(map,generations):
 print("------------ Urban Planning --------------")
 print("Please Select Map File (text file only)")
 map_trial = ReadFromFile()
-print("site number :",map_trial.siteAmount)
-print("cost Map ",map_trial.costMap)
-print("scenic view ",map_trial.scenicCoord)
-print("toxic view ",map_trial.toxicCoord)
+# print("site number :",map_trial.siteAmount)
+# print("cost Map ",map_trial.costMap)
+# print("scenic view ",map_trial.scenicCoord)
+# print("toxic view ",map_trial.toxicCoord)
 
 print("Please choose: 1 for Hill Climbing. 2 for Genetic Algorithm:")
 number = int(input())
@@ -808,7 +847,10 @@ number = int(input())
 if number == 1:
     print("Hill Climbing: ")
     start = timeit.default_timer()
-    result,score = hillClimbing(map_trial)
+    print("Please Input Running Time:")
+    time_limit = int(input())
+
+    result,score = hillClimbing(map_trial,time_limit)
     end = timeit.default_timer()
 
     print("The result: ")
@@ -816,19 +858,41 @@ if number == 1:
     print("The score: "+str(score[0]))
     print("When achieved: " + str(score[1]))
     print("Elpased Time: " + str(end-start))
+    printMap(result,map_trial)
 
 elif number == 2:
     print("Genetic Algorithm:")
-    start = timeit.default_timer()
-    result = GeneticAlgorithm(map_trial,1000)
-    end = timeit.default_timer()
+    print("Please Input Running Time:")
+    time_limit = int(input())
+
+    result,elapse_time,trial_use = GeneticAlgorithm(map_trial,time_limit)
 
     print("The result: ")
-    print(result)
+    print(result[1][0])
     print("The score: "+str(10000 - result[0]))
-    print("Elpased Time: " + str(end-start))
-
+    print("Time acheived the score:",result[1][1])
+    print("Elpased Time: " + str(elapse_time))
+    printMap(result[1][0], map_trial)
 else:
     print("Input Error. Please restart the program")
     exit()
 
+x = []
+y = []
+
+for i in range(len(trial_use)):
+    y.append(trial_use[i][0])
+    x.append(trial_use[i][1])
+
+###plot:
+# print(trial_use)
+plt.figure()
+
+plt.plot(y, linewidth=1)  # linewidth决定绘制线条的粗细
+
+plt.title('Genetic Algorithm (Full Version) ', fontsize=14)  # 标题
+plt.xlabel('Iteration Number', fontsize=10)
+plt.ylabel('Score', fontsize=10)
+
+# plt.tick_params(axis='both', labelsize=14)  # 刻度加粗
+plt.show()  # 输出图像
