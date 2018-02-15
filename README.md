@@ -5,6 +5,7 @@ when running the code, first enter the number of queen, such that when entering 
 then , the result will be printed on the screen.
 
 For urban planning:
+    you need package "numpy" to run this code.
     1.run "urban_planning_new.py"
     2.input "1" or "2" in command line to chose either to use hill climbing or genetic algorithm.
     3.input a number to decide the time duration that you want the program run.
