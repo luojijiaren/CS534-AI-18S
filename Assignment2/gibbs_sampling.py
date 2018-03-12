@@ -1,10 +1,12 @@
-import numpy as np
 import pandas as pd
+from random import randint
+import random
 
 class BayesNet(object):
 
     def __init__(self):
         self.NodeDict = dict()
+        self.sampleDict = dict()
 
     # One dictionary mapping to another dictionary
     def addNode(self,name,children,parents,table,category):
@@ -64,9 +66,80 @@ class BayesNet(object):
             else:
                 return cpd
 
-    def gibbs_sampling(self):
+    def initialize(self,evidenceDict):
+
+        nodes_all = set(self.NodeDict.keyes())
+        evi_node_set = set(evidenceDict.keys())
+        other_node_set = nodes_all - evi_node_set
+
+        # set evidence node and their condition
+        for key in evidenceDict:
+            self.sampleDict[key] = self.NodeDict[key]
+            self.sampleDict[key][category] = evidenceDict[key]
+
+        for key in other_node_set:
+            temp_cate_list = list(self.NodeDict[key]['category'])
+            temp_index = randint(0,len(temp_cate_list)-1)
+            self.sampleDict[key] = self.NodeDict[key]
+            self.sampleDict[key]['category'] = temp_cate_list[temp_index]
+
+    # random
+    def random_pick(self,cate_list, probabilities):
+        x = random.uniform(0, 1)
+        cumulative_probability = 0.0
+        for item, item_probability in zip(cate_list, probabilities):
+            cumulative_probability += item_probability
+            if x < cumulative_probability:
+                break
+        return item
+
+    def markov_blanket_cal(self,node):
+
+
 
         return
+
+    def random_sample(self,evidenceDict):
+
+        nodes_all = set(self.NodeDict.keys())
+        evi_node_set = set(evidenceDict.keys())
+        other_node_set = list(nodes_all - evi_node_set)
+
+        length = len(other_node_set)
+
+        # Sample one node randomly
+        index = randint(0,length-1)
+        key = other_node_set[index]
+
+        # According the Markov Blanket, calculate the category that it may appear
+        prob_list = self.markov_blanket_cal(key)
+        category = self.random_pick(list(self.NodeDict[key]['category']),prob_list)
+        self.sampleDict[key]['category'] = category
+
+
+
+    def gibbs_sampling(self, predictNode, evidenceDict, iteration, discard):
+
+        self.initialize(evidenceDict)
+        cat_list = list(self.NodeDict[predictNode]['category'])
+        cat_num_list = [0] * len(self.NodeDict[predictNode])
+
+        for i in range(0,iteration):
+            self.random_sample(evidenceDict)
+
+            cat_value = self.sampleDict[predictNode]['category']
+            temp_position = cat_list.index(cat_value)
+            cat_num_list[temp_position] = cat_num_list[temp_position] + 1
+
+        new_cat_num_list = []
+        for i in range(0,len(cat_num_list)):
+            new_cat_num_list.append(cat_num_list[i]/iteration)
+
+
+        result_data_frame = pd.DataFrame(data=new_cat_num_list,columns=self.NodeDict[predictNode]['category'])
+
+
+        return result_data_frame
 
 
 
