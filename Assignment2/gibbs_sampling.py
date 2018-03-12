@@ -135,11 +135,8 @@ class BayesNet(object):
         for i in range(0,len(cat_num_list)):
             new_cat_num_list.append(cat_num_list[i]/iteration)
 
-
-        result_data_frame = pd.DataFrame(data=new_cat_num_list,columns=self.NodeDict[predictNode]['category'])
-
-
-        return result_data_frame
+        # output the result values
+        return self.NodeDict[predictNode]['category'],new_cat_num_list
 
 
 
