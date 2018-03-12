@@ -1,4 +1,4 @@
-# Assignment CS 534 18 SPRING
+# WPI CS 534 - Artificial Intelligence 18 SPRING Assignments
 
 Group 10, 5 Assignments 
 
