@@ -1,10 +1,7 @@
 import pandas as pd
 from random import randint
 import random
-<<<<<<< HEAD
 import copy
-=======
->>>>>>> 73f1dc0100b4a6da6ba61d515797673b5889255d
 
 class BayesNet(object):
 
@@ -72,17 +69,12 @@ class BayesNet(object):
 
     def initialize(self,evidenceDict):
 
-<<<<<<< HEAD
         nodes_all = set(self.NodeDict.keys())
-=======
-        nodes_all = set(self.NodeDict.keyes())
->>>>>>> 73f1dc0100b4a6da6ba61d515797673b5889255d
         evi_node_set = set(evidenceDict.keys())
         other_node_set = nodes_all - evi_node_set
 
         # set evidence node and their condition
         for key in evidenceDict:
-<<<<<<< HEAD
             self.sampleDict[key] = copy.deepcopy(self.NodeDict[key])
             self.sampleDict[key]['category'] = copy.deepcopy(evidenceDict[key])
 
@@ -91,16 +83,6 @@ class BayesNet(object):
             temp_index = randint(0,len(temp_cate_list)-1)
             self.sampleDict[key] = copy.deepcopy(self.NodeDict[key])
             self.sampleDict[key]['category'] = copy.deepcopy(temp_cate_list[temp_index])
-=======
-            self.sampleDict[key] = self.NodeDict[key]
-            self.sampleDict[key][category] = evidenceDict[key]
-
-        for key in other_node_set:
-            temp_cate_list = list(self.NodeDict[key]['category'])
-            temp_index = randint(0,len(temp_cate_list)-1)
-            self.sampleDict[key] = self.NodeDict[key]
-            self.sampleDict[key]['category'] = temp_cate_list[temp_index]
->>>>>>> 73f1dc0100b4a6da6ba61d515797673b5889255d
 
     # random
     def random_pick(self,cate_list, probabilities):
@@ -112,7 +94,6 @@ class BayesNet(object):
                 break
         return item
 
-<<<<<<< HEAD
     #calculate the coefficient alpha
     def markov_blanket_cal(self,node):
 
@@ -185,19 +166,6 @@ class BayesNet(object):
 
     # name is set, actually a list
     def random_sample(self,other_node_set):
-=======
-    def markov_blanket_cal(self,node):
-
-
-
-        return
-
-    def random_sample(self,evidenceDict):
-
-        nodes_all = set(self.NodeDict.keys())
-        evi_node_set = set(evidenceDict.keys())
-        other_node_set = list(nodes_all - evi_node_set)
->>>>>>> 73f1dc0100b4a6da6ba61d515797673b5889255d
 
         length = len(other_node_set)
 
@@ -207,20 +175,14 @@ class BayesNet(object):
 
         # According the Markov Blanket, calculate the category that it may appear
         prob_list = self.markov_blanket_cal(key)
-<<<<<<< HEAD
         category = self.random_pick(list(copy.deepcopy(self.NodeDict[key]['category'])),prob_list)
         self.sampleDict[key]['category'] = copy.deepcopy(category)
-=======
-        category = self.random_pick(list(self.NodeDict[key]['category']),prob_list)
-        self.sampleDict[key]['category'] = category
->>>>>>> 73f1dc0100b4a6da6ba61d515797673b5889255d
 
 
 
     def gibbs_sampling(self, predictNode, evidenceDict, iteration, discard):
 
         self.initialize(evidenceDict)
-<<<<<<< HEAD
         cat_list = copy.deepcopy(self.NodeDict[predictNode]['category'])
         cat_num_list = [0] * len(cat_list)
 
@@ -232,19 +194,11 @@ class BayesNet(object):
 
         for i in range(0,iteration):
             self.random_sample(other_node_set)
-=======
-        cat_list = list(self.NodeDict[predictNode]['category'])
-        cat_num_list = [0] * len(self.NodeDict[predictNode])
-
-        for i in range(0,iteration):
-            self.random_sample(evidenceDict)
->>>>>>> 73f1dc0100b4a6da6ba61d515797673b5889255d
 
             cat_value = self.sampleDict[predictNode]['category']
             temp_position = cat_list.index(cat_value)
             cat_num_list[temp_position] = cat_num_list[temp_position] + 1
 
-<<<<<<< HEAD
             if i < discard:
                 discard_list[temp_position] = discard_list[temp_position] + 1
 
@@ -257,14 +211,6 @@ class BayesNet(object):
 
         # output the result values
         return cat_list,new_cat_num_list
-=======
-        new_cat_num_list = []
-        for i in range(0,len(cat_num_list)):
-            new_cat_num_list.append(cat_num_list[i]/iteration)
-
-        # output the result values
-        return self.NodeDict[predictNode]['category'],new_cat_num_list
->>>>>>> 73f1dc0100b4a6da6ba61d515797673b5889255d
 
 
 
@@ -279,11 +225,7 @@ network.addNode('age',['price'],['location'],[(('good'),(0.3,0.7)),(('bad'),(0.6
 
 name = 'price'
 children = [None]
-<<<<<<< HEAD
 parents = ['location','age','schools','size']
-=======
-parents = ['age','location','schools','size']
->>>>>>> 73f1dc0100b4a6da6ba61d515797673b5889255d
 cpd = []
 cpd.append((('good','old','bad','small'),(0.5,0.4,0.1)))
 cpd.append((('good','old','bad','medium'),(0.4,0.45,0.15)))
@@ -332,7 +274,6 @@ cpd.append((('ugly','new','bad','large'),(0.61,0.32,0.07)))
 cpd.append((('ugly','new','good','small'),(0.48,0.42,0.1)))
 cpd.append((('ugly','new','good','medium'),(0.41,0.39,0.2)))
 cpd.append((('ugly','new','good','large'),(0.37,0.33,0.3)))
-<<<<<<< HEAD
 
 category = ('cheap','ok','expensive')
 network.addNode(name,children,parents,cpd,category)
@@ -350,16 +291,7 @@ predictNode = 'price'
 evidenceDict = {'location':'ugly','size':'small'}
 iteration = 10000
 discard = 10
-=======
 
-category = ('cheap','ok','expensive')
-network.addNode(name,children,parents,cpd,category)
->>>>>>> 73f1dc0100b4a6da6ba61d515797673b5889255d
-
-td = None
-# network.get_prob('price',evidence={'size':'small'})
-df = network.get_prob('price')
-print(df)
 
 cat,cat_num_prob = network.gibbs_sampling(predictNode,evidenceDict,iteration,discard)
 print(cat)
