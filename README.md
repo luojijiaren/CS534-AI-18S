@@ -1,4 +1,4 @@
-# Assignment CS 534 18 SPRING
+# WPI CS 534 - Artificial Intelligence 18 SPRING Assignments
 
 Group 10, 5 Assignments 
 
@@ -13,3 +13,8 @@ Group 10, 5 Assignments
 ### Assignment 3:
 1. Basic EM (Expectation Maximization) Algorithm
 2. Extended EM Algorithm Implementation 
+
+### Assignment 4:
+
+
+### Assignment 5
