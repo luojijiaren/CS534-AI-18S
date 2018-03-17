@@ -1,6 +1,8 @@
 import xlrd
-import xdrlib,sys
+import xdrlib, sys
 import random
+import matplotlib as mpl
+import matplotlib.pyplot as plt
 
 def open_file():
     data = xlrd.open_workbook('CS534 assignment 2 network.xlsx')
@@ -190,14 +192,15 @@ def gibbs_sampling():
     level=[0,0,0,0,0,0,0,0]
     state=[0,0,0,0,0,0,0,0]
     for i in range(len(evidence)):
-        a=evidence[i].split('=')
+        a = evidence[i].split('=')
         level[mk.index(a[0])]=1
         state[mk.index(a[0])]=a[1]
-    state=set_start_state(level, state)
-    discard=int(discard_num)
+    state = set_start_state(level, state)
+    discard = int(discard_num)
     m=0
     n=0
     k=0
+    result=[]
     for i in range(int(iteration_num)):
         state = one_iteration(list, level, state)
         if discard == 0:
@@ -206,21 +209,25 @@ def gibbs_sampling():
                     m=m+1
                 else:
                     n=n+1
+                result.append([m/(m+n),n/(m+n)])
             if mk.index(query_node) == 1:
                 if state[1] == 'bad':
                     m=m+1
                 else:
                     n=n+1
+                result.append([m/(m+n), n/(m+n)])
             if mk.index(query_node) == 2:
                 if state[2] == 'bad':
                     m=m+1
                 else:
                     n=n+1
+                result.append([m/(m+n), n/(m+n)])
             if mk.index(query_node) == 3:
                 if state[3] == 'old':
                     m=m+1
                 else:
                     n=n+1
+                result.append([m/(m+n), n/(m+n)])
             if mk.index(query_node) == 4:
                 if state[4] == 'good':
                     m=m+1
@@ -228,6 +235,7 @@ def gibbs_sampling():
                     n=n+1
                 else:
                     k=k+1
+                result.append([m/(m+n+k), n/(m+n+k), k/(m+n+k)])
             if mk.index(query_node) == 5:
                 if state[5] == 'small':
                     m=m+1
@@ -235,11 +243,13 @@ def gibbs_sampling():
                     n=n+1
                 else:
                     k=k+1
+                result.append([m/(m+n+k), n/(m+n+k), k/(m+n+k)])
             if mk.index(query_node) == 6:
                 if state[6] == 'bad':
                     m=m+1
                 else:
                     n=n+1
+                result.append([m/(m+n), n/(m+n)])
             if mk.index(query_node) == 7:
                 if state[7] == 'cheap':
                     m=m+1
@@ -247,36 +257,81 @@ def gibbs_sampling():
                     n=n+1
                 else:
                     k=k+1
+                result.append([m/(m+n+k), n/(m+n+k), k/(m+n+k)])
         else:
             discard = discard-1
-    return query_node, m, n, k
+
+    return query_node, m, n, k, result
 
 mk = ['amenities', 'neighborhood', 'children', 'age', 'location', 'size', 'schools', 'price']
-query_node, m, n, k = gibbs_sampling()
+query_node, m, n, k, result = gibbs_sampling()
 if mk.index(query_node) == 0:
     print('P(amenities=lots)=', m / (m + n))
     print('P(amenities=little)=', n / (m + n))
+    y1 = [x[0] for x in result]
+    y2 = [x[1] for x in result]
+    plt.plot(y1, "x-", label="P(amenities=lots)")
+    plt.plot(y2, "+-", label="P(amenities=little)")
 if mk.index(query_node) == 1:
     print('P(neighborhood=bad)=', m / (m + n))
     print('P(neighborhood=good)=', n / (m + n))
+    y1 = [x[0] for x in result]
+    y2 = [x[1] for x in result]
+    plt.plot(y1, label="P(neighborhood=bad)")
+    plt.plot(y2, label="P(neighborhood=good)")
 if mk.index(query_node) == 2:
     print('P(children=bad)=', m / (m + n))
     print('P(children=good)=', n / (m + n))
+    y1 = [x[0] for x in result]
+    y2 = [x[1] for x in result]
+    plt.plot(y1, label="P(children=bad)")
+    plt.plot(y2, label="P(children=good)")
 if mk.index(query_node) == 3:
     print('P(age=old)=', m / (m + n))
     print('P(age=new)=', n / (m + n))
+    y1 = [x[0] for x in result]
+    y2 = [x[1] for x in result]
+    plt.plot(y1, label="P(age=old)")
+    plt.plot(y2, label="P(ge=new)")
 if mk.index(query_node) == 4:
     print('P(location=good)=', m / (m + n + k))
     print('P(location=bad)=', n / (m + n + k))
     print('P(location=ugly)=', k / (m + n + k))
+    y1 = [x[0] for x in result]
+    y2 = [x[1] for x in result]
+    y3 = [x[2] for x in result]
+    plt.plot(y1, label="P(location=good)")
+    plt.plot(y2, label="P(location=bad)")
+    plt.plot(y3, label="P(location=ugly)")
 if mk.index(query_node) == 5:
     print('P(size=small)=', m / (m + n + k))
     print('P(size=medium)=', n / (m + n + k))
     print('P(size=large)=', k / (m + n + k))
+    y1 = [x[0] for x in result]
+    y2 = [x[1] for x in result]
+    y3 = [x[2] for x in result]
+    plt.plot(y1, label="P(size=small)")
+    plt.plot(y2, label="P(size=medium)")
+    plt.plot(y3, label="P(size=large)")
 if mk.index(query_node) == 6:
     print('P(schools=bad)=', m / (m + n))
     print('P(schools=good)=', n / (m + n))
+    y1 = [x[0] for x in result]
+    y2 = [x[1] for x in result]
+    plt.plot(y1, label="P(schools=bad)")
+    plt.plot(y2, label="P(schools=good)")
 if mk.index(query_node) == 7:
     print('P(price=cheap)=', m / (m + n + k))
     print('P(price=ok)=', n / (m + n + k))
     print('P(price=expensive)=', k / (m + n + k))
+    y1 = [x[0] for x in result]
+    y2 = [x[1] for x in result]
+    y3 = [x[2] for x in result]
+    plt.plot(y1, label="P(price=cheap)")
+    plt.plot(y2, label="P(price=ok))")
+    plt.plot(y3, label="P(price=expensive)")
+plt.xlabel('iteration')
+plt.ylabel('probability')
+plt.grid(True)
+plt.legend(bbox_to_anchor=(1.0, 1), loc=1, borderaxespad=0.)
+plt.show()
