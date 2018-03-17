@@ -19,18 +19,19 @@ import = import*1e-4/8;
 %gdp_growth = gdp_growth * 1e6;
 
 y = [gdp;gdp_growth];
-sensor = [export;import]; %[export;import;employ_rate];
+sensor = [export;import;employ_rate];
 
 % Q matrix 
 %Q = cov(y(1,:),y(2,:));
-Q = [1,0;0,1];
+Q = [1,0;0,1]; % 3*3 [X,1,2;1,Y,3;2,3,Z];
 % R matrix
-% problem is how to set the R covariance
-R = [4, 0;0 ,4];
+% % problem is how to set the R covariance, only with the number of y
+% % variables
+R = [2,0.1,0.2;0.1,3,0.3;0.2,0.3,4]; 
 
 w = mvnrnd([0;0], Q, length(gdp));
 w = w';
-v = mvnrnd([0;0], R, length(gdp));
+v = mvnrnd([0;0;0], R, length(gdp));
 v = v';
 
 H = (sensor - v)/y; %observe model
