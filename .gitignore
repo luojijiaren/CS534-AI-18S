@@ -3,3 +3,6 @@
 *.toc
 *.log
 *.out
+*.bib
+*.bbl
+*.blg
