@@ -8,6 +8,10 @@ This part adopts Python 3.x as the programming language.
 ### Input Format (Should be strictly obeyed)
 gibbs price schools=good location=ugly -u 10000 -d 0
 
+### Output
+
+1. Result of the Probability
+2. The Graph 
 ### Other Information
 This program read the excel file given by the course instructor. 
 The excel file should be put within the same folder with the Python file.
