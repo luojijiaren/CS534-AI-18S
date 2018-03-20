@@ -120,18 +120,18 @@ Group Member
 
 \section{Gibbs Sampling}
 
-\subsection{Procedures}
 
-\subsubsection{Load The Data}
+\subsection{Load The Data}
 
-The data of the Bayesian network is stored on the excel, so when load the excel, this project could get the data we need in the next step. The format of the input is as following:
+The data of the Bayesian network is stored in the excel, so when loading the excel, this project could get the data we need in the next step. The format of the input is as follows:
 
 gibbs price schools=good location=ugly -u 10000 -d 0
 
 The price is the query node, and the schools and location are the evidence nodes. 10000 means the iteration, 0 means discard 0.
 In this step, this project could get the request of the Gibbs sampling.
 
-\subsection{Gibbs Sampling}
+
+\subsection{Operation of Gibbs Sampling}
 
 In order to do the Gibbs sampling, we need to know the information from the excel and input. For each iteration, we need to update the state of every node and store the state after update. After the iteration, the probability could be computed by the stored state.
 
@@ -139,17 +139,298 @@ In order to do the Gibbs sampling, we need to know the information from the exce
 The sequence of updating is shown below:
 ['amenities', 'neighborhood', 'children', 'age', 'location', 'size', 'schools', 'price']
 
-\subsubsection{Operation of Gibbs sampling}
 
-In order to do the gibbs sampling, we need to know the information from the excel and input. For each iteration, we need to update the state of every node and store the state after the update. After the iteration, the probability could be computed by the stored state.
-
-
-The sequence of updating is shown below:
-['amenities', 'neighborhood', 'children', 'age', 'location', 'size', 'schools', 'price']
-
-\paragraph{Set the evidence}
+\subsubsection{Set the evidence}
 
 For no update is made to evidence nodes, we need an approach to distinguish them from the rest nodes.We generate a list to store the information of evidence nodes. 
+
+\subsubsection{Set the Initial State}
+
+Before the iteration, this project needs a start state to do the update. The start state of each node is randomly set with the same probability. For example, for the price, the probability of price=cheap, price=OK and price=expensive are 0.33333 when setting the start state.
+
+\subsubsection{Update of the Node}
+
+After setting the start state, we need to update the node one by one. 
+For each node, if it is not an evidence node, we compute the conditional probabilities according to the Markov blanket. Then set this node according to the new probability. If it is the evidence node, we skip this node.
+
+\subsubsection{Iteration}
+
+After knowing the way updating the nodes, this project needs to update every node without updating evidence nodes. 
+For each iteration, the order of updating node is the order of the sequence. After updating all the nodes in the sequence, if the discard number is 0, the number of the corresponding state of the query node plus 1, if not, discard number = discard number-1
+
+
+\subsection{Result}
+
+After the iteration, this project calculates the probability of the query node by the number of the stored state divided by iteration time(this is calculated by total iteration time - discard time).
+
+The input is: gibbs price schools=good location=ugly -u 30000 -d 0; The result plot is shown below: price1
+
+\begin{figure}[htbp]
+	
+	\centering 
+	\includegraphics[width=10cm]{gs_1}
+	
+	%\caption{Price Result}
+	\label{fig:gb1}
+	
+\end{figure}
+
+The input is: gibbs location schools=good -u 30000 -d 0; The result plot is shown below: location1
+
+\begin{figure}[htbp]
+	
+	\centering 
+	\includegraphics[width=10cm]{gs_2}
+	
+	%\caption{Price Result}
+	\label{fig:gb2}
+	
+\end{figure}
+
+The input is: gibbs children schools=good location=ugly -u 30000 -d 0; The result plot is shown below: children1.
+
+\begin{figure}[htbp]
+	
+	\centering 
+	\includegraphics[width=10cm]{gs_3}
+	
+	%\caption{Price Result}
+	\label{fig:gb3}
+	
+\end{figure}
+
+
+\subsection{Question Solution}
+
+\subsubsection{Samples vs. estimated probability}
+
+For the 3 experiment, we get that for about 15000 iterations, the estimated probability to converge.
+
+For the first plot, the probability converge at about 8000 iterations;
+
+For the second plot, the probability converge at about 9000 iterations;
+
+For the third plot, the probability converge at about 6000 iterations;
+
+\subsubsection{the parameter which influences the number of samples required}
+
+The number of the evidence node could influence.
+The input is: gibbs price schools=good -u 10000 -d 0; The result plot is shown below: 
+
+\begin{figure}[htbp]
+	
+	\centering 
+	\includegraphics[width=10cm]{gs_4}
+	
+	%\caption{Price Result}
+	\label{fig:gb4}
+	
+\end{figure}
+
+The input is: gibbs price schools=good location=ugly -u 10000 -d 0; The result plot is shown below: 
+
+\begin{figure}[htbp]
+	
+	\centering 
+	\includegraphics[width=10cm]{gs_5}
+	
+	%\caption{Price Result}
+	\label{fig:gb5}
+	
+\end{figure}
+
+The input is: gibbs price schools=good location=ugly amenities=lots -u 30000 -d 0; The result plot is shown below: 
+
+\begin{figure}[htbp]
+	
+	\centering 
+	\includegraphics[width=10cm]{gs_6}
+	
+	%\caption{Price Result}
+	\label{fig:gb6}
+	
+\end{figure}
+
+
+From the three plots above:
+For the first plot, the probability converge at about 9000 iterations;
+For the second plot, the probability converge at about 6000 iterations;
+For the third plot, the probability converge at about 4000 iterations;
+Thus, we conclude that the number of evidence nodes will have a positive influence on the speed of convergence.
+
+
+\subsubsection{Does discarding initial samples speed the convergence of probabilities}
+
+
+Yes, it could help speed the convergence of probabilities
+The input is: gibbs location schools=good -u 10000 -d 0; The result plot is shown below:
+
+\begin{figure}[htbp]
+	
+	\centering 
+	\includegraphics[width=10cm]{gs_7}
+	
+	%\caption{Price Result}
+	\label{fig:gb7}
+	
+\end{figure}
+
+\newpage
+
+The input is: gibbs location schools=good -u 10000 -d 100; The result plot is shown below: 
+
+\begin{figure}[htbp]
+	
+	\centering 
+	\includegraphics[width=10cm]{gs_8}
+	
+	%\caption{Price Result}
+	\label{fig:gb8}
+	
+\end{figure}
+
+The input is: gibbs children schools=good location=ugly -u 10000 -d 0; The result plot is shown below: 
+
+\begin{figure}[htbp]
+	
+	\centering 
+	\includegraphics[width=10cm]{gs_9}
+	
+	%\caption{Price Result}
+	\label{fig:gb9}
+	
+\end{figure}
+
+
+The input is: gibbs children schools=good location=ugly -u 30000 -d 0; The result plot is shown below: children1.
+
+\begin{figure}[htbp]
+	
+	\centering 
+	\includegraphics[width=10cm]{gs_10}
+	
+	%\caption{Price Result}
+	\label{fig:gb10}
+	
+\end{figure}
+
+\subsection{Question Solution}
+
+\subsubsection{samples vs. estimated probability}
+
+For the 3 experiment, we get that for about 15000 iterations, the estimated probability to converge.
+For the first plot, the probability converge at about 8000 iterations;
+For the second plot, the probability converge at about 9000 iterations;
+For the third plot, the probability converge at about 6000 iterations;
+
+
+\subsubsection{the parameter which influences the number of samples required}
+
+
+The number of the evidence node could influence.
+The input is: gibbs price schools=good -u 10000 -d 0; The result plot is shown below: 
+
+\begin{figure}[htbp]
+	
+	\centering 
+	\includegraphics[width=10cm]{gs_11}
+	
+	%\caption{Price Result}
+	\label{fig:gb11}
+	
+\end{figure}
+
+The input is: gibbs price schools=good location=ugly -u 10000 -d 0; The result plot is shown below: 
+
+\begin{figure}[htbp]
+	
+	\centering 
+	\includegraphics[width=10cm]{gs_12}
+	
+	%\caption{Price Result}
+	\label{fig:gb12}
+	
+\end{figure}
+
+The input is: gibbs price schools=good location=ugly amenities=lots -u 30000 -d 0; The result plot is shown below: 
+
+\begin{figure}[htbp]
+	
+	\centering 
+	\includegraphics[width=10cm]{gs_13}
+	
+	%\caption{Price Result}
+	\label{fig:gb13}
+	
+\end{figure}
+
+
+From the three plots above:
+For the first plot, the probability converge at about 9000 iterations;
+For the second plot, the probability converge at about 6000 iterations;
+For the third plot, the probability converge at about 4000 iterations;
+Thus, we conclude that the number of evidence nodes will have a positive influence on the speed of convergence.
+
+\subsubsection{Does discarding initial samples speed the convergence of probabilities}
+
+Yes, it could help speed the convergence of probabilities
+The input is: gibbs location schools=good -u 10000 -d 0; The result plot is shown below: 
+
+\begin{figure}[htbp]
+	
+	\centering 
+	\includegraphics[width=10cm]{gs_14}
+	
+	%\caption{Price Result}
+	\label{fig:gb14}
+	
+\end{figure}
+
+The input is: gibbs location schools=good -u 10000 -d 100; The result plot is shown below: 
+
+\newpage
+
+\begin{figure}[htbp]
+	
+	\centering 
+	\includegraphics[width=10cm]{gs_15}
+	
+	%\caption{Price Result}
+	\label{fig:gb15}
+	
+\end{figure}
+
+The input is: gibbs children schools=good location=ugly -u 10000 -d 0; The result plot is shown below: 
+
+\begin{figure}[htbp]
+	
+	\centering 
+	\includegraphics[width=10cm]{gs_16}
+	
+	%\caption{Price Result}
+	\label{fig:gb16}
+	
+\end{figure}
+
+The input is: gibbs children schools=good location=ugly -u 10000 -d 100; The result plot is shown below:
+
+\begin{figure}[htbp]
+	
+	\centering 
+	\includegraphics[width=10cm]{gs_18}
+	
+	%\caption{Price Result}
+	\label{fig:gb18}
+	
+\end{figure}
+
+\newpage
+
+For the first couple, 0 discard converge at about 6000 iterations, while 100 discard converge at about 4000 iterations;
+
+For the second couple, 0 discard converge at about 7000 iterations, while 100 discard converge at about 5000 iterations.
+
+We draw to our conclusion that discarding initial samples do speed the convergence of probabilities.
 
 
 \section{Kalman Filter}
@@ -168,7 +449,7 @@ The second model is use 3 sensors, the 2 sensors are still import and export, th
 \begin{figure}[htbp]
 	
 	\centering 
-	\includegraphics[width=10cm]{graph}
+	\includegraphics[width=13cm]{graph}
 	
 	\caption{Kalman Filter Network}
 	\label{fig:network}
@@ -184,6 +465,8 @@ The graph model of the Kalman filter is on the following:
 
 
 The parameters of the Kalman filter and their equations are on the following~\cite{ref:kf}.
+
+\newpage
 
 For Kalman filter, its parameters are listed in the table~\ref{tab:kf_meaning}:
 
@@ -421,6 +704,8 @@ The estimate result of GDP under the complete model is illustrated in figure~\re
 	\label{fig:kf3}
 	
 \end{figure}
+
+\newpage
 
 \subparagraph{GDP Growth Estimate}
 
