@@ -2,7 +2,18 @@
 
 ## Gibbs Sampling
 
-Use Gibbs sampling algortithm to calculate the probability distribution
+Use Gibbs sampling algortithm to calculate the probability distribution.
+This part adopts Python 3.x as the programming language.
+
+### Input Format (Should be strictly obeyed)
+gibbs price schools=good location=ugly -u 10000 -d 0
+
+### Other Information
+This program read the excel file given by the course instructor. 
+The excel file should be put within the same folder with the Python file.
+
+### Package
+xlread/matlibplot
 
 ## Kalman Filter
 Use Kalman filter to predict the GDP.
