@@ -1,6 +1,6 @@
 # Assignment 2
 
-### Gibbs Sampling
+## Gibbs Sampling
 
 Use Gibbs sampling algortithm to calculate the probability distribution
 
