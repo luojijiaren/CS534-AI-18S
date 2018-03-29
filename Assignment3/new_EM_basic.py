@@ -151,11 +151,15 @@ def Maximization(data,para_dict,prob_matrix):
     ## update sigma
     for i in range(len(data)):
         for j in range(len(para_dict)-1):
-            std_[j][0] += math.sqrt(prob_matrix[i][j] * math.pow(data[i][0] - mean_[j][0] ,2) / denom_[j])
-            std_[j][1] += math.sqrt(prob_matrix[i][j] * math.pow(data[i][1] - mean_[j][1] ,2) / denom_[j])
+            std_[j][0] += prob_matrix[i][j] * math.pow(data[i][0] - mean_[j][0] ,2) / denom_[j]
+            std_[j][1] += prob_matrix[i][j] * math.pow(data[i][1] - mean_[j][1] ,2) / denom_[j]
 
     ## Update the weight parameter
     para_dict['weight'] = denom_ / len(data)
+
+    for j in range(len(para_dict)-1):
+        std_[j][0] = math.sqrt(std_[j][0])
+        std_[j][1] = math.sqrt(std_[j][1])
 
     ### Update other parameters
     for i in range(len(para_dict)-1):
@@ -224,12 +228,12 @@ print("result old pdf",test_old_pdf)
 #
 # print("Weight vector, ", result_pd['weight'])
 
-# for i in range(100):
-#
-#     print("Weight vector, ", para_dict['weight'])
-#     Expectation(data,para_dict,prob_matrix)
-#     Maximization(data,para_dict,prob_matrix)
-#     #print("Weight vector, ", para_dict['weight'])
+for i in range(100):
+
+    print("Weight vector, ", para_dict['weight'])
+    Expectation(data,para_dict,prob_matrix)
+    Maximization(data,para_dict,prob_matrix)
+    #print("Weight vector, ", para_dict['weight'])
 
 
 # result_pd = para_dict
