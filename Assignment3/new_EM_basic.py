@@ -84,8 +84,8 @@ print("y_std",y_std_array)
 ## Initialize the parameter dictionary
 for i in range(cluster_number):
     sub_dict = dict()
-    sub_dict['mu'] = [x_mean_array[i],y_mean_array[i]]
-    sub_dict['sigma'] = [[x_std_array[i],0],[0,y_std_array[i]]]
+    sub_dict['mu'] = np.array([x_mean_array[i],y_mean_array[i]])
+    sub_dict['sigma'] = np.array([[math.sqrt(x_std_array[i]),0],[0,math.sqrt(y_std_array[i])]])
     para_dict[i] = sub_dict
     para_dict['weight'] = np.ones(cluster_number) / cluster_number
 
@@ -100,12 +100,12 @@ def getCDF(value,mu,sigma):
 
 def newGetPDF(data,Mu,sigma):
 
-    data = np.array(data)
-    Mu = np.array(Mu)
-    sigma = np.array(sigma)
+    #data = np.array(data)
+    #Mu = np.array(Mu)
+    #sigma = np.array(sigma)
 
-    sigma_sqrt = math.sqrt(np.linalg.det(sigma))  # 协方差矩阵绝对值的1/2次
-    sigma_inv = np.linalg.inv(sigma)  # 协方差矩阵的逆
+    sigma_sqrt = math.sqrt(np.linalg.det(sigma))
+    sigma_inv = np.linalg.inv(sigma)
     data.shape = (2, 1)
     Mu.shape = (2, 1)
     minus_mu = data - Mu
@@ -122,19 +122,33 @@ def Expectation(data,para_dict,prob_matrix):
 
         # important : multiply the weight
         for j in range(len(para_dict)-1):
-            temp_prob[j] = getPDF(data[i][:2],para_dict[j]['mu'],para_dict[j]['sigma']) * para_dict['weight'][j]
-
+            #temp_prob[j] = getPDF(data[i][:2],para_dict[j]['mu'],para_dict[j]['sigma']) * para_dict['weight'][j]
+            temp_data = np.array([data[i][0],data[i][1]])
+            temp_prob[j] = newGetPDF(temp_data,para_dict[j]['mu'],para_dict[j]['sigma']) * para_dict['weight'][j]
         temp_prob = temp_prob/np.sum(temp_prob)
         prob_matrix[i] = temp_prob
 
     ## Update the probability matrix directly
     #return prob_matrix
 
+def log_likelihood(prob_matrix):
+
+    log_value = np.zeros(len(prob_matrix[0]))
+
+    for i in range(len(prob_matrix)):
+        for j in range(len(prob_matrix[0])):
+            log_value[j] += np.log(prob_matrix[i][j])
+
+    sum_log = np.sum(log_value)
+
+    return sum_log
+
+
 
 def Maximization(data,para_dict,prob_matrix):
 
     mean_ = np.zeros((len(para_dict)-1,2))
-    std_ = np.zeros((len(para_dict)-1,2))
+    std_ = np.zeros((len(para_dict)-1,2,2))
     denom_ = np.zeros(len(para_dict)-1)
 
     # calculate the denorminator
@@ -151,23 +165,37 @@ def Maximization(data,para_dict,prob_matrix):
     ## update sigma
     for i in range(len(data)):
         for j in range(len(para_dict)-1):
-            std_[j][0] += prob_matrix[i][j] * math.pow(data[i][0] - mean_[j][0] ,2) / denom_[j]
-            std_[j][1] += prob_matrix[i][j] * math.pow(data[i][1] - mean_[j][1] ,2) / denom_[j]
-
+            #std_[j][0] += prob_matrix[i][j] * math.pow(data[i][0] - mean_[j][0] ,2) / denom_[j]
+            #std_[j][1] += prob_matrix[i][j] * math.pow(data[i][1] - mean_[j][1] ,2) / denom_[j]
+            temp_data = np.array([data[i][0],data[i][1]])
+            temp_data.shape = (2,1)
+            temp_mean = np.array([para_dict[j]['mu'][0],para_dict[j]['mu'][1]])
+            temp_mean.shape = (2,1)
+            minus_mu = temp_data - temp_mean
+            std_[j] += prob_matrix[i][j] * (minus_mu ) * np.transpose(minus_mu) / denom_[j]
     ## Update the weight parameter
     para_dict['weight'] = denom_ / len(data)
 
-    for j in range(len(para_dict)-1):
-        std_[j][0] = math.sqrt(std_[j][0])
-        std_[j][1] = math.sqrt(std_[j][1])
+    # for j in range(len(para_dict)-1):
+    #     std_[j][0] = math.sqrt(std_[j][0])
+    #     std_[j][1] = math.sqrt(std_[j][1])
 
     ### Update other parameters
     for i in range(len(para_dict)-1):
-        para_dict[i]['mu'] = [mean_[i][0],mean_[i][1]]
-        para_dict[i]['sigma'] = [[std_[i][0],0],[0,std_[i][1]]]
+        para_dict[i]['mu'] = mean_[i]#[mean_[i][0],mean_[i][1]]
+        para_dict[i]['sigma'] = std_[i]#[[std_[i][0],0],[0,std_[i][1]]]
 
     ### Update the parameter dictionary directly
     #return para_dict
+
+def printVariance(para_dict):
+
+    print("-----------------------")
+    for j in range(len(para_dict)-1):
+        print(para_dict[j]['sigma'])
+
+    print("-----------------------")
+
 
 
 '''
@@ -210,8 +238,8 @@ print("shape",test_value.shape)
 # test_new_pdf = newGetPDF([data[1][0],data[1][1]],para_dict[1]['mu'],sigma_array)
 # print("result new pdf",test_new_pdf)
 
-test_old_pdf = getPDF([data[1][0],data[1][1]],para_dict[1]['mu'],para_dict[1]['sigma'])
-print("result old pdf",test_old_pdf)
+#test_old_pdf = getPDF([data[1][0],data[1][1]],para_dict[1]['mu'],para_dict[1]['sigma'])
+#print("result old pdf",test_old_pdf)
 # result_pm = Expectation(data,para_dict,prob_matrix)
 #
 # print(result_pm)
@@ -228,14 +256,22 @@ print("result old pdf",test_old_pdf)
 #
 # print("Weight vector, ", result_pd['weight'])
 
-for i in range(100):
+log_value = 0
+log_list = []
+for i in range(30):
 
-    print("Weight vector, ", para_dict['weight'])
+    #print("Weight vector, ", para_dict['weight'])
     Expectation(data,para_dict,prob_matrix)
     Maximization(data,para_dict,prob_matrix)
+    log_value = log_likelihood(prob_matrix)
+    #printVariance(para_dict)
+    #print("log likelihood",log_value)
+    log_list.append(log_value)
     #print("Weight vector, ", para_dict['weight'])
 
-
+plt.figure()
+plt.plot(log_list)
+plt.show()
 # result_pd = para_dict
 #
 # for i in range(cluster_number):
