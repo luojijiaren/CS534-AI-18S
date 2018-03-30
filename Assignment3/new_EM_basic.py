@@ -3,92 +3,7 @@ import numpy as np
 import math
 import random
 import matplotlib.pyplot as plt
-
-file_read = pd.read_csv("sample EM data.csv")
-data = file_read.values
-data = np.insert(data, 2, 0, axis=1)
-
-#print("data, ",data)
-
-cluster_number = 3 # cluster number
-
-x_range = [np.transpose(data)[0].min(), np.transpose(data)[0].max()]
-y_range = [np.transpose(data)[1].min(), np.transpose(data)[1].max()]
-x_std = np.std(np.transpose(data)[0])
-y_std = np.std(np.transpose(data)[1])
-
-prob_matrix = np.ones((len(data),cluster_number))
-prob_matrix = prob_matrix / cluster_number
-
-# Initialize the parameters
-para_dict = dict()
-
-point = random.sample(data.tolist(),cluster_number)
-point = np.array(point)
-print("point",point)
-# x_test = np.transpose(point)[0]
-# print("x test",x_test)
-
-def generateNumber(low,high,number):
-
-    result = np.zeros(number)
-    for i in range(number):
-        result[i] = np.random.uniform(low,high,size=1)[0]
-
-    return result
-
-for i in range(len(data)):
-    data[i][2] = np.random.randint(0,cluster_number,1)
-
-div_list = []
-for j in range(cluster_number):
-
-    sub_list = []
-    for i in range(len(data)):
-        if data[i][2] == j:
-            sub_list.append([data[i][0],data[i][1]])
-
-    div_list.append(sub_list)
-
-print("div list len",len(div_list))
-
-x_std_array = np.zeros(cluster_number)
-y_std_array = np.zeros(cluster_number)
-x_mean_array = np.zeros(cluster_number)
-y_mean_array = np.zeros(cluster_number)
-
-for j in range(cluster_number):
-    temp_ = np.array(div_list[j])
-
-    x_std_array[j] = np.std(np.transpose(temp_)[0])
-    y_std_array[j] = np.std(np.transpose(temp_)[1])
-    idx = np.random.randint(len(div_list[j]), size=1)[0]
-    #x_mean_array[j] = div_list[j][idx][0]
-    #y_mean_array[j] = div_list[j][idx][1]
-    x_mean_array[j] = np.mean(np.transpose(temp_)[0])
-    y_mean_array[j] = np.mean(np.transpose(temp_)[1])
-
-
-# x_mean_array = np.transpose(point)[0]
-# y_mean_array = np.transpose(point)[1]
-# # x_std_array = np.random.uniform(low = math.pow(x_std,2), high = cluster_number*math.pow(x_std,2)-10, size = (cluster_number,))
-# # y_std_array = np.random.uniform(low = math.pow(y_std,2), high = cluster_number*math.pow(y_std,2), size = (cluster_number,))
-# x_std_array = generateNumber(5,40,cluster_number)
-# y_std_array = generateNumber(30,90,cluster_number)
-
-print("x_mean_array",x_mean_array)
-print("y_mean_arry",y_mean_array)
-print("x_std",x_std_array)
-print("y_std",y_std_array)
-
-## Initialize the parameter dictionary
-for i in range(cluster_number):
-    sub_dict = dict()
-    sub_dict['mu'] = np.array([x_mean_array[i],y_mean_array[i]])
-    sub_dict['sigma'] = np.array([[math.sqrt(x_std_array[i]),0],[0,math.sqrt(y_std_array[i])]])
-    para_dict[i] = sub_dict
-    para_dict['weight'] = np.ones(cluster_number) / cluster_number
-
+import copy
 
 def getPDF(value,mu,sigma):
 
@@ -99,10 +14,6 @@ def getCDF(value,mu,sigma):
     return 0.25*(1+math.erf((value[0]-mu[0])/(sigma[0][0]*math.sqrt(2)))) * (1+math.erf((value[1]-mu[1])/(sigma[1][1]*math.sqrt(2))))
 
 def newGetPDF(data,Mu,sigma):
-
-    #data = np.array(data)
-    #Mu = np.array(Mu)
-    #sigma = np.array(sigma)
 
     sigma_sqrt = math.sqrt(np.linalg.det(sigma))
     sigma_inv = np.linalg.inv(sigma)
@@ -118,7 +29,7 @@ def newGetPDF(data,Mu,sigma):
 def Expectation(data,para_dict,prob_matrix):
 
     for i in range(len(data)):
-        temp_prob = np.zeros(3)
+        temp_prob = np.zeros(len(para_dict)-1)
 
         # important : multiply the weight
         for j in range(len(para_dict)-1):
@@ -138,12 +49,11 @@ def log_likelihood(prob_matrix):
     for i in range(len(prob_matrix)):
         for j in range(len(prob_matrix[0])):
             log_value[j] += np.log(prob_matrix[i][j])
+            #log_value[j] += prob_matrix[i][j]
 
     sum_log = np.sum(log_value)
 
-    return sum_log
-
-
+    return -sum_log
 
 def Maximization(data,para_dict,prob_matrix):
 
@@ -192,91 +102,139 @@ def printVariance(para_dict):
 
     print("-----------------------")
     for j in range(len(para_dict)-1):
-        print(para_dict[j]['sigma'])
-
+        print("*****")
+        print("mu, ", para_dict[j]['mu'])
+        print("sigma ", para_dict[j]['sigma'])
+        print("*****")
     print("-----------------------")
 
+def BICEquation(log_likelihood,K,N):
+
+    return 2*log_likelihood + K*np.log(N)
+
+def EM(data,para_dict,prob_matrix):
+
+    log_value = 0
+    log_list = []
+    # for i in range(30):
+    epsilon = 0.1
+    difference = 10
+    delta_mu = 3
+
+    while delta_mu > epsilon:
+        #print("Weight vector, ", para_dict['weight'])
+
+        delta_mu = 0
+        last_para = copy.deepcopy(para_dict)
+
+        Expectation(data,para_dict,prob_matrix)
+        Maximization(data,para_dict,prob_matrix)
+        log_value = log_likelihood(prob_matrix)
+        #printVariance(para_dict)
+        #print("log likelihood",log_value)
+        log_list.append(log_value)
+
+        now_para = copy.deepcopy(para_dict)
+
+        for i in range(len(para_dict)-1):
+            #delta_mu += abs(now_para[i]['mu'][0] - last_para[i]['mu'][0]) + abs(now_para[i]['mu'][1] - last_para[i]['mu'][1])
+            delta_mu += math.sqrt(math.pow(now_para[i]['mu'][0] - last_para[i]['mu'][0],2) + math.pow(now_para[i]['mu'][1] - last_para[i]['mu'][1],2))
+        #print(delta_mu)
 
 
-'''
-for iter in range(100):
+            #if len(log_list) > 2:
+            #difference = log_list[len(log_list)-1] - log_list[len(log_list)-2]
+    bic = BICEquation(log_list[-1], cluster_number, len(data))
 
-    prob_matrix = Expectation(data,para_dict,prob_matrix)
+    return log_list[-1],bic
 
-    para_dict = Maximization(data,para_dict,prob_matrix)
+def InitializeParameter(data,cluster_number):
 
-print(prob_matrix)
+    ### The data
+    data = np.insert(data, 2, 0, axis=1)
 
-for i in range(len(data)):
+    for i in range(len(data)):
+        data[i][2] = np.random.randint(0, cluster_number, 1)
 
-    index = np.argmax(prob_matrix[i])
-    print(index)
-    data[i][2] = index
+    prob_matrix = np.ones((len(data),cluster_number))
+    prob_matrix = prob_matrix / cluster_number
+
+    # Initialize the parameters
+    para_dict = dict()
+
+    point = random.sample(data.tolist(),cluster_number)
+    point = np.array(point)
+    print("point",point)
+
+    div_list = []
+    for j in range(cluster_number):
+
+        sub_list = []
+        for i in range(len(data)):
+            if data[i][2] == j:
+                sub_list.append([data[i][0],data[i][1]])
+
+        div_list.append(sub_list)
+
+    print("div list len",len(div_list))
+
+    x_std_array = np.zeros(cluster_number)
+    y_std_array = np.zeros(cluster_number)
+    x_mean_array = np.zeros(cluster_number)
+    y_mean_array = np.zeros(cluster_number)
+
+    for j in range(cluster_number):
+        temp_ = np.array(div_list[j])
+
+        x_std_array[j] = np.std(np.transpose(temp_)[0])
+        y_std_array[j] = np.std(np.transpose(temp_)[1])
+        x_mean_array[j] = np.mean(np.transpose(temp_)[0])
+        y_mean_array[j] = np.mean(np.transpose(temp_)[1])
+
+    ## Initialize the parameter dictionary
+    for i in range(cluster_number):
+        sub_dict = dict()
+        sub_dict['mu'] = np.array([x_mean_array[i],y_mean_array[i]])
+        sub_dict['sigma'] = np.array([[math.sqrt(x_std_array[i]),0],[0,math.sqrt(y_std_array[i])]])
+        para_dict[i] = sub_dict
+        para_dict['weight'] = np.ones(cluster_number) / cluster_number
+
+    return data,para_dict,prob_matrix
+
+def getResult(data,cluster_number):
+
+    data, para_dict, prob_matrix = InitializeParameter(data, cluster_number)
+    log_value, bic = EM(data,para_dict,prob_matrix)
+
+    return log_value,bic
 
 
+def getOptimalNumber(data,X):
 
-plt.figure(1)
-plt.scatter(np.transpose(data)[0],np.transpose(data)[1],c=np.transpose(data)[2])
+    BIC_list = []
+    log_value_list = []
 
-plt.figure(2)
-plt.scatter(np.transpose(data)[0],np.transpose(data)[1])
+    for i in range(2,X+1):
+        temp_log_value,temp_bic = getResult(data,i)
+        log_value_list.append(temp_log_value)
+        BIC_list.append(temp_bic)
 
-plt.show()
+    return BIC_list,log_value_list
 
-'''""
 
-### Test the Expectation function:
+file_read = pd.read_csv("sample EM data v2.csv")
+data = file_read.values
 
-## Test the newPDF
+cluster_number = 5
 
-test_value = np.array([data[1][0],data[1][1]])
-print("shape",test_value.shape)
+BIC_list,log_list = getOptimalNumber(data,cluster_number)
 
-# sigma_array = np.array(para_dict[1]['sigma'])
-# sigma_array = np.power(sigma_array,2)
-# print(sigma_array)
-# test_new_pdf = newGetPDF([data[1][0],data[1][1]],para_dict[1]['mu'],sigma_array)
-# print("result new pdf",test_new_pdf)
-
-#test_old_pdf = getPDF([data[1][0],data[1][1]],para_dict[1]['mu'],para_dict[1]['sigma'])
-#print("result old pdf",test_old_pdf)
-# result_pm = Expectation(data,para_dict,prob_matrix)
+print("BIC list",BIC_list)
 #
-# print(result_pm)
+# print("BIC ",bic)
+# plt.figure()
+# plt.plot(log_list)
+# plt.show()
 #
-#
-# ### Test The Maximization function:
-#
-# result_pd = Maximization(data,para_dict,prob_matrix)
-#
-# for i in range(cluster_number):
-#
-#     for subkey in result_pd[i]:
-#         print("subkey, ", subkey, '\t', "content", result_pd[i][subkey])
-#
-# print("Weight vector, ", result_pd['weight'])
 
-log_value = 0
-log_list = []
-for i in range(30):
 
-    #print("Weight vector, ", para_dict['weight'])
-    Expectation(data,para_dict,prob_matrix)
-    Maximization(data,para_dict,prob_matrix)
-    log_value = log_likelihood(prob_matrix)
-    #printVariance(para_dict)
-    #print("log likelihood",log_value)
-    log_list.append(log_value)
-    #print("Weight vector, ", para_dict['weight'])
-
-plt.figure()
-plt.plot(log_list)
-plt.show()
-# result_pd = para_dict
-#
-# for i in range(cluster_number):
-#
-#     for subkey in result_pd[i]:
-#         print("subkey, ", subkey, '\t', "content", result_pd[i][subkey])
-#
-# print("Weight vector, ", result_pd['weight'])
