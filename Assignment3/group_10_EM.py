@@ -148,12 +148,12 @@ def EM(data,para_dict,prob_matrix):
     cluster_number = len(para_dict) - 1
     bic = BICEquation(log_list[-1], cluster_number, len(data))
 
-    plt.figure()
-    plt.plot(log_list)
-    plt.title("Log-Likelihood vs. Iteration")
-    plt.show()
+    # plt.figure()
+    # plt.plot(log_list)
+    # plt.title("Log-Likelihood vs. Iteration")
+    # plt.show()
 
-    return log_list[-1],bic
+    return log_list,bic
 
 def _EM(data,para_dict,prob_matrix):
     log_value = 0
@@ -236,6 +236,11 @@ def getEMResult(data,cluster_number):
 
     printVariance(para_dict)
 
+    plt.figure()
+    plt.plot(log_value)
+    plt.title("Log-Likelihood vs. Iteration")
+    plt.show()
+
     return log_value,bic
 
 def _getEMResult(data,cluster_number):
@@ -256,7 +261,7 @@ def ExtendedEM(data):
 
     while True:
         k = k + 1
-        temp_log_value,temp_bic = getEMResult(data,k)
+        temp_log_value,temp_bic = _getEMResult(data,k)
         BIC_list.append(temp_bic)
         print("cluster number",k, "BIC ",temp_bic,"log-likelihood ",temp_log_value)
 
@@ -308,7 +313,7 @@ def ExtendedEMResult(data):
 # data = file_read.values
 
 mode=input('Basic EM, enter 1; Extending EM, enter 2:')
-filename= input('enter the path of the file:')
+filename= input('enter the Path of the file:')
 
 if mode =='1':
     k = int(input('enter the k:'))
@@ -318,7 +323,9 @@ if mode =='1':
 
 elif mode=='2':
     data = pd.read_csv(filename).values
-    ExtendedEMResult(data)
+    k_best,BIC_list = ExtendedEM(data)
+    print("Best cluster number K:",k_best)
+
 else:
     print('Input Error. Please Re-input.')
 
