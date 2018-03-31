@@ -127,7 +127,8 @@ def EM_extend(filename, esp):
     return k_best,BIC
 
 mode=input('Basic EM, enter 1; Extending EM, enter 2:')
-filename=input('enter the name of the file:')
+filename= "sample EM data v2.csv"#input('enter the name of the file:')
+
 if mode =='1':
     k = int(input('enter the k:'))
     p_weight, Sigma, Mu, log_lhod = EM_basic(filename, k, 0.1)

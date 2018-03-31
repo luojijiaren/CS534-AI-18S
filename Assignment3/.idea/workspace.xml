@@ -10,95 +10,7 @@
     <option name="LAST_RESOLUTION" value="IGNORE" />
   </component>
   <component name="FileEditorManager">
-    <leaf SIDE_TABS_SIZE_LIMIT_KEY="300">
-      <file leaf-file-name="basic_EM.py" pinned="false" current-in-tab="false">
-        <entry file="file://$PROJECT_DIR$/basic_EM.py">
-          <provider selected="true" editor-type-id="text-editor">
-            <state relative-caret-position="315">
-              <caret line="304" column="24" lean-forward="true" selection-start-line="304" selection-start-column="24" selection-end-line="304" selection-end-column="24" />
-              <folding>
-                <element signature="e#0#11#0" expanded="true" />
-              </folding>
-            </state>
-          </provider>
-        </entry>
-      </file>
-      <file leaf-file-name="new_EM_basic.py" pinned="false" current-in-tab="true">
-        <entry file="file://$PROJECT_DIR$/new_EM_basic.py">
-          <provider selected="true" editor-type-id="text-editor">
-            <state relative-caret-position="247">
-              <caret line="235" column="20" lean-forward="true" selection-start-line="235" selection-start-column="20" selection-end-line="235" selection-end-column="20" />
-              <folding>
-                <element signature="e#0#19#0" expanded="true" />
-                <element signature="e#2777#2951#0" />
-                <element signature="e#2986#3115#0" />
-                <element signature="e#519#862#0" />
-                <element signature="e#3694#4181#0" />
-                <element signature="e#4307#4595#0" />
-                <element signature="e#4604#6239#0" />
-                <element signature="e#6251#6470#0" />
-                <element signature="e#6604#6641#0" />
-                <element signature="e#3908#5030#0" />
-                <element signature="e#5014#6615#0" />
-                <element signature="e#6715#6869#0" />
-                <element signature="e#6903#7096#0" />
-              </folding>
-            </state>
-          </provider>
-        </entry>
-      </file>
-      <file leaf-file-name="sample EM data.csv" pinned="false" current-in-tab="false">
-        <entry file="file://$PROJECT_DIR$/sample EM data.csv">
-          <provider selected="true" editor-type-id="text-editor" />
-        </entry>
-      </file>
-      <file leaf-file-name="sample EM data v2.csv" pinned="false" current-in-tab="false">
-        <entry file="file://$PROJECT_DIR$/sample EM data v2.csv">
-          <provider selected="true" editor-type-id="text-editor" />
-        </entry>
-      </file>
-      <file leaf-file-name="EM sample data - label.csv" pinned="false" current-in-tab="false">
-        <entry file="file://$PROJECT_DIR$/EM sample data - label.csv">
-          <provider selected="true" editor-type-id="text-editor" />
-        </entry>
-      </file>
-      <file leaf-file-name="demo.py" pinned="false" current-in-tab="false">
-        <entry file="file://$PROJECT_DIR$/demo.py">
-          <provider selected="true" editor-type-id="text-editor">
-            <state relative-caret-position="-520">
-              <caret line="25" column="37" selection-start-line="25" selection-start-column="37" selection-end-line="25" selection-end-column="37" />
-              <folding>
-                <element signature="e#0#31#0" expanded="true" />
-              </folding>
-            </state>
-          </provider>
-        </entry>
-      </file>
-      <file leaf-file-name="temp.py" pinned="false" current-in-tab="false">
-        <entry file="file://$PROJECT_DIR$/temp.py">
-          <provider selected="true" editor-type-id="text-editor">
-            <state relative-caret-position="200">
-              <caret line="16" column="1" lean-forward="true" selection-start-line="16" selection-start-column="1" selection-end-line="16" selection-end-column="1" />
-              <folding>
-                <element signature="e#0#19#0" expanded="true" />
-              </folding>
-            </state>
-          </provider>
-        </entry>
-      </file>
-      <file leaf-file-name="GMM.py" pinned="false" current-in-tab="false">
-        <entry file="file://$PROJECT_DIR$/GMM.py">
-          <provider selected="true" editor-type-id="text-editor">
-            <state relative-caret-position="1080">
-              <caret line="56" column="32" selection-start-line="56" selection-start-column="32" selection-end-line="56" selection-end-column="32" />
-              <folding>
-                <element signature="e#25#43#0" expanded="true" />
-              </folding>
-            </state>
-          </provider>
-        </entry>
-      </file>
-    </leaf>
+    <leaf SIDE_TABS_SIZE_LIMIT_KEY="300" />
   </component>
   <component name="FileTemplateManagerImpl">
     <option name="RECENT_TEMPLATES">
@@ -120,7 +32,10 @@
         <option value="$PROJECT_DIR$/GMM.py" />
         <option value="$PROJECT_DIR$/demo.py" />
         <option value="$PROJECT_DIR$/temp.py" />
+        <option value="$PROJECT_DIR$/new_EMMM.py" />
+        <option value="$PROJECT_DIR$/plot.py" />
         <option value="$PROJECT_DIR$/new_EM_basic.py" />
+        <option value="$PROJECT_DIR$/generate.py" />
       </list>
     </option>
   </component>
@@ -135,7 +50,6 @@
       <foldersAlwaysOnTop value="true" />
     </navigator>
     <panes>
-      <pane id="Scope" />
       <pane id="ProjectPane">
         <subPane>
           <expand>
@@ -147,6 +61,7 @@
           <select />
         </subPane>
       </pane>
+      <pane id="Scope" />
     </panes>
   </component>
   <component name="PropertiesComponent">
@@ -220,6 +135,24 @@
       <option name="EMULATE_TERMINAL" value="false" />
       <option name="MODULE_MODE" value="false" />
     </configuration>
+    <configuration name="new_EMMM" type="PythonConfigurationType" factoryName="Python" temporary="true">
+      <module name="Assignment3" />
+      <option name="INTERPRETER_OPTIONS" value="" />
+      <option name="PARENT_ENVS" value="true" />
+      <envs>
+        <env name="PYTHONUNBUFFERED" value="1" />
+      </envs>
+      <option name="SDK_HOME" value="" />
+      <option name="WORKING_DIRECTORY" value="$PROJECT_DIR$" />
+      <option name="IS_MODULE_SDK" value="true" />
+      <option name="ADD_CONTENT_ROOTS" value="true" />
+      <option name="ADD_SOURCE_ROOTS" value="true" />
+      <option name="SCRIPT_NAME" value="$PROJECT_DIR$/new_EMMM.py" />
+      <option name="PARAMETERS" value="" />
+      <option name="SHOW_COMMAND_LINE" value="false" />
+      <option name="EMULATE_TERMINAL" value="false" />
+      <option name="MODULE_MODE" value="false" />
+    </configuration>
     <configuration name="new_EM_basic" type="PythonConfigurationType" factoryName="Python">
       <module name="Assignment3" />
       <option name="INTERPRETER_OPTIONS" value="" />
@@ -233,6 +166,24 @@
       <option name="ADD_CONTENT_ROOTS" value="true" />
       <option name="ADD_SOURCE_ROOTS" value="true" />
       <option name="SCRIPT_NAME" value="$PROJECT_DIR$/new_EM_basic.py" />
+      <option name="PARAMETERS" value="" />
+      <option name="SHOW_COMMAND_LINE" value="false" />
+      <option name="EMULATE_TERMINAL" value="false" />
+      <option name="MODULE_MODE" value="false" />
+    </configuration>
+    <configuration name="plot" type="PythonConfigurationType" factoryName="Python">
+      <module name="Assignment3" />
+      <option name="INTERPRETER_OPTIONS" value="" />
+      <option name="PARENT_ENVS" value="true" />
+      <envs>
+        <env name="PYTHONUNBUFFERED" value="1" />
+      </envs>
+      <option name="SDK_HOME" value="" />
+      <option name="WORKING_DIRECTORY" value="$PROJECT_DIR$" />
+      <option name="IS_MODULE_SDK" value="true" />
+      <option name="ADD_CONTENT_ROOTS" value="true" />
+      <option name="ADD_SOURCE_ROOTS" value="true" />
+      <option name="SCRIPT_NAME" value="$PROJECT_DIR$/plot.py" />
       <option name="PARAMETERS" value="" />
       <option name="SHOW_COMMAND_LINE" value="false" />
       <option name="EMULATE_TERMINAL" value="false" />
@@ -257,14 +208,17 @@
       <option name="MODULE_MODE" value="false" />
     </configuration>
     <list>
+      <item itemvalue="Python.plot" />
       <item itemvalue="Python.basic_EM" />
       <item itemvalue="Python.new_EM_basic" />
+      <item itemvalue="Python.new_EMMM" />
       <item itemvalue="Python.temp" />
       <item itemvalue="Python.GMM" />
       <item itemvalue="Python.demo" />
     </list>
     <recent_temporary>
       <list>
+        <item itemvalue="Python.new_EMMM" />
         <item itemvalue="Python.temp" />
         <item itemvalue="Python.demo" />
         <item itemvalue="Python.GMM" />
@@ -286,25 +240,24 @@
   </component>
   <component name="ToolWindowManager">
     <frame x="64" y="-11" width="1537" height="912" extended-state="6" />
-    <editor active="true" />
     <layout>
-      <window_info content_ui="combo" id="Project" order="0" visible="true" weight="0.1674267" />
+      <window_info active="true" content_ui="combo" id="Project" order="0" visible="true" weight="0.1674267" />
       <window_info anchor="bottom" id="TODO" order="6" />
       <window_info anchor="bottom" id="Event Log" order="7" sideWeight="0.50032574" side_tool="true" weight="0.4246231" />
-      <window_info active="true" anchor="bottom" id="Run" order="2" sideWeight="0.49967426" visible="true" weight="0.33919597" />
+      <window_info anchor="bottom" id="Find" order="1" weight="0.32914573" />
       <window_info anchor="bottom" id="Version Control" order="7" show_stripe_button="false" />
       <window_info anchor="bottom" id="Python Console" order="7" />
+      <window_info anchor="bottom" id="Run" order="2" sideWeight="0.49967426" weight="0.26005024" />
       <window_info id="Structure" order="1" side_tool="true" weight="0.25" />
       <window_info anchor="bottom" id="Terminal" order="7" />
-      <window_info anchor="bottom" id="Debug" order="3" weight="0.39949748" />
       <window_info id="Favorites" order="2" side_tool="true" />
+      <window_info anchor="bottom" id="Debug" order="3" weight="0.39949748" />
       <window_info anchor="right" content_ui="combo" id="Hierarchy" order="2" weight="0.25" />
       <window_info anchor="right" id="Commander" internal_type="SLIDING" order="0" type="SLIDING" weight="0.4" />
       <window_info anchor="right" id="Ant Build" order="1" weight="0.25" />
       <window_info anchor="bottom" id="Message" order="0" />
       <window_info anchor="bottom" id="Inspection" order="5" weight="0.4" />
       <window_info anchor="bottom" id="Cvs" order="4" weight="0.25" />
-      <window_info anchor="bottom" id="Find" order="1" />
     </layout>
   </component>
   <component name="VcsContentAnnotationSettings">
@@ -312,10 +265,74 @@
   </component>
   <component name="XDebuggerManager">
     <breakpoint-manager>
-      <option name="time" value="2" />
+      <option name="time" value="17" />
     </breakpoint-manager>
   </component>
   <component name="editorHistoryManager">
+    <entry file="file://$PROJECT_DIR$/basic_EM.py">
+      <provider selected="true" editor-type-id="text-editor">
+        <state relative-caret-position="6000">
+          <caret line="304" column="24" selection-start-line="304" selection-start-column="24" selection-end-line="304" selection-end-column="24" />
+          <folding>
+            <element signature="e#0#11#0" expanded="true" />
+          </folding>
+        </state>
+      </provider>
+    </entry>
+    <entry file="file://$PROJECT_DIR$/demo.py">
+      <provider selected="true" editor-type-id="text-editor">
+        <state relative-caret-position="500">
+          <caret line="25" column="37" selection-start-line="25" selection-start-column="37" selection-end-line="25" selection-end-column="37" />
+          <folding>
+            <element signature="e#0#31#0" expanded="true" />
+          </folding>
+        </state>
+      </provider>
+    </entry>
+    <entry file="file://$PROJECT_DIR$/temp.py">
+      <provider selected="true" editor-type-id="text-editor">
+        <state relative-caret-position="280">
+          <caret line="16" column="1" lean-forward="true" selection-start-line="16" selection-start-column="1" selection-end-line="16" selection-end-column="1" />
+          <folding>
+            <element signature="e#0#19#0" expanded="true" />
+          </folding>
+        </state>
+      </provider>
+    </entry>
+    <entry file="file://$PROJECT_DIR$/GMM.py">
+      <provider selected="true" editor-type-id="text-editor">
+        <state relative-caret-position="1080">
+          <caret line="56" column="32" selection-start-line="56" selection-start-column="32" selection-end-line="56" selection-end-column="32" />
+          <folding>
+            <element signature="e#25#43#0" expanded="true" />
+          </folding>
+        </state>
+      </provider>
+    </entry>
+    <entry file="file://$PROJECT_DIR$/new_EM_basic.py">
+      <provider selected="true" editor-type-id="text-editor">
+        <state relative-caret-position="4700">
+          <caret line="235" column="20" lean-forward="true" selection-start-line="235" selection-start-column="20" selection-end-line="235" selection-end-column="20" />
+          <folding>
+            <element signature="e#0#19#0" expanded="true" />
+            <element signature="e#143#317#0" />
+            <element signature="e#352#481#0" />
+            <element signature="e#518#861#0" />
+            <element signature="e#913#1511#0" />
+            <element signature="e#1550#2030#0" />
+            <element signature="e#1884#3519#0" />
+            <element signature="e#3428#3698#0" />
+            <element signature="e#3842#3879#0" />
+            <element signature="e#5263#6545#0" />
+            <element signature="e#5436#6692#0" />
+            <element signature="e#6729#6879#0" />
+            <element signature="e#8001#8181#0" />
+            <element signature="e#6480#6886#0" />
+            <element signature="e#6932#7636#0" />
+          </folding>
+        </state>
+      </provider>
+    </entry>
     <entry file="file://$PROJECT_DIR$/basic_EM.py">
       <provider selected="true" editor-type-id="text-editor">
         <state relative-caret-position="1460">
@@ -362,18 +379,20 @@
           <caret line="220" column="1" lean-forward="true" selection-start-line="220" selection-start-column="1" selection-end-line="220" selection-end-column="1" />
           <folding>
             <element signature="e#0#19#0" expanded="true" />
-            <element signature="e#2777#2951#0" />
-            <element signature="e#2986#3115#0" />
-            <element signature="e#519#862#0" />
-            <element signature="e#3694#4181#0" />
-            <element signature="e#4307#4595#0" />
-            <element signature="e#4604#6239#0" />
-            <element signature="e#6251#6470#0" />
-            <element signature="e#6604#6641#0" />
-            <element signature="e#3908#5030#0" />
-            <element signature="e#5014#6615#0" />
-            <element signature="e#6715#6869#0" />
-            <element signature="e#6903#7096#0" />
+            <element signature="e#143#317#0" />
+            <element signature="e#352#481#0" />
+            <element signature="e#518#861#0" />
+            <element signature="e#913#1511#0" />
+            <element signature="e#1550#2030#0" />
+            <element signature="e#1884#3519#0" />
+            <element signature="e#3428#3698#0" />
+            <element signature="e#3842#3879#0" />
+            <element signature="e#5263#6545#0" />
+            <element signature="e#5436#6692#0" />
+            <element signature="e#6729#6879#0" />
+            <element signature="e#8001#8181#0" />
+            <element signature="e#6480#6886#0" />
+            <element signature="e#6932#7636#0" />
           </folding>
         </state>
       </provider>
@@ -394,18 +413,20 @@
           <caret line="203" column="39" lean-forward="true" selection-start-line="203" selection-start-column="39" selection-end-line="203" selection-end-column="39" />
           <folding>
             <element signature="e#0#19#0" expanded="true" />
-            <element signature="e#2777#2951#0" />
-            <element signature="e#2986#3115#0" />
-            <element signature="e#519#862#0" />
-            <element signature="e#3694#4181#0" />
-            <element signature="e#4307#4595#0" />
-            <element signature="e#4604#6239#0" />
-            <element signature="e#6251#6470#0" />
-            <element signature="e#6604#6641#0" />
-            <element signature="e#3908#5030#0" />
-            <element signature="e#5014#6615#0" />
-            <element signature="e#6715#6869#0" />
-            <element signature="e#6903#7096#0" />
+            <element signature="e#143#317#0" />
+            <element signature="e#352#481#0" />
+            <element signature="e#518#861#0" />
+            <element signature="e#913#1511#0" />
+            <element signature="e#1550#2030#0" />
+            <element signature="e#1884#3519#0" />
+            <element signature="e#3428#3698#0" />
+            <element signature="e#3842#3879#0" />
+            <element signature="e#5263#6545#0" />
+            <element signature="e#5436#6692#0" />
+            <element signature="e#6729#6879#0" />
+            <element signature="e#8001#8181#0" />
+            <element signature="e#6480#6886#0" />
+            <element signature="e#6932#7636#0" />
           </folding>
         </state>
       </provider>
@@ -456,18 +477,20 @@
           <caret line="185" lean-forward="true" selection-start-line="185" selection-end-line="185" />
           <folding>
             <element signature="e#0#19#0" expanded="true" />
-            <element signature="e#2777#2951#0" />
-            <element signature="e#2986#3115#0" />
-            <element signature="e#519#862#0" />
-            <element signature="e#3694#4181#0" />
-            <element signature="e#4307#4595#0" />
-            <element signature="e#4604#6239#0" />
-            <element signature="e#6251#6470#0" />
-            <element signature="e#6604#6641#0" />
-            <element signature="e#3908#5030#0" />
-            <element signature="e#5014#6615#0" />
-            <element signature="e#6715#6869#0" />
-            <element signature="e#6903#7096#0" />
+            <element signature="e#143#317#0" />
+            <element signature="e#352#481#0" />
+            <element signature="e#518#861#0" />
+            <element signature="e#913#1511#0" />
+            <element signature="e#1550#2030#0" />
+            <element signature="e#1884#3519#0" />
+            <element signature="e#3428#3698#0" />
+            <element signature="e#3842#3879#0" />
+            <element signature="e#5263#6545#0" />
+            <element signature="e#5436#6692#0" />
+            <element signature="e#6729#6879#0" />
+            <element signature="e#8001#8181#0" />
+            <element signature="e#6480#6886#0" />
+            <element signature="e#6932#7636#0" />
           </folding>
         </state>
       </provider>
@@ -522,8 +545,8 @@
     </entry>
     <entry file="file://$PROJECT_DIR$/temp.py">
       <provider selected="true" editor-type-id="text-editor">
-        <state relative-caret-position="200">
-          <caret line="16" column="1" lean-forward="true" selection-start-line="16" selection-start-column="1" selection-end-line="16" selection-end-column="1" />
+        <state relative-caret-position="280">
+          <caret line="16" column="1" selection-start-line="16" selection-start-column="1" selection-end-line="16" selection-end-column="1" />
           <folding>
             <element signature="e#0#19#0" expanded="true" />
           </folding>
@@ -532,7 +555,7 @@
     </entry>
     <entry file="file://$PROJECT_DIR$/demo.py">
       <provider selected="true" editor-type-id="text-editor">
-        <state relative-caret-position="-520">
+        <state relative-caret-position="400">
           <caret line="25" column="37" selection-start-line="25" selection-start-column="37" selection-end-line="25" selection-end-column="37" />
           <folding>
             <element signature="e#0#31#0" expanded="true" />
@@ -540,43 +563,103 @@
         </state>
       </provider>
     </entry>
-    <entry file="file://$PROJECT_DIR$/EM sample data - label.csv">
-      <provider selected="true" editor-type-id="text-editor" />
-    </entry>
-    <entry file="file://$PROJECT_DIR$/sample EM data v2.csv">
-      <provider selected="true" editor-type-id="text-editor" />
-    </entry>
-    <entry file="file://$PROJECT_DIR$/sample EM data.csv">
-      <provider selected="true" editor-type-id="text-editor" />
-    </entry>
     <entry file="file://$PROJECT_DIR$/basic_EM.py">
       <provider selected="true" editor-type-id="text-editor">
-        <state relative-caret-position="315">
-          <caret line="304" column="24" lean-forward="true" selection-start-line="304" selection-start-column="24" selection-end-line="304" selection-end-column="24" />
+        <state relative-caret-position="6000">
+          <caret line="304" column="24" selection-start-line="304" selection-start-column="24" selection-end-line="304" selection-end-column="24" />
           <folding>
             <element signature="e#0#11#0" expanded="true" />
           </folding>
         </state>
       </provider>
     </entry>
-    <entry file="file://$PROJECT_DIR$/new_EM_basic.py">
+    <entry file="file://$PROJECT_DIR$/build_data.csv">
       <provider selected="true" editor-type-id="text-editor">
-        <state relative-caret-position="247">
-          <caret line="235" column="20" lean-forward="true" selection-start-line="235" selection-start-column="20" selection-end-line="235" selection-end-column="20" />
+        <state relative-caret-position="-21437" />
+      </provider>
+    </entry>
+    <entry file="file://$PROJECT_DIR$/sample EM data.csv">
+      <provider selected="true" editor-type-id="text-editor" />
+    </entry>
+    <entry file="file://$PROJECT_DIR$/EM sample data - label.csv">
+      <provider selected="true" editor-type-id="text-editor" />
+    </entry>
+    <entry file="file://$PROJECT_DIR$/sample EM data v2.csv">
+      <provider selected="true" editor-type-id="text-editor" />
+    </entry>
+    <entry file="file://$PROJECT_DIR$/EM sample v3_test.csv">
+      <provider selected="true" editor-type-id="text-editor">
+        <state relative-caret-position="-21977" />
+      </provider>
+    </entry>
+    <entry file="file://$PROJECT_DIR$/plot.py">
+      <provider selected="true" editor-type-id="text-editor">
+        <state relative-caret-position="-818">
+          <caret line="128" column="29" selection-start-line="128" selection-start-column="29" selection-end-line="128" selection-end-column="29" />
           <folding>
             <element signature="e#0#19#0" expanded="true" />
-            <element signature="e#2777#2951#0" />
-            <element signature="e#2986#3115#0" />
-            <element signature="e#519#862#0" />
-            <element signature="e#3694#4181#0" />
-            <element signature="e#4307#4595#0" />
-            <element signature="e#4604#6239#0" />
-            <element signature="e#6251#6470#0" />
-            <element signature="e#6604#6641#0" />
-            <element signature="e#3908#5030#0" />
-            <element signature="e#5014#6615#0" />
-            <element signature="e#6715#6869#0" />
-            <element signature="e#6903#7096#0" />
+            <element signature="e#246#420#0" />
+            <element signature="e#455#584#0" />
+            <element signature="e#621#964#0" />
+            <element signature="e#1016#1613#0" />
+            <element signature="e#1653#2127#0" />
+            <element signature="e#2180#3490#0" />
+            <element signature="e#3527#3769#0" />
+            <element signature="e#3813#3851#0" />
+            <element signature="e#5227#6360#0" />
+            <element signature="e#6405#6555#0" />
+            <element signature="e#6584#6995#0" />
+          </folding>
+        </state>
+      </provider>
+    </entry>
+    <entry file="file://$PROJECT_DIR$/new_EM_basic.py">
+      <provider selected="true" editor-type-id="text-editor">
+        <state relative-caret-position="-384">
+          <caret line="152" column="45" lean-forward="true" selection-start-line="152" selection-start-column="45" selection-end-line="152" selection-end-column="45" />
+          <folding>
+            <element signature="e#0#19#0" expanded="true" />
+            <element signature="e#143#317#0" />
+            <element signature="e#352#481#0" />
+            <element signature="e#518#861#0" />
+            <element signature="e#913#1511#0" />
+            <element signature="e#1550#2030#0" />
+            <element signature="e#1884#3519#0" />
+            <element signature="e#3428#3698#0" />
+            <element signature="e#3842#3879#0" />
+            <element signature="e#5263#6545#0" />
+            <element signature="e#5436#6692#0" />
+            <element signature="e#6729#6879#0" />
+            <element signature="e#8001#8181#0" />
+            <element signature="e#6480#6886#0" />
+            <element signature="e#6932#7636#0" />
+          </folding>
+        </state>
+      </provider>
+    </entry>
+    <entry file="file://$PROJECT_DIR$/generate.py">
+      <provider selected="true" editor-type-id="text-editor">
+        <state relative-caret-position="250">
+          <caret line="13" column="21" lean-forward="true" selection-start-line="13" selection-start-column="21" selection-end-line="13" selection-end-column="21" />
+          <folding>
+            <element signature="e#0#10#0" expanded="true" />
+          </folding>
+        </state>
+      </provider>
+    </entry>
+    <entry file="file:///usr/local/lib/python3.5/dist-packages/pandas/core/generic.py">
+      <provider selected="true" editor-type-id="text-editor">
+        <state relative-caret-position="152">
+          <caret line="3613" selection-start-line="3613" selection-end-line="3613" />
+        </state>
+      </provider>
+    </entry>
+    <entry file="file://$PROJECT_DIR$/new_EMMM.py">
+      <provider selected="true" editor-type-id="text-editor">
+        <state relative-caret-position="190">
+          <caret line="132" column="10" selection-start-line="131" selection-end-line="143" selection-end-column="26" />
+          <folding>
+            <element signature="e#0#10#0" expanded="true" />
           </folding>
         </state>
       </provider>

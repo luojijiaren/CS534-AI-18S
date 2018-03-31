@@ -1,5 +1,10 @@
 import pandas as pd
 import numpy as np
+import matplotlib.pyplot as plt
+import csv
+import numpy as np
+import pandas as pd
+import numpy as np
 import math
 import random
 import matplotlib.pyplot as plt
@@ -99,7 +104,6 @@ def Maximization(data,para_dict,prob_matrix):
 
 def printVariance(para_dict):
 
-    print("The parameter of the Clustering ")
     print("-----------------------")
     for j in range(len(para_dict)-1):
         print("*****")
@@ -148,49 +152,7 @@ def EM(data,para_dict,prob_matrix):
     cluster_number = len(para_dict) - 1
     bic = BICEquation(log_list[-1], cluster_number, len(data))
 
-    plt.figure()
-    plt.plot(log_list)
-    plt.title("Log-Likelihood vs. Iteration")
-    plt.show()
-
-    return log_list[-1],bic
-
-def _EM(data,para_dict,prob_matrix):
-    log_value = 0
-    log_list = []
-    # for i in range(30):
-    epsilon = 0.01
-    difference = 10
-    delta_mu = 300
-    #cluster_number = len(para_dict) - 1
-
-    while delta_mu > epsilon:
-        #print("Weight vector, ", para_dict['weight'])
-
-        delta_mu = 0
-        last_para = copy.deepcopy(para_dict)
-
-        prob_matrix = Expectation(data,para_dict,prob_matrix)
-        para_dict = Maximization(data,para_dict,prob_matrix)
-        log_value = log_likelihood(prob_matrix)
-        #printVariance(para_dict)
-        #print("log likelihood",log_value)
-        log_list.append(log_value)
-
-        now_para = copy.deepcopy(para_dict)
-
-        for i in range(len(para_dict)-1):
-            delta_mu += abs(now_para[i]['mu'][0] - last_para[i]['mu'][0]) + abs(now_para[i]['mu'][1] - last_para[i]['mu'][1])
-            #delta_mu += math.sqrt(math.pow(now_para[i]['mu'][0] - last_para[i]['mu'][0],2) + math.pow(now_para[i]['mu'][1] - last_para[i]['mu'][1],2))
-        #print(delta_mu)
-        delta_mu = delta_mu / (len(para_dict)-1)
-
-            #if len(log_list) > 2:
-            #difference = log_list[len(log_list)-1] - log_list[len(log_list)-2]
-    cluster_number = len(para_dict) - 1
-    bic = BICEquation(log_list[-1], cluster_number, len(data))
-
-    return log_list[-1], bic
+    return log_list,bic
 
 def InitializeParameter(data,cluster_number):
 
@@ -234,17 +196,6 @@ def getEMResult(data,cluster_number):
     data, para_dict, prob_matrix = InitializeParameter(data, cluster_number)
     log_value, bic = EM(data,para_dict,prob_matrix)
 
-    printVariance(para_dict)
-
-    return log_value,bic
-
-def _getEMResult(data,cluster_number):
-
-    data, para_dict, prob_matrix = InitializeParameter(data, cluster_number)
-    log_value, bic = _EM(data,para_dict,prob_matrix)
-
-    #printVariance(para_dict)
-
     return log_value,bic
 
 def ExtendedEM(data):
@@ -267,61 +218,52 @@ def ExtendedEM(data):
 
     return k_best,BIC_list
 
-def ExtendedEMResult(data):
 
-    total_list = []
+file_read = pd.read_csv("EM sample v3_test.csv")
+data = file_read.values
 
-    for i in range(2, 7):
+log_list,bic = getEMResult(data,1)
+plt.figure()
+plt.plot(log_list)
+plt.title("K=1 Log-Likelihood vs. Iteration")
+plt.show()
 
-        sub_list = []
-        for j in range(20):
-            log_value, bic = _getEMResult(data, i)
-            sub_list.append(bic)
+# out = open('EM sample v3_test.csv','a', newline='')
+#
+# csv_write = csv.writer(out,dialect='excel')
+#
+# mean1=[0,0]
+# mean2=[10,10]
+# mean3=[20,20]
+# cov1= [[100, 1], [1, 100]]
+# cov2= [[10, 1], [1, 10]]
+# cov3= [[50, 1], [1, 50]]
 
-        total_list.append(sub_list)
+# class_ = np.zeros(1119)
+#
+# for i in range(1119):
+#     if i<400:
+#         x, y = np.random.multivariate_normal(mean1, cov1, 1).T
+#         csv_write.writerow([x[0], y[0],1])
+#         #class_[i] = 0
+#
+#     elif 400<i<800:
+#         x, y = np.random.multivariate_normal(mean2, cov2, 1).T
+#         csv_write.writerow([x[0], y[0],2])
+#         #class_[i] = 1
+#
+#     else:
+#         x, y = np.random.multivariate_normal(mean3, cov3, 1).T
+#         csv_write.writerow([x[0], y[0],3])
+#         #class_[i] = 2
+#
+# print ("write over")
 
-    x_ = []
-    label_ = []
-    for i in range(20):
-        x_.append(i + 1)
-
-    for j in range(2, 11):
-        label_.append("cluster k = " + str(j))
-
-    var_ = []
-    for i in range(len(total_list)):
-        arr_ = np.array(total_list[i])
-        var_.append(np.var(arr_ / np.sum(arr_)))
-
-    print("Variance ", var_)
-
-    plt.figure()
-
-    for i in range(len(total_list)):
-        plt.plot(x_, total_list[i], label=str(label_[i]))
-        plt.legend(loc='upper right')
-
-    plt.show()
-
-
-# file_read = pd.read_csv("sample EM data v2.csv")
+# file_read = pd.read_csv("EM sample v3_test.csv")
 # data = file_read.values
-
-mode=input('Basic EM, enter 1; Extending EM, enter 2:')
-filename= input('enter the path of the file:')
-
-if mode =='1':
-    k = int(input('enter the k:'))
-    data = pd.read_csv(filename).values
-    #print(data)
-    getEMResult(data,k)
-
-elif mode=='2':
-    data = pd.read_csv(filename).values
-    ExtendedEMResult(data)
-else:
-    print('Input Error. Please Re-input.')
-
-
-
-
+# print(data.shape)
+#
+# plt.figure()
+# plt.scatter(np.transpose(data)[0],np.transpose(data)[1],c=np.transpose(data)[2])
+# plt.title("Generated File - 3 Clusters")
+# plt.show()
