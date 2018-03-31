@@ -1,11 +1,10 @@
 import csv
 import numpy as np
 
-#打开文件，追加a
 out = open('EM sample v3_test.csv','a', newline='')
-#设定写入模式
+
 csv_write = csv.writer(out,dialect='excel')
-#写入具体内容
+
 mean1=[0,0]
 mean2=[10,10]
 mean3=[20,20]
