@@ -1,14 +1,15 @@
-*.gz
-*.aux
-*.toc
-*.log
-*.out
-*.bib
-*.bbl
-*.blg
 
-/venv/
-/.idea/
-/Assignment3/Demo_EM
+*.xml
+*.xml
+*.xml
+*.pyc
+*.tmp
+*.tmp
+*.xml
+*.xml
+*.xml
+
 /.vscode/
-/Assignment3/.vscode/
+/.idea/
+/Final Project/DrawBoardWithTinker/
+/Final Project/GoBang-master/
