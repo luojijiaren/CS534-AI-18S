@@ -8,6 +8,7 @@
 *.xml
 *.xml
 *.xml
+*.ps
 
 /.vscode/
 /.idea/
