@@ -9,6 +9,10 @@
 *.xml
 *.xml
 *.ps
+*.aux
+*.log
+*.out
+*.synctex.gz
 
 /.vscode/
 /.idea/
