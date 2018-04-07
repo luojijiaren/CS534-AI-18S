@@ -18,3 +18,6 @@
 /.idea/
 /FinalProject/DrawBoardwithTinker/
 /FinalProject/GoBang-master/
+*.toc
+*.blg
+*.bbl
