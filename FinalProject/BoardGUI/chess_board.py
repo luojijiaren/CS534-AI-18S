@@ -48,16 +48,14 @@ def setMenu(_window):
     filemenu.add_command(label="Exit",)
     menubar.add_cascade(label="Save the Board", menu=filemenu)
 
-
     _window.config(menu=menubar)
 
-###----------------------
-### Basic Definition
-###----------------------
+###-----------------------------------
+### Basic Definition of the GUI
+###-----------------------------------
 
 #absolute path of current folder
 dirname = os.path.dirname(__file__)
-
 
 window = tkinter.Tk()
 window.title("Go UI")

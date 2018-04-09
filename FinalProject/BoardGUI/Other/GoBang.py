@@ -59,13 +59,13 @@ class GoBang(object):
         self.window.resizable(0, 0)
         self.can = Canvas(self.window, bg="#EEE8AC", width=700, height=700)
 
-        image = Image.open("/home/jiaming/WPI/CS534/CS534-AI-18S/FinalProject/DrawBoardwithTinker/background_1.jpg")
-        im = ImageTk.PhotoImage(image)
+        #image = Image.open("/home/jiaming/WPI/CS534/CS534-AI-18S/FinalProject/DrawBoardwithTinker/background_1.jpg")
+        #im = ImageTk.PhotoImage(image)
 
-        self.can.create_image(700, 0, image=im)
+        #self.can.create_image(700, 0, image=im)
 
         self.draw_board()
-        self.can.grid(row=0, column=0)
+        self.can.gridd(row=0, column=0)
         self.net_board = self.get_net_board()
         self.robot = Robot(self.board)
         #self.sgf = SGFflie()
