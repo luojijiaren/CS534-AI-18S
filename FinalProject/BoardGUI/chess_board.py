@@ -4,74 +4,52 @@ EMPTY = 0
 BLACK = 1
 WHITE = 2
 
-import tkinter
-from tkinter import *
-import tkinter.font as font
-from PIL import Image,ImageTk
-import os
+class ChessBoard(object):
+    def __init__(self):
+        self.__board = [[EMPTY for n in range(19)] for m in range(19)]
+        self.__dir = [[(-1, 0), (1, 0)], [(0, -1), (0, 1)], [(-1, 1), (1, -1)], [(-1, -1), (1, 1)]]
+        #                (左      右)      (上       下)     (左下     右上)      (左上     右下)
 
-def drawBoard(_board):
-    lengt = 40
-    w_ = 2
+    def board(self):  # 返回数组对象
+        return self.__board
 
-    for i in range(19):
-        _board.create_line(20, 20 + i * lengt, 20 + 18 * lengt, 20 + i * lengt, width=w_)
-        _board.create_line(20 + i * lengt, 20, 20 + i * lengt, 20 + 18 * lengt, width=w_)
+    def draw_xy(self, x, y, state):  # 获取落子点坐标的状态
+        self.__board[x][y] = state
 
-    radius = 5
-    for i in range(3):
-        x_cor_1 = 20 + 3 * lengt
-        y_cor_1 = 20 + 3 * lengt + i * 6 * lengt
-        for j in range(3):
-            x_cor = x_cor_1 + j * 6 * lengt
-            y_cor = y_cor_1
-            _board.create_oval(x_cor - radius, y_cor - radius, x_cor + radius, y_cor + radius, outline='black',
-                                   fill='black')
+    def get_xy_on_logic_state(self, x, y):  # 获取指定点坐标的状态
+        return self.__board[x][y]
 
-def start(_window):
-    _window.mainloop()
+    def get_next_xy(self, point, direction):  # 获取指定点的指定方向的坐标
+        x = point[0] + direction[0]
+        y = point[1] + direction[1]
+        if x < 0 or x >= 19 or y < 0 or y >= 19:
+            return False
+        else:
+            return x, y
 
-def placeButton(_window):
-    labelfont = ('times', 15, 'bold')
-    b1 = Button(_window, text="Start",font = labelfont)
-    #b1.place(x=800, y=100)
-    b1.place(x=810, y=80)
+    def get_xy_on_direction_state(self, point, direction):  # 获取指定点的指定方向的状态
+        if point is not False:
+            xy = self.get_next_xy(point, direction)
+            if xy is not False:
+                x, y = xy
+                return self.__board[x][y]
+        return False
 
-def setMenu(_window):
+    def anyone_win(self, x, y):
+        state = self.get_xy_on_logic_state(x, y)
+        for directions in self.__dir:  # 对米字的4个方向分别检测是否有5子相连的棋
+            count = 1
+            for direction in directions:  # 对落下的棋子的同一条线的两侧都要检测，结果累积
+                point = (x, y)
+                while True:
+                    if self.get_xy_on_direction_state(point, direction) == state:
+                        count += 1
+                        point = self.get_next_xy(point, direction)
+                    else:
+                        break
+            if count >= 5:
+                return state
+        return EMPTY
 
-    # File Menu
-    menubar = Menu(_window)
-    filemenu = Menu(menubar, tearoff=0)
-    filemenu.add_command(label="Open",)
-    filemenu.add_command(label="Save",)
-    filemenu.add_separator()
-    filemenu.add_command(label="Exit",)
-    menubar.add_cascade(label="Save the Board", menu=filemenu)
-
-    _window.config(menu=menubar)
-
-###-----------------------------------
-### Basic Definition of the GUI
-###-----------------------------------
-
-#absolute path of current folder
-dirname = os.path.dirname(__file__)
-
-window = tkinter.Tk()
-window.title("Go UI")
-window.geometry("980x760+200+30") #900x780 is the size of the window, 200 and 30 is the alignment
-window.resizable(width=False,height=False) # Prohibit the resize function
-
-board = tkinter.Canvas(window, width=760, height=760, bg='yellow')
-im = ImageTk.PhotoImage(file=dirname + '/source/background.jpg')
-board.create_image(0, 200, image=im)
-board.grid(row=0, column=0)
-
-#draw line
-drawBoard(board)
-placeButton(window)
-setMenu(window)
-
-
-if __name__ == '__main__':
-    start(window)
+    def reset(self):  # 重置
+        self.__board = [[EMPTY for n in range(19)] for m in range(19)]

@@ -9,19 +9,25 @@
 from PyQt5 import QtCore, QtGui, QtWidgets
 from PyQt5.QtGui import QPixmap, QIcon, QPalette, QPainter, QBrush
 from PyQt5.QtGui import QColor
-from PIL import Image
-from PIL.ImageQt import ImageQt
-from PyQt5.QtCore import QLineF, QRectF
-from PyQt5.QtWidgets import QLabel
+from PyQt5.QtCore import QLineF, QRectF, Qt
+from PyQt5.QtWidgets import QLabel, QMainWindow,QWidget
 import os
 
-class LaBel(QtWidgets.QGraphicsView):
+class LaBel(QLabel):
     def __init__(self, parent):
         super().__init__(parent)
         self.setMouseTracking(True)
 
     def enterEvent(self, e):
-        e.ignore()
+       e.ignore()
+
+class Filter(QtCore.QObject):
+    def __init__(self):
+        super(QtCore.QObject, self).__init__()
+
+    def eventFilter(self, obj, event):
+        #print event.type()
+        return False
 
 class Ui_MainWindow(object):
     def setupUi(self, MainWindow):
@@ -39,7 +45,7 @@ class Ui_MainWindow(object):
         self.scene = QtWidgets.QGraphicsScene()
         #self.scene.addPixmap(QPixmap('C:\\Users\Jiaming Nie\Documents\GitHub\CS534-AI-18S\FinalProject\BoardGUI\source\background.jpg'))
         self.graphicsView.setScene(self.scene)
-        self.graphicsView.setMouseTracking(True)
+        #self.graphicsView.setMouseTracking(True)
         self.graphicsView.setCursor(QtCore.Qt.ClosedHandCursor)
 
         self.pushButton = QtWidgets.QPushButton(self.centralwidget)
@@ -76,8 +82,9 @@ class Ui_MainWindow(object):
         dirname = os.path.dirname(__file__)
         self.graphicsView.black = QPixmap(dirname + '/source/black.png')
         self.graphicsView.white = QPixmap(dirname + '/source/white.png')
-        self.graphicsView.mouse_point = LaBel(self)
 
+        self.graphicsView.setMouseTracking(True)
+        MainWindow.setMouseTracking(True)
 
 
         self.DrawBackground()
@@ -119,5 +126,48 @@ class Ui_MainWindow(object):
                 #self.scene.addEllipse(QRectF(x_cor - radius, y_cor - radius, x_cor + radius, y_cor + radius),pen)
                 self.scene.addEllipse(x_cor -0.5*radius ,y_cor - 0.5*radius, radius,radius,pen,QBrush(QColor(0,0,0)))
 
-    # def mouseMoveEvent(self,e):
-    #     self.graphicsView.mouse_point.move(e.x() - 16, e.y() - 16)
+
+class DisplayMW(QMainWindow):
+
+    def __init__(self):
+        QMainWindow.__init__(self)
+
+        self.ui = Ui_MainWindow()
+        self.ui.setupUi(self)
+        self.ui.graphicsView.setMouseTracking(True)
+        self.filter = Filter()
+        #self.ui.graphicsView.installEventFilter(self.filter)
+        self.installEventFilter(self.filter)
+        #### Black and White
+
+        self.setCursor(Qt.PointingHandCursor)
+        self.mouse_point = LaBel(self)  # 将鼠标图片改为棋子
+        self.mouse_point.setScaledContents(True)
+        self.mouse_point.setPixmap(self.ui.graphicsView.black)  # 加载黑棋
+        self.mouse_point.setGeometry(270, 270, 32, 32)
+        self.mouse_point.raise_()
+        self.setMouseTracking(True)
+
+    def mouseMoveEvent(self, event):
+        if event.x() <= 760 and event.y() <= 760:
+            self.mouse_point.move(event.x() - 16,event.y() - 16)
+        #print("Moved")
+
+    def mousePressEvent(self, event):
+        if event.button() == Qt.LeftButton:
+            print("Pressed")
+
+
+import sys
+
+if __name__ == "__main__":
+    app = QtWidgets.QApplication(sys.argv)
+    # w = QtWidgets.QMainWindow()
+    # ex = Ui_MainWindow()
+    # ex.setupUi(w)
+    # w.show()
+
+    win = DisplayMW()
+    win.show()
+
+    sys.exit(app.exec_())
