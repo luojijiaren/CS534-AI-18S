@@ -1,7 +1,6 @@
 import xlrd
 import numpy as np
 import random
-
 import matplotlib as mpl
 import matplotlib.pyplot as plt
 
@@ -127,6 +126,7 @@ def SARSA(all_value, key, epsilon, alpha, move_cost, gamma):
                         key = key
                     else:
                         key = key + 10
+
             elif 0.2 < p2 <= 0.3:
                 if next_action == 0:
                     if x <= 0:
@@ -134,28 +134,29 @@ def SARSA(all_value, key, epsilon, alpha, move_cost, gamma):
                     elif x - 1 == 0 or type(all_value[key - 10]) == int:
                         key = new_key
                     else:
-                        key = new_key -10
+                        key = key - 20
                 elif next_action == 1:
                     if x >= max_x -1:
                         key = key
-                    elif x + 1 == 0 or type(all_value[key + 10]) == int:
+                    elif x + 1 == max_x -1 or type(all_value[key + 10]) == int:
                         key = new_key
                     else:
-                        key = new_key + 10
+                        key = key + 20
                 elif next_action == 2:
                     if y <= 0:
                         key = key
                     elif y - 1 == 0 or type(all_value[key - 1]) == int:
                         key = new_key
                     else:
-                        key = new_key - 1
+                        key = key - 2
                 elif next_action == 3:
                     if y >= max_y -1:
                         key = key
-                    elif y + 1 == 0 or type(all_value[key + 1]) == int:
+                    elif y + 1 == max_y -1 or type(all_value[key + 1]) == int:
                         key = new_key
                     else:
-                        key = new_key + 1
+                        key = key + 2
+
             if type(all_value[key]) == int:
                 out = 1
                 value = all_value[key]
@@ -168,7 +169,6 @@ def iteration(all_value, epsilon, alpha, move_cost, gamma, iteration_time):
         key = start_point(all_value)
         steps = 0
         while True:
-            print(key)
             all_value, key, value, out, step, next_action = SARSA(all_value, key, epsilon, alpha, move_cost, gamma)
             steps += step
             if out == 1:
@@ -190,27 +190,11 @@ gamma = 1
 start_map = np.array(open_file())
 max_x = len(start_map)
 max_y = len(start_map[0])
+
 all_value = set_start(start_map, value_goal, value_fall, value_giveup,max_x, max_y)
 
-'''
-#key = start_point(all_value)
-for i in range(5):
-    key = start_point(all_value)
-    while True:
-        all_value, key, value, out, step, next_action = SARSA(all_value, key, epsilon, alpha, move_cost, gamma)
-        if out == 1:
-            break
-'''
 all_values, all_value = iteration(all_value, epsilon, alpha, move_cost, gamma, iteration_time)
+
 print(all_values)
 print(all_value)
-'''
-key = 3
-all_value, key, value, out, step, next_action = SARSA(all_value, key, epsilon, alpha, move_cost, gamma)
-print(all_value)
-print(key)
-print(next_action)
-print(value)
-print(out)
-print(step)
-'''
+
