@@ -49,7 +49,6 @@ def SARSA(all_value, key, epsilon, alpha, move_cost, gamma):
     new_key = 0
     value = 0
     step = 1
-    fail = 0
     x = int(key / 10)
     y = key % 10
     p = random.random()
@@ -82,7 +81,7 @@ def SARSA(all_value, key, epsilon, alpha, move_cost, gamma):
         out = 1
         step = 0
         value = all_value[key][next_action]
-    if fail == 0:
+    if out == 0:
         p = random.random()
         if p < epsilon:
             if type(all_value[new_key]) == list:
