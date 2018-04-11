@@ -185,7 +185,7 @@ value_giveup = -3
 epsilon = 0
 alpha = 0.5
 move_cost = -0.1
-gamma = 0.1
+gamma = 1
 start_map = np.array(open_file())
 max_x = len(start_map)
 max_y = len(start_map[0])
@@ -194,7 +194,15 @@ all_value = set_start(start_map, value_goal, value_fall, value_giveup,max_x, max
 
 all_values, all_value = iteration(all_value, epsilon, alpha, move_cost, gamma, iteration_time)
 
+for i in range(len(start_map)):
+    for j in range(len(start_map[0])):
+        if start_map[i][j] == '':
+            start_map[i][j] = action[all_value[10 * i + j].index(max(all_value[10 * i + j]))]
+
+
+
 all_values = np.array(all_values)
+print(start_map)
 mean50 = []
 for i in range(2000):
     temp = np.array(all_values[i * 50: i * 50 + 50])
