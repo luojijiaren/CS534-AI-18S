@@ -179,7 +179,6 @@ def iteration(all_value, epsilon, alpha, move_cost, gamma, iteration_time):
 
 def load_input():
     str = input('Please input:').split()
-    print(str)
     value_goal=int(str[1])
     value_fall=int(str[2])
     move_cost=float(str[3])
@@ -190,13 +189,7 @@ def load_input():
 
 
 action = ['^', 'v', '<', '>', 'T']
-iteration_time = 10000
-value_goal = 5
-value_fall = -2
-value_giveup = -3
-epsilon = 0
 alpha = 0.5
-move_cost = -1
 gamma = 1
 value_goal, value_fall, move_cost, value_giveup, iteration_time, epsilon = load_input()
 start_map = np.array(open_file())
