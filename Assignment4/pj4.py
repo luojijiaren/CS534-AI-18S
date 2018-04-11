@@ -88,6 +88,7 @@ def SARSA(all_value, key, epsilon, alpha, move_cost, gamma):
                 ntnt_action = random.randint(0, len(all_value[new_key]) -1)
             else:
                 value = all_value[new_key]
+                all_value[key][next_action] = old_value + alpha * (move_cost + gamma * value - old_value)
                 out = 1
                 step = 1
         else:
@@ -95,6 +96,7 @@ def SARSA(all_value, key, epsilon, alpha, move_cost, gamma):
                 ntnt_action = all_value[new_key].index(max(all_value[new_key]))
             else:
                 value = all_value[new_key]
+                all_value[key][next_action] = old_value + alpha * (move_cost + gamma * value - old_value)
                 out = 1
                 step = 1
         if out == 0:
