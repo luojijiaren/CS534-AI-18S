@@ -108,30 +108,30 @@ def SARSA(all_value, key, epsilon, alpha, move_cost, gamma):
             elif p2 < 0.1:
                 if next_action == 0 or 1:  #left
                     if y-1 == 0:
-                        key = new_key
+                        key = key
                     else:
                         key = new_key - 1
                 elif next_action == 2 or 3:  #up
                     if x-1 == 0:
-                        key = new_key
+                        key = key
                     else:
                         key = new_key - 10
             elif 0.1 <= p2 <= 0.2:
                 if next_action == 0 or 1:  #right
                     if y+1 == max_y -1:
-                        key = new_key
+                        key = key
                     else:
                         key = new_key + 1
                 elif next_action == 2 or 3:  #down
                     if x+1 == max_x -1:
-                        key = new_key
+                        key = key
                     else:
                         key = new_key + 10
             elif 0.2 < p2 <= 0.3:
                 if next_action == 0:
                     if x - 1 == 0:
                         key = key
-                    elif x - 2 == 0 or type(all_value[key - 10]) != list:
+                    elif x - 2 == 0 or type(all_value[key - 10]) == int:
                         key = new_key
                     else:
                         key = new_key -10
