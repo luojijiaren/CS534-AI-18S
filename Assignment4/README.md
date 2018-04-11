@@ -10,4 +10,4 @@ Reward for reaching goal, reward for falling into pit, move action reward, give 
 2. The score for each gird of the map.
 
 ### Other Notifications
-**The program needs to read the excel file as the map input.
+**The program needs to read the excel file as the map input.**
