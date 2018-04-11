@@ -58,22 +58,22 @@ def SARSA(all_value, key, epsilon, alpha, move_cost, gamma):
         next_action = all_value[key].index(max(all_value[key]))
     old_value = all_value[key][next_action]
     if next_action == 0:
-        if x == 0:
+        if x <= 0:
             new_key = key
         else:
             new_key = key - 10
     elif next_action == 1:
-        if x == max_x - 1:
+        if x >= max_x - 1:
             new_key = key
         else:
             new_key = key + 10
     elif next_action == 2:
-        if y == 0:
+        if y <= 0:
             new_key = key
         else:
             new_key = key - 1
     elif next_action == 3:
-        if y == max_y - 1:
+        if y >= max_y - 1:
             new_key = key
         else:
             new_key = key + 1
@@ -107,67 +107,68 @@ def SARSA(all_value, key, epsilon, alpha, move_cost, gamma):
                 key = new_key
             elif p2 < 0.1:
                 if next_action == 0 or 1:  #left
-                    if y-1 == 0:
+                    if y <= 0:
                         key = key
                     else:
-                        key = new_key - 1
+                        key = key - 1
                 elif next_action == 2 or 3:  #up
-                    if x-1 == 0:
+                    if x <= 0:
                         key = key
                     else:
-                        key = new_key - 10
+                        key = key - 10
             elif 0.1 <= p2 <= 0.2:
                 if next_action == 0 or 1:  #right
-                    if y+1 == max_y -1:
+                    if y >= max_y -1:
                         key = key
                     else:
-                        key = new_key + 1
+                        key = key + 1
                 elif next_action == 2 or 3:  #down
-                    if x+1 == max_x -1:
+                    if x >= max_x -1:
                         key = key
                     else:
-                        key = new_key + 10
+                        key = key + 10
             elif 0.2 < p2 <= 0.3:
                 if next_action == 0:
-                    if x - 1 == 0:
+                    if x <= 0:
                         key = key
-                    elif x - 2 == 0 or type(all_value[key - 10]) == int:
+                    elif x - 1 == 0 or type(all_value[key - 10]) == int:
                         key = new_key
                     else:
                         key = new_key -10
                 elif next_action == 1:
-                    if x + 1 == max_x -1:
+                    if x >= max_x -1:
                         key = key
-                    elif x + 2 == 0 or type(all_value[key + 10]) == int:
+                    elif x + 1 == 0 or type(all_value[key + 10]) == int:
                         key = new_key
                     else:
                         key = new_key + 10
                 elif next_action == 2:
-                    if y - 1 == 0:
+                    if y <= 0:
                         key = key
-                    elif y - 2 == 0 or type(all_value[key - 1]) == int:
+                    elif y - 1 == 0 or type(all_value[key - 1]) == int:
                         key = new_key
                     else:
                         key = new_key - 1
                 elif next_action == 3:
-                    if y + 1 == max_y -1:
+                    if y >= max_y -1:
                         key = key
-                    elif y + 2 == 0 or type(all_value[key + 1]) == int:
+                    elif y + 1 == 0 or type(all_value[key + 1]) == int:
                         key = new_key
                     else:
                         key = new_key + 1
-            if all_value[key] == int:
+            if type(all_value[key]) == int:
                 out = 1
                 value = all_value[key]
                 step = 1
     return all_value, key, value, out, step, next_action
 
-def iteration(all_value, key, epsilon, alpha, move_cost, gamma, iteration_time):
+def iteration(all_value, epsilon, alpha, move_cost, gamma, iteration_time):
     all_values = []
     for i in range(iteration_time):
         key = start_point(all_value)
         steps = 0
         while True:
+            print(key)
             all_value, key, value, out, step, next_action = SARSA(all_value, key, epsilon, alpha, move_cost, gamma)
             steps += step
             if out == 1:
@@ -190,11 +191,21 @@ start_map = np.array(open_file())
 max_x = len(start_map)
 max_y = len(start_map[0])
 all_value = set_start(start_map, value_goal, value_fall, value_giveup,max_x, max_y)
+
+'''
 #key = start_point(all_value)
-#all_values, all_value = iteration(all_value, key, epsilon, alpha, move_cost, gamma, iteration_time)
-#print(all_values)
-#print(all_value)
-key = 41
+for i in range(5):
+    key = start_point(all_value)
+    while True:
+        all_value, key, value, out, step, next_action = SARSA(all_value, key, epsilon, alpha, move_cost, gamma)
+        if out == 1:
+            break
+'''
+all_values, all_value = iteration(all_value, epsilon, alpha, move_cost, gamma, iteration_time)
+print(all_values)
+print(all_value)
+'''
+key = 3
 all_value, key, value, out, step, next_action = SARSA(all_value, key, epsilon, alpha, move_cost, gamma)
 print(all_value)
 print(key)
@@ -202,3 +213,4 @@ print(next_action)
 print(value)
 print(out)
 print(step)
+'''
