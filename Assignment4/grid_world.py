@@ -42,7 +42,7 @@ def iniGridState():
         for j in range(6):
             if IsDuplicate([i,j],forbidden_) == True:
                 key = (i,j)
-                value = [0,0,0,0,-100]
+                value = [0,0,0,0,-3]
                 state_dict[key] = value
 
     return state_dict
@@ -76,12 +76,12 @@ class Agent:
         self.move_reward = -0.1
         self.giveup_reward = -3
 
-        self.trial_number = 10000
-        self.epsilon = 0.1
+        self.trial_number = 100000
+        self.epsilon = 1
 
         self.gamma = 1 # no settings of this
 
-        self.alpha = 0.7 # learning rate alpha
+        self.alpha = 0.5 # learning rate alpha
         self.q_table = iniGridState()
 
 
@@ -94,15 +94,28 @@ class Agent:
 
 
     # Need to judge the state here
-    def sarsa_learning(self,state, action, reward, next_state, next_action):
-        state_ = (state[0],state[1])
-        next_state_ = (next_state[0],next_state[1])
+    def sarsa_learning(self,state, action, reward, next_state, next_action, type):
 
-        current_q = self.q_table[state_][action]
-        next_state_q = self.q_table[next_state_][next_action]
+        if type == 0:
+            state_ = (state[0],state[1])
+            next_state_ = (next_state[0],next_state[1])
 
-        new_q = (current_q + self.alpha *(reward +  self.gamma * next_state_q - current_q))
-        self.q_table[state_][action] = new_q
+            current_q = self.q_table[state_][action]
+            next_state_q = self.q_table[next_state_][next_action]
+
+            new_q = (current_q + self.alpha *(reward + self.gamma * next_state_q - current_q))
+            self.q_table[state_][action] = new_q
+
+        elif type == 2:
+            state_ = (state[0], state[1])
+            current_q = self.q_table[state_][action]
+            new_q = (current_q + self.alpha * (reward - current_q))
+            self.q_table[state_][action] = new_q
+
+        else:
+
+            pass
+
 
 
     def Q_learning(self,state,action,reward,next_state,next_action):
@@ -114,14 +127,15 @@ class Agent:
     ## epsilon-greedy and other methods to select the action
 
     def get_action(self,state):
-        #
+
         # if random.random() < self.epsilon:
-        #     action = np.random.choice(self.actions)
+        #      action = np.random.choice(self.actions)
         #
         # else:
         state_ = (state[0],state[1])
         state_action = self.q_table[state_]
-        action = self.arg_max(state_action)
+        #action = self.arg_max(state_action)
+        action = state_action.index(max(state_action))
 
         return action
 
@@ -148,6 +162,7 @@ class Agent:
         next_state = copy.deepcopy(state)
         reward = self.move_reward
 
+        type = 0
         if action == 0: #up
             if result_ == 0: # keep old direction
                 next_state[1] = next_state[1] - 1
@@ -221,19 +236,21 @@ class Agent:
             self.isOver = True
             next_state = copy.deepcopy(state_)
             reward = reward + self.giveup_reward
+            type = 1
 
         if next_state[0] == self.goal_loc[0][0] and next_state[1] == self.goal_loc[0][1]:
             reward = reward + self.goal_reward
             next_state = copy.deepcopy(state_)
             self.isOver = True
+            type = 2
 
         if IsDuplicate(next_state,self.pit_loc) == False:
             reward = reward + self.pit_reward
             next_state = copy.deepcopy(state_)
             self.isOver = True
+            type = 2
 
-
-        return next_state, reward
+        return next_state, reward, type
 
 
 # goal_reward = 5
@@ -261,8 +278,8 @@ goal_loc = [[3,2]]
 ###
 agent = Agent()
 
-print(agent.q_table.keys())
-print(agent.pit_loc)
+# print(agent.q_table.keys())
+# print(agent.pit_loc)
 
 result = []
 for i in range(10000):
@@ -276,9 +293,9 @@ for i in range(10000):
     step = 0
     while True:
 
-        next_state, reward = agent.Move(state,action)
+        next_state, reward, type = agent.Move(state,action)
         next_action = agent.get_action(next_state)
-        agent.sarsa_learning(state,action,reward,next_state,next_action)
+        agent.sarsa_learning(state,action,reward,next_state,next_action,type)
         state = copy.deepcopy(next_state)
         action = next_action
 
