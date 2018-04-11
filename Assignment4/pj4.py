@@ -1,7 +1,6 @@
 import xlrd
 import numpy as np
 import random
-import matplotlib as mpl
 import matplotlib.pyplot as plt
 
 def open_file():
@@ -179,14 +178,14 @@ def iteration(all_value, epsilon, alpha, move_cost, gamma, iteration_time):
 
 
 action = ['^', 'v', '<', '>']
-iteration_time = 10000
+iteration_time = 100000
 value_goal = 5
 value_fall = -2
 value_giveup = -3
 epsilon = 0
 alpha = 0.5
 move_cost = -0.1
-gamma = 1
+gamma = 0.1
 start_map = np.array(open_file())
 max_x = len(start_map)
 max_y = len(start_map[0])
@@ -195,6 +194,13 @@ all_value = set_start(start_map, value_goal, value_fall, value_giveup,max_x, max
 
 all_values, all_value = iteration(all_value, epsilon, alpha, move_cost, gamma, iteration_time)
 
-print(all_values)
-print(all_value)
+all_values = np.array(all_values)
+mean50 = []
+for i in range(2000):
+    temp = np.array(all_values[i * 50: i * 50 + 50])
+    mean50.append(np.mean(temp))
+plt.figure()
+plt.plot(mean50)
+plt.show()
+
 
