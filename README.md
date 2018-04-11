@@ -16,5 +16,8 @@ Group 10, 5 Assignments
 
 ### Assignment 4:
 
+Reinforcement Learning on Grid World.
 
 ### Assignment 5
+
+Simple Go Game with AI
