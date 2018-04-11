@@ -1,7 +1,6 @@
 import xlrd
 import numpy as np
 import random
-import matplotlib.pyplot as plt
 
 def open_file():
     data = xlrd.open_workbook('CS 534 map for assignment 4 .xlsx')
@@ -176,7 +175,6 @@ def iteration(all_value, epsilon, alpha, move_cost, gamma, iteration_time):
         all_values.append(values)
     return all_values, all_value
 
-
 def load_input():
     str = input('Please input:').split()
     value_goal=int(str[1])
@@ -189,8 +187,8 @@ def load_input():
 
 
 action = ['^', 'v', '<', '>', 'T']
-alpha = 0.5
-gamma = 1
+alpha = 0.05                  # change alpha
+gamma = 1                     # change gamma
 value_goal, value_fall, move_cost, value_giveup, iteration_time, epsilon = load_input()
 start_map = np.array(open_file())
 max_x = len(start_map)
@@ -200,21 +198,24 @@ all_value = set_start(start_map, value_goal, value_fall, value_giveup,max_x, max
 
 all_values, all_value = iteration(all_value, epsilon, alpha, move_cost, gamma, iteration_time)
 
+
 for i in range(len(start_map)):
     for j in range(len(start_map[0])):
         if start_map[i][j] == '':
             start_map[i][j] = action[all_value[10 * i + j].index(max(all_value[10 * i + j]))]
-
-
-
-all_values = np.array(all_values)
 print(start_map)
-mean50 = []
-for i in range(500):
-    temp = np.array(all_values[i * 20: i * 20 + 20])
-    mean50.append(np.median(temp))
-plt.figure()
-plt.plot(mean50)
-plt.show()
+print()
 
-
+end_map = []
+for i in range(len(start_map)):
+    end_map11=[]
+    for j in range(len(start_map[0])):
+        if start_map[i][j] == 'P':
+            end_map11.append(value_fall)
+        elif start_map[i][j] == 'G':
+            end_map11.append(value_goal)
+        else:
+            end_map11.append(round(max(all_value[10 * i + j]), 2))
+    end_map.append(end_map11)
+end_map = np.array(end_map)
+print(end_map)
