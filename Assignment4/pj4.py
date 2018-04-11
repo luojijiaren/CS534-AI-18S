@@ -177,6 +177,18 @@ def iteration(all_value, epsilon, alpha, move_cost, gamma, iteration_time):
     return all_values, all_value
 
 
+def load_input():
+    str = input('Please input:').split()
+    print(str)
+    value_goal=int(str[1])
+    value_fall=int(str[2])
+    move_cost=float(str[3])
+    value_giveup=int(str[4])
+    iteration_time = int(str[5])
+    epsilon = float(str[6])
+    return value_goal, value_fall, move_cost, value_giveup, iteration_time, epsilon
+
+
 action = ['^', 'v', '<', '>', 'T']
 iteration_time = 10000
 value_goal = 5
@@ -186,6 +198,7 @@ epsilon = 0
 alpha = 0.5
 move_cost = -1
 gamma = 1
+value_goal, value_fall, move_cost, value_giveup, iteration_time, epsilon = load_input()
 start_map = np.array(open_file())
 max_x = len(start_map)
 max_y = len(start_map[0])
