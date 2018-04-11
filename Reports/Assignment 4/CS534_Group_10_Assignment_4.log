@@ -1,4 +1,4 @@
-This is pdfTeX, Version 3.14159265-2.6-1.40.18 (MiKTeX 2.9.6600 64-bit) (preloaded format=pdflatex 2018.2.27)  11 APR 2018 15:11
+This is pdfTeX, Version 3.14159265-2.6-1.40.18 (MiKTeX 2.9.6600 64-bit) (preloaded format=pdflatex 2018.2.27)  11 APR 2018 19:31
 entering extended mode
 **./CS534_Group_10_Assignment_4.tex
 (CS534_Group_10_Assignment_4.tex
@@ -495,7 +495,7 @@ Package: lscape 2000/10/22 v3.01 Landscape Pages (DPC)
 )
 Package pdflscape Info: Auto-detected driver: pdftex on input line 81.
 )
-<images/wpi2.png, id=31, 1818.04219pt x 1404.74812pt>
+<images/wpi2.png, id=119, 1818.04219pt x 1404.74812pt>
 File: images/wpi2.png Graphic file (type png)
 <use images/wpi2.png>
 Package pdftex.def Info: images/wpi2.png  used on input line 79.
@@ -503,75 +503,277 @@ Package pdftex.def Info: images/wpi2.png  used on input line 79.
  [1
 
 {C:/Users/Jiaming Nie/AppData/Local/MiKTeX/2.9/pdftex/config/pdftex.map} <./ima
-ges/wpi2.png>]
+ges/wpi2.png>] (CS534_Group_10_Assignment_4.toc)
+\tf@toc=\write4
+\openout4 = `CS534_Group_10_Assignment_4.toc'.
 
-Package hyperref Warning: Token not allowed in a PDF string (PDFDocEncoding):
-(hyperref)                removing `math shift' on input line 134.
-
-
-Package hyperref Warning: Token not allowed in a PDF string (PDFDocEncoding):
-(hyperref)                removing `\alpha' on input line 134.
-
-
-Package hyperref Warning: Token not allowed in a PDF string (PDFDocEncoding):
-(hyperref)                removing `math shift' on input line 134.
-
-
-Package hyperref Warning: Token not allowed in a PDF string (PDFDocEncoding):
-(hyperref)                removing `math shift' on input line 136.
-
-
-Package hyperref Warning: Token not allowed in a PDF string (PDFDocEncoding):
-(hyperref)                removing `\epsilon' on input line 136.
-
-
-Package hyperref Warning: Token not allowed in a PDF string (PDFDocEncoding):
-(hyperref)                removing `math shift' on input line 136.
-
-
-Package hyperref Warning: Token not allowed in a PDF string (PDFDocEncoding):
-(hyperref)                removing `math shift' on input line 138.
-
-
-Package hyperref Warning: Token not allowed in a PDF string (PDFDocEncoding):
-(hyperref)                removing `\epsilon' on input line 138.
-
-
-Package hyperref Warning: Token not allowed in a PDF string (PDFDocEncoding):
-(hyperref)                removing `math shift' on input line 138.
-
-Package atveryend Info: Empty hook `BeforeClearDocument' on input line 151.
 pdfTeX warning (ext4): destination with the same identifier (name{page.1}) has 
 been already used, duplicate ignored
 <to be read again> 
                    \relax 
-l.151 \end{document}
-                     [1]
-Package atveryend Info: Empty hook `AfterLastShipout' on input line 151.
+l.119 \newpage
+               [1]
+LaTeX Font Info:    Try loading font information for OMS+cmr on input line 140.
+
+ ("C:\Program Files\MiKTeX 2.9\tex\latex\base\omscmr.fd"
+File: omscmr.fd 2014/09/29 v2.5h Standard LaTeX font definitions
+)
+LaTeX Font Info:    Font shape `OMS/cmr/m/n' in size <10.95> not available
+(Font)              Font shape `OMS/cmsy/m/n' tried instead on input line 140.
+Missing character: There is no ‚ in font cmr10!
+Missing character: There is no Ä in font cmr10!
+Missing character: There is no ú in font cmr10!
+Missing character: There is no ‚ in font cmr10!
+Missing character: There is no Ä in font cmr10!
+Missing character: There is no ù in font cmr10!
+Missing character: There is no ‚ in font cmr10!
+Missing character: There is no Ä in font cmr10!
+Missing character: There is no ú in font cmr10!
+Missing character: There is no ‚ in font cmr10!
+Missing character: There is no Ä in font cmr10!
+Missing character: There is no ù in font cmr10!
+Missing character: There is no ‚ in font cmr10!
+Missing character: There is no Ä in font cmr10!
+Missing character: There is no ú in font cmr10!
+Missing character: There is no ‚ in font cmr10!
+Missing character: There is no Ä in font cmr10!
+Missing character: There is no ù in font cmr10!
+Missing character: There is no ‚ in font cmr10!
+Missing character: There is no Ä in font cmr10!
+Missing character: There is no ú in font cmr10!
+Missing character: There is no ‚ in font cmr10!
+Missing character: There is no Ä in font cmr10!
+Missing character: There is no ù in font cmr10!
+Missing character: There is no Œ in font cmr10!
+Missing character: There is no ± in font cmr10!
+Missing character: There is no ‚ in font cmr10!
+Missing character: There is no Ä in font cmr10!
+Missing character: There is no ô in font cmr10!
+Missing character: There is no ‚ in font cmr10!
+Missing character: There is no Ä in font cmr10!
+Missing character: There is no ô in font cmr10!
+Missing character: There is no ‚ in font cmr10!
+Missing character: There is no Ä in font cmr10!
+Missing character: There is no ì in font cmr10!
+Missing character: There is no ‚ in font cmr10!
+Missing character: There is no Ä in font cmr10!
+Missing character: There is no ú in font cmr10!
+Missing character: There is no ‚ in font cmr10!
+Missing character: There is no Ä in font cmr10!
+Missing character: There is no ù in font cmr10!
+Missing character: There is no ‚ in font cmr10!
+Missing character: There is no Ä in font cmr10!
+Missing character: There is no ô in font cmr10!
+Missing character: There is no ‚ in font cmr10!
+Missing character: There is no Ä in font cmr10!
+Missing character: There is no ú in font cmr10!
+Missing character: There is no ‚ in font cmr10!
+Missing character: There is no Ä in font cmr10!
+Missing character: There is no ù in font cmr10!
+Missing character: There is no ‚ in font cmr10!
+Missing character: There is no Ä in font cmr10!
+Missing character: There is no ô in font cmr10!
+Missing character: There is no ‚ in font cmr10!
+Missing character: There is no Ä in font cmr10!
+Missing character: There is no ô in font cmr10!
+Missing character: There is no ‚ in font cmr10!
+Missing character: There is no Ä in font cmr10!
+Missing character: There is no ô in font cmr10!
+Missing character: There is no ‚ in font cmr10!
+Missing character: There is no Ä in font cmr10!
+Missing character: There is no ô in font cmr10!
+
+[2]
+<images/1_1W.jpg, id=171, 462.528pt x 346.896pt>
+File: images/1_1W.jpg Graphic file (type jpg)
+<use images/1_1W.jpg>
+Package pdftex.def Info: images/1_1W.jpg  used on input line 196.
+(pdftex.def)             Requested size: 227.62204pt x 170.71628pt.
+<images/1_1K.jpg, id=173, 462.528pt x 346.896pt>
+File: images/1_1K.jpg Graphic file (type jpg)
+<use images/1_1K.jpg>
+Package pdftex.def Info: images/1_1K.jpg  used on input line 209.
+(pdftex.def)             Requested size: 227.62204pt x 170.71628pt.
+ [3 <./images/1_1W.jpg>]
+<images/1_movement.png, id=181, 195.22937pt x 100.375pt>
+File: images/1_movement.png Graphic file (type png)
+<use images/1_movement.png>
+Package pdftex.def Info: images/1_movement.png  used on input line 242.
+(pdftex.def)             Requested size: 170.71652pt x 87.77582pt.
+ [4 <./images/1_1K.jpg> <./images/1_movement.png>]
+<images/1_score.png, id=191, 179.16937pt x 83.31125pt>
+File: images/1_score.png Graphic file (type png)
+<use images/1_score.png>
+Package pdftex.def Info: images/1_score.png  used on input line 254.
+(pdftex.def)             Requested size: 113.81102pt x 52.92111pt.
+
+
+Package hyperref Warning: Token not allowed in a PDF string (PDFDocEncoding):
+(hyperref)                removing `math shift' on input line 262.
+
+
+Package hyperref Warning: Token not allowed in a PDF string (PDFDocEncoding):
+(hyperref)                removing `\alpha' on input line 262.
+
+
+Package hyperref Warning: Token not allowed in a PDF string (PDFDocEncoding):
+(hyperref)                removing `math shift' on input line 262.
+
+
+Package hyperref Warning: Token not allowed in a PDF string (PDFDocEncoding):
+(hyperref)                removing `math shift' on input line 266.
+
+
+Package hyperref Warning: Token not allowed in a PDF string (PDFDocEncoding):
+(hyperref)                removing `\alpha' on input line 266.
+
+
+Package hyperref Warning: Token not allowed in a PDF string (PDFDocEncoding):
+(hyperref)                removing `math shift' on input line 266.
+
+<images/2_2.png, id=193, 462.528pt x 346.896pt>
+File: images/2_2.png Graphic file (type png)
+<use images/2_2.png>
+Package pdftex.def Info: images/2_2.png  used on input line 272.
+(pdftex.def)             Requested size: 170.71652pt x 128.0372pt.
+
+Package hyperref Warning: Token not allowed in a PDF string (PDFDocEncoding):
+(hyperref)                removing `math shift' on input line 280.
+
+
+Package hyperref Warning: Token not allowed in a PDF string (PDFDocEncoding):
+(hyperref)                removing `\alpha' on input line 280.
+
+
+Package hyperref Warning: Token not allowed in a PDF string (PDFDocEncoding):
+(hyperref)                removing `math shift' on input line 280.
+
+<images/2_1.png, id=195, 462.528pt x 346.896pt>
+File: images/2_1.png Graphic file (type png)
+<use images/2_1.png>
+Package pdftex.def Info: images/2_1.png  used on input line 286.
+(pdftex.def)             Requested size: 170.71652pt x 128.0372pt.
+
+Package hyperref Warning: Token not allowed in a PDF string (PDFDocEncoding):
+(hyperref)                removing `math shift' on input line 294.
+
+
+Package hyperref Warning: Token not allowed in a PDF string (PDFDocEncoding):
+(hyperref)                removing `\alpha' on input line 294.
+
+
+Package hyperref Warning: Token not allowed in a PDF string (PDFDocEncoding):
+(hyperref)                removing `math shift' on input line 294.
+
+<images/2_3.png, id=197, 462.528pt x 346.896pt>
+File: images/2_3.png Graphic file (type png)
+<use images/2_3.png>
+Package pdftex.def Info: images/2_3.png  used on input line 300.
+(pdftex.def)             Requested size: 199.16928pt x 149.37938pt.
+[5 <./images/1_score.png> <./images/2_2.png> <./images/2_1.png>]
+
+Package hyperref Warning: Token not allowed in a PDF string (PDFDocEncoding):
+(hyperref)                removing `math shift' on input line 308.
+
+
+Package hyperref Warning: Token not allowed in a PDF string (PDFDocEncoding):
+(hyperref)                removing `\epsilon' on input line 308.
+
+
+Package hyperref Warning: Token not allowed in a PDF string (PDFDocEncoding):
+(hyperref)                removing `math shift' on input line 308.
+
+<images/3_e_2.png, id=211, 462.528pt x 346.896pt>
+File: images/3_e_2.png Graphic file (type png)
+<use images/3_e_2.png>
+Package pdftex.def Info: images/3_e_2.png  used on input line 316.
+(pdftex.def)             Requested size: 199.16928pt x 149.37938pt.
+<images/3_e_3.jpg, id=214, 462.528pt x 346.896pt>
+File: images/3_e_3.jpg Graphic file (type jpg)
+<use images/3_e_3.jpg>
+Package pdftex.def Info: images/3_e_3.jpg  used on input line 329.
+(pdftex.def)             Requested size: 256.0748pt x 192.06375pt.
+[6 <./images/2_3.png> <./images/3_e_2.png>]
+<images/3_map.png, id=226, 211.28937pt x 181.17688pt>
+File: images/3_map.png Graphic file (type png)
+<use images/3_map.png>
+Package pdftex.def Info: images/3_map.png  used on input line 345.
+(pdftex.def)             Requested size: 227.62204pt x 195.18707pt.
+
+
+Package hyperref Warning: Token not allowed in a PDF string (PDFDocEncoding):
+(hyperref)                removing `math shift' on input line 353.
+
+
+Package hyperref Warning: Token not allowed in a PDF string (PDFDocEncoding):
+(hyperref)                removing `\epsilon' on input line 353.
+
+
+Package hyperref Warning: Token not allowed in a PDF string (PDFDocEncoding):
+(hyperref)                removing `math shift' on input line 353.
+
+[7 <./images/3_e_3.jpg> <./images/3_map.png>]
+<images/4_e_1.png, id=235, 462.528pt x 346.896pt>
+File: images/4_e_1.png Graphic file (type png)
+<use images/4_e_1.png>
+Package pdftex.def Info: images/4_e_1.png  used on input line 363.
+(pdftex.def)             Requested size: 199.16928pt x 149.37938pt.
+<images/4_e_2.png, id=238, 462.528pt x 346.896pt>
+File: images/4_e_2.png Graphic file (type png)
+<use images/4_e_2.png>
+Package pdftex.def Info: images/4_e_2.png  used on input line 376.
+(pdftex.def)             Requested size: 227.62204pt x 170.71628pt.
+<images/4_map.png, id=240, 211.28937pt x 177.16188pt>
+File: images/4_map.png Graphic file (type png)
+<use images/4_map.png>
+Package pdftex.def Info: images/4_map.png  used on input line 390.
+(pdftex.def)             Requested size: 142.26378pt x 119.28714pt.
+ [8 <./images/4_e_1.png> <./images/4_e_2.png>]
+<images/5_a_1.png, id=251, 194.22563pt x 179.16937pt>
+File: images/5_a_1.png Graphic file (type png)
+<use images/5_a_1.png>
+Package pdftex.def Info: images/5_a_1.png  used on input line 416.
+(pdftex.def)             Requested size: 142.26378pt x 131.23817pt.
+<images/5_a_2.png, id=253, 225.84375pt x 179.67125pt>
+File: images/5_a_2.png Graphic file (type png)
+<use images/5_a_2.png>
+Package pdftex.def Info: images/5_a_2.png  used on input line 430.
+(pdftex.def)             Requested size: 142.26378pt x 113.18524pt.
+ [9 <./images/4_map.png> <./images/5_a_1.png>]
+File: images/4_map.png Graphic file (type png)
+<use images/4_map.png>
+Package pdftex.def Info: images/4_map.png  used on input line 446.
+(pdftex.def)             Requested size: 142.26378pt x 119.28714pt.
+Package atveryend Info: Empty hook `BeforeClearDocument' on input line 471.
+ [10 <./images/5_a_2.png>]
+Package atveryend Info: Empty hook `AfterLastShipout' on input line 471.
  (CS534_Group_10_Assignment_4.aux)
-Package atveryend Info: Executing hook `AtVeryEndDocument' on input line 151.
-Package atveryend Info: Executing hook `AtEndAfterFileList' on input line 151.
+Package atveryend Info: Executing hook `AtVeryEndDocument' on input line 471.
+Package atveryend Info: Executing hook `AtEndAfterFileList' on input line 471.
 Package rerunfilecheck Info: File `CS534_Group_10_Assignment_4.out' has not cha
 nged.
-(rerunfilecheck)             Checksum: E2DD503C64B7FAAFCE7286849F0BE1BA;506.
-Package atveryend Info: Empty hook `AtVeryVeryEnd' on input line 151.
+(rerunfilecheck)             Checksum: 1CA5E0C7CE296C6F2C6CFA44A8E38D67;2377.
+Package atveryend Info: Empty hook `AtVeryVeryEnd' on input line 471.
  ) 
 Here is how much of TeX's memory you used:
- 8660 strings out of 493305
- 126339 string characters out of 3138854
- 250705 words of memory out of 3000000
- 12097 multiletter control sequences out of 15000+200000
- 9401 words of font info for 34 fonts, out of 3000000 for 9000
+ 8848 strings out of 493305
+ 129329 string characters out of 3138854
+ 255705 words of memory out of 3000000
+ 12214 multiletter control sequences out of 15000+200000
+ 9709 words of font info for 35 fonts, out of 3000000 for 9000
  1141 hyphenation exceptions out of 8191
- 37i,8n,40p,244b,351s stack positions out of 5000i,500n,10000p,200000b,50000s
-<C:/Program Files/MiKTeX 2.9/fonts/type1/public/amsfonts/cm/cmbx12.pfb><C:/Pr
-ogram Files/MiKTeX 2.9/fonts/type1/public/amsfonts/cm/cmmi12.pfb><C:/Program Fi
-les/MiKTeX 2.9/fonts/type1/public/amsfonts/cm/cmr10.pfb><C:/Program Files/MiKTe
-X 2.9/fonts/type1/public/amsfonts/cm/cmr12.pfb><C:/Program Files/MiKTeX 2.9/fon
-ts/type1/public/amsfonts/cm/cmr17.pfb>
-Output written on CS534_Group_10_Assignment_4.pdf (2 pages, 507139 bytes).
+ 37i,9n,40p,1691b,389s stack positions out of 5000i,500n,10000p,200000b,50000s
+<C:/Program Files/MiKTeX 2.9/fonts/type1/public/amsfonts/cm/cmbx10.pfb><C:/Pr
+ogram Files/MiKTeX 2.9/fonts/type1/public/amsfonts/cm/cmbx12.pfb><C:/Program Fi
+les/MiKTeX 2.9/fonts/type1/public/amsfonts/cm/cmmi10.pfb><C:/Program Files/MiKT
+eX 2.9/fonts/type1/public/amsfonts/cm/cmmi12.pfb><C:/Program Files/MiKTeX 2.9/f
+onts/type1/public/amsfonts/cm/cmr10.pfb><C:/Program Files/MiKTeX 2.9/fonts/type
+1/public/amsfonts/cm/cmr12.pfb><C:/Program Files/MiKTeX 2.9/fonts/type1/public/
+amsfonts/cm/cmr17.pfb><C:/Program Files/MiKTeX 2.9/fonts/type1/public/amsfonts/
+cm/cmsy10.pfb>
+Output written on CS534_Group_10_Assignment_4.pdf (11 pages, 945500 bytes).
 PDF statistics:
- 68 PDF objects out of 1000 (max. 8388607)
- 9 named destinations out of 1000 (max. 500000)
- 62 words of extra memory for PDF output out of 10000 (max. 10000000)
+ 310 PDF objects out of 1000 (max. 8388607)
+ 57 named destinations out of 1000 (max. 500000)
+ 313 words of extra memory for PDF output out of 10000 (max. 10000000)
 

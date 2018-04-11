@@ -1,7 +1,29 @@
-\BOOKMARK [1][-]{section.1}{1 Write Up Questions Solution}{}% 1
-\BOOKMARK [2][-]{subsection.1.1}{1.1 Program Result Plot}{section.1}% 2
-\BOOKMARK [2][-]{subsection.1.2}{1.2 \040Optimization}{section.1}% 3
-\BOOKMARK [2][-]{subsection.1.3}{1.3 = 0.2 Asymptotes}{section.1}% 4
-\BOOKMARK [2][-]{subsection.1.4}{1.4 \040Exploration}{section.1}% 5
-\BOOKMARK [2][-]{subsection.1.5}{1.5 Parameters Optimization }{section.1}% 6
-\BOOKMARK [1][-]{section.2}{2 Q functions Initialization \(Extra Credit\)}{}% 7
+\BOOKMARK [1][-]{section.1}{1 Program Description}{}% 1
+\BOOKMARK [1][-]{section.2}{2 Approach}{}% 2
+\BOOKMARK [2][-]{subsection.2.1}{2.1 Set up the gridworld and random start\(not a goal or pit\)}{section.2}% 3
+\BOOKMARK [2][-]{subsection.2.2}{2.2 Calculate Q-value lookup table by using SARSA and Roll dice to decide the actions}{section.2}% 4
+\BOOKMARK [2][-]{subsection.2.3}{2.3 Calculate new value and update}{section.2}% 5
+\BOOKMARK [2][-]{subsection.2.4}{2.4 Calculate the place it will wind up}{section.2}% 6
+\BOOKMARK [2][-]{subsection.2.5}{2.5 Total Reward Calculation}{section.2}% 7
+\BOOKMARK [2][-]{subsection.2.6}{2.6 Restart}{section.2}% 8
+\BOOKMARK [1][-]{section.3}{3 Write Up Questions Solution}{}% 9
+\BOOKMARK [2][-]{subsection.3.1}{3.1 Program Result Asymptote Plot}{section.3}% 10
+\BOOKMARK [3][-]{subsubsection.3.1.1}{3.1.1 Iterations = 10000 Asymptote Plot}{subsection.3.1}% 11
+\BOOKMARK [3][-]{subsubsection.3.1.2}{3.1.2 Iterations = 1000 Asymptote Plot}{subsection.3.1}% 12
+\BOOKMARK [3][-]{subsubsection.3.1.3}{3.1.3 Map Movements}{subsection.3.1}% 13
+\BOOKMARK [2][-]{subsection.3.2}{3.2 \040Optimization}{section.3}% 14
+\BOOKMARK [3][-]{subsubsection.3.2.1}{3.2.1 = 0.5}{subsection.3.2}% 15
+\BOOKMARK [3][-]{subsubsection.3.2.2}{3.2.2 = 0.05}{subsection.3.2}% 16
+\BOOKMARK [3][-]{subsubsection.3.2.3}{3.2.3 = 1}{subsection.3.2}% 17
+\BOOKMARK [2][-]{subsection.3.3}{3.3 = 0.2 Asymptotes}{section.3}% 18
+\BOOKMARK [3][-]{subsubsection.3.3.1}{3.3.1 Iterations = 1000}{subsection.3.3}% 19
+\BOOKMARK [3][-]{subsubsection.3.3.2}{3.3.2 Iterations = 10000}{subsection.3.3}% 20
+\BOOKMARK [3][-]{subsubsection.3.3.3}{3.3.3 Recommended Actions Map}{subsection.3.3}% 21
+\BOOKMARK [2][-]{subsection.3.4}{3.4 \040Exploration}{section.3}% 22
+\BOOKMARK [3][-]{subsubsection.3.4.1}{3.4.1 Iterations = 1000 }{subsection.3.4}% 23
+\BOOKMARK [3][-]{subsubsection.3.4.2}{3.4.2 Iterations = 10000}{subsection.3.4}% 24
+\BOOKMARK [3][-]{subsubsection.3.4.3}{3.4.3 Recommended Actions Map}{subsection.3.4}% 25
+\BOOKMARK [2][-]{subsection.3.5}{3.5 Parameters Optimization }{section.3}% 26
+\BOOKMARK [3][-]{subsubsection.3.5.1}{3.5.1 Parameters Not Pointing to Goal}{subsection.3.5}% 27
+\BOOKMARK [3][-]{subsubsection.3.5.2}{3.5.2 Multiple Result}{subsection.3.5}% 28
+\BOOKMARK [1][-]{section.4}{4 Q functions Initialization \(Extra Credit\)}{}% 29

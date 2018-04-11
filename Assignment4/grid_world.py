@@ -33,8 +33,8 @@ def iniLoc(length,forbidden_):
 def iniGridState():
 
     state_dict = dict()
-    pit_loc = [[2, 2], [2, 3], [3, 1], [3, 5], [4, 2], [4, 3], [4, 4]]
-    goal_loc = [[3, 2]]
+    pit_loc = [[2, 2], [3, 2], [1, 3], [5, 3], [2, 4], [3, 4], [4, 4]]
+    goal_loc = [[2, 3]]
     forbidden_ = pit_loc + goal_loc
 
     #the grid is a 6*7
@@ -65,11 +65,10 @@ def isOutBoundary(point):
     return flag
 
 
-
 class Agent:
     def __init__(self):
         self.actions = [0,1,2,3,4]
-        self.ACTIONS = [(0, 1), (0, -1), (-1, 0), (1, 0),(0, 0)] #up,down,left,right,giveup
+        self.ACTIONS = ['👆','👇','👉','👈','👋'] #up,down,right,left,giveup
 
         self.goal_reward = 5
         self.pit_reward = -2
@@ -85,8 +84,8 @@ class Agent:
         self.q_table = iniGridState()
 
 
-        self.pit_loc = [[2,2],[2,3],[3,1],[3,5],[4,2],[4,3],[4,4]]
-        self.goal_loc = [[3, 2]]
+        self.pit_loc = [[2, 2], [3, 2], [1, 3], [5, 3], [2, 4], [3, 4], [4, 4]]
+        self.goal_loc = [[2,3]]
         self.length = [7,6]
         self.forbidden = self.pit_loc + self.goal_loc
         self.isOver = False
@@ -252,6 +251,24 @@ class Agent:
 
         return next_state, reward, type
 
+    def printActions(self):
+
+        list_ = [[0 for col in range(7)] for row in range(6)]
+
+        for i in range(len(self.pit_loc)):
+            x = self.pit_loc[i][0]
+            y = self.pit_loc[i][1]
+            list_[y][x] = '🚫'
+
+
+        list_[3][2] = "💰"
+
+        for key in self.q_table:
+            index = self.q_table[key].index(max(self.q_table[key]))
+            list_[key[1]][key[0]] = self.ACTIONS[index]
+
+        for i in range(len(list_)):
+            print(list_[i])
 
 # goal_reward = 5
 # pit_reward = -2
@@ -278,8 +295,10 @@ goal_loc = [[3,2]]
 ###
 agent = Agent()
 
-# print(agent.q_table.keys())
-# print(agent.pit_loc)
+print(agent.q_table.keys())
+print(agent.pit_loc)
+print(agent.goal_loc)
+
 
 result = []
 for i in range(10000):
@@ -307,6 +326,7 @@ for i in range(10000):
             #print("reward",reward_)
             break
 
+agent.printActions()
 print(agent.q_table.values())
 r_ = []
 for i in range(len(result)):
@@ -316,7 +336,7 @@ r2 = np.zeros(200)
 
 for i in range(200):
     temp = np.array(r_[i * 50 : i*50 + 50])
-    r2[i] = np.median(temp)
+    r2[i] = np.amax(temp)
 
 
 plt.figure()

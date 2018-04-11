@@ -12,6 +12,7 @@ from PyQt5.QtGui import QColor
 from PyQt5.QtCore import QLineF, QRectF, Qt
 from PyQt5.QtWidgets import QLabel, QMainWindow,QWidget
 import os
+from chess_board import ChessBoard
 
 class LaBel(QLabel):
     def __init__(self, parent):
@@ -85,8 +86,6 @@ class Ui_MainWindow(object):
 
         self.graphicsView.setMouseTracking(True)
         MainWindow.setMouseTracking(True)
-
-
         self.DrawBackground()
 
         self.retranslateUi(MainWindow)
@@ -148,6 +147,8 @@ class DisplayMW(QMainWindow):
         self.mouse_point.raise_()
         self.setMouseTracking(True)
 
+        self.chess_board = ChessBoard()
+
     def mouseMoveEvent(self, event):
         if event.x() <= 760 and event.y() <= 760:
             self.mouse_point.move(event.x() - 16,event.y() - 16)
@@ -156,6 +157,15 @@ class DisplayMW(QMainWindow):
     def mousePressEvent(self, event):
         if event.button() == Qt.LeftButton:
             print("Pressed")
+
+    def coordinate_transform_map2pixel(self):
+
+        return
+
+    def coordinate_transform_pixel2map(self):
+
+        return
+
 
 
 import sys
