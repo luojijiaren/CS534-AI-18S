@@ -177,14 +177,14 @@ def iteration(all_value, epsilon, alpha, move_cost, gamma, iteration_time):
     return all_values, all_value
 
 
-action = ['^', 'v', '<', '>']
-iteration_time = 100000
+action = ['^', 'v', '<', '>', 'T']
+iteration_time = 10000
 value_goal = 5
 value_fall = -2
 value_giveup = -3
 epsilon = 0
 alpha = 0.5
-move_cost = -0.1
+move_cost = -1
 gamma = 1
 start_map = np.array(open_file())
 max_x = len(start_map)
@@ -204,9 +204,9 @@ for i in range(len(start_map)):
 all_values = np.array(all_values)
 print(start_map)
 mean50 = []
-for i in range(2000):
-    temp = np.array(all_values[i * 50: i * 50 + 50])
-    mean50.append(np.mean(temp))
+for i in range(500):
+    temp = np.array(all_values[i * 20: i * 20 + 20])
+    mean50.append(np.median(temp))
 plt.figure()
 plt.plot(mean50)
 plt.show()
