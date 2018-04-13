@@ -6,6 +6,11 @@
 #
 # WARNING! All changes made in this file will be lost!
 
+EMPTY = 0
+BLACK = 1
+WHITE = 2
+PIECE = 34 ## Even Number
+
 from PyQt5 import QtCore, QtGui, QtWidgets
 from PyQt5.QtGui import QPixmap, QIcon, QPalette, QPainter, QBrush
 from PyQt5.QtGui import QColor
@@ -142,16 +147,24 @@ class DisplayMW(QMainWindow):
         self.setCursor(Qt.PointingHandCursor)
         self.mouse_point = LaBel(self)  # 将鼠标图片改为棋子
         self.mouse_point.setScaledContents(True)
-        self.mouse_point.setPixmap(self.ui.graphicsView.black)  # 加载黑棋
-        self.mouse_point.setGeometry(270, 270, 32, 32)
+        self.mouse_point.setPixmap(self.ui.graphicsView.black)  # Black chess piece, human always hold
+        self.mouse_point.setGeometry(270, 270, PIECE, PIECE)
+
+        # settings for the mouse
         self.mouse_point.raise_()
         self.setMouseTracking(True)
+        self.AI_down = True
 
         self.chess_board = ChessBoard()
+        self.pieces = [LaBel(self) for i in range(361)] # All the chess pieces , 19*19 chess board
+
+        for piece in self.pieces:
+            piece.setVisible(True)  # Set Picture Visible
+            piece.setScaledContents(True)  #
 
     def mouseMoveEvent(self, event):
         if event.x() <= 760 and event.y() <= 760:
-            self.mouse_point.move(event.x() - 16,event.y() - 16)
+            self.mouse_point.move(event.x() - PIECE/2,event.y() - PIECE/2)
         #print("Moved")
 
     def mousePressEvent(self, event):

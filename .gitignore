@@ -33,3 +33,12 @@ Assignment4/sarsa_agent.py
 *.gz
 *.out
 *.log
+*.bbl
+*.bbl
+*.blg
+*.log
+*.gz
+*.gz
+*.log
+*.blg
+*.bbl
