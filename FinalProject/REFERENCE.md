@@ -7,4 +7,6 @@
 
 ## 4. https://github.com/brilee/MuGo
 
+## 5. https://github.com/colingogogo/gobang_AI#gobang_ai
+
 update111
